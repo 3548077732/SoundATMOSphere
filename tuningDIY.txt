@@ -1,0 +1,229 @@
+V=21
+### Dolby tuning DIY
+#Blank or wrong filled variable will cause setting default value
+
+-----------------------------------
+
+# Which Intelligent EQ preset you want? 
+# (values B - balanced, D - detailed, W - Warm, N - no IEQ) (default: B)
+
+HIEQ=B
+
+-----------------------------------
+
+# How strong Intelligent EQ should be? 
+# Generally values:
+# 1-3 is weak
+# 4-6 is medium
+# 7-10 is strong
+# 10-15 is very strong
+# 16-20 is extreme
+# (values 1-20) (default: 8)
+
+HIEQSTR=8
+
+-----------------------------------
+
+# How strong Bass Boost you want?
+# values [0-20] (default: 7)
+
+HBASS=7
+
+-----------------------------------
+
+# Headphone Digital Volume booster
+# How much in dB volume should be boosted?
+# values [0 to 15] (default:0)
+
+HVOLBOOST=0
+
+-----------------------------------
+
+# Dialog Enhancer. Should be turned on? or off?
+# Value of 0 will turn off Dialog Enhancer
+# Value of 1 will turn on Dialog Enhancer only for Movie profile
+# Value of 2 will turn on Dialog Enhancer for every profile
+# values [0-2] (default: 0)
+
+HDE=0
+
+-----------------------------------
+
+# This setting is working only with enabled Dialog Enhancer
+# How strong Dialog Enhancer should be?
+# values [1-10] (default: 6)
+
+HDEA=6
+
+-----------------------------------
+
+# This setting is working only with enabled Dialog Enhancer
+# How strong Dialog Enhancer ducking should be?
+# (ducking will attenuate audio when dialogue appear)
+# values [0-10] (default: 0)
+
+HDED=0
+
+-----------------------------------
+
+# Virtualizer will be turned on in Movie preset 
+# and disabled in Music preset
+# How strong Virtualizer effect you want? (if your Dolby support it)
+# values [4-100] (default: 20)
+
+HVIRTSTR=20
+
+-----------------------------------
+
+# How wide (left-right angle) Virtualizer effect you want? (if your Dolby support it)
+# values [45-90] (default: 90)
+
+HVIRTWID=90
+
+-----------------------------------
+
+# Which mode of Virtualizer effect you want? (if your Dolby support it)
+# Mode 1 means, Virtualizer is center oriented, soundscene is narrow.
+# Mode 2 means, Virtualizer is much more expanded to sides.
+# values [1 or 2] (default: 2)
+
+HVIRTMOD=2
+
+-----------------------------------
+
+# Do you want to try custom advanced Virtualizer renderer?
+# It will be applied only if your Dolby support it.
+# Values [YES or NO] (default: YES)
+
+HVIRTREND=YES
+
+-----------------------------------
+
+# Should Volume Leveler be turned on or off? 
+# values [ON or OFF] (default: OFF)
+
+HLEVELER=OFF
+
+-----------------------------------
+
+# How strong volume boost with volume leveler should be? 
+# HLEVELER must be turned ON if you want this feature
+# If HLEVELER is off, then no matter what value is here)
+# values [0-10] (default: 3)
+
+HLEVSTR=3
+
+-----------------------------------
+
+# This setting is working when Volume Leveler
+# How fast HLEVELER should react?
+# Value of 0 means no reaction, but still volume boost will be active
+# Larger value means faster reaction
+# values [0-10] (default: 0)
+
+HLEVAMOUNT=0
+
+-----------------------------------
+
+# FOR A BIT MORE ADVANCED USERS!
+# This setting is working when Volume Leveler
+# How aggressive volume leveler should be in attenuation peaks?
+# SUGGESTION: 
+# Set it lower than 6, to have more aggressive type of sound
+# Set it higher than 6, to have softer sound
+# values [1-10] (default: 6)
+
+HLEVTARGETIN=6
+
+-----------------------------------
+
+# FOR A BIT MORE ADVANCED USERS!
+# This setting is working when Volume Leveler
+# This parameter is also dependent on previous parameter.
+# How aggressive volume leveler should be in 
+# modifying signal from previous parameter?
+# RECOMMENDED to set it like previous value
+# values [1-10] (default: 6)
+
+HLEVTARGETOUT=6
+
+-----------------------------------
+
+# How hard regulator should try to preserve timbre?
+# values [1-4] (default: 2)
+
+HTIMBRE=2
+
+-----------------------------------
+
+# Should Speaker be tuned as well?
+# This is tuning for adding more bass to speaker
+# NOT NEEDED to activate for parameters below
+# values [YES or NO] (default: NO)
+
+SPEAKERTUNING=NO
+
+-----------------------------------
+
+# Speaker Digital Volume booster
+# How much in dB volume should be boosted?
+# values [0 to 15] (default:0)
+
+SVOLBOOST=0
+
+-----------------------------------
+
+# Speaker volume leveler should be turned on or off?
+# values [ON or OFF] (default: OFF)
+
+SLEVELER=OFF
+
+-----------------------------------
+
+# Speaker Dialog Enhancer. Should be turned on? or off?
+# Value 0 will turn off Dialog Enhancer
+# Value 1 will turn on Dialog Enhancer only for Movie profile
+# Value 2 will turn on Dialog Enhancer for every profile
+# values [0-2] (default: 0)
+
+SDE=0
+
+-----------------------------------
+
+# This parameter is working only with enabled Dialog Enhancer
+# How strong Speaker Dialog Enhancer should be?
+# values [1-10] (default: 6)
+
+SDEA=6
+
+-----------------------------------
+
+# This parameter is working only with enabled Dialog Enhancer
+# How strong Speaker Dialog Enhancer ducking should be?
+# (ducking will attenuate audio when dialogue appear)
+# values [0-10] (default: 0)
+
+SDED=0
+
+-----------------------------------
+
+# Speaker Virtualizer. Should be turned on? or off?
+# Value 0 will turn off Speaker Virtualizer
+# Value 1 will turn on Speaker Virtualizer only for Movie profile
+# Value 2 will turn on Speaker Virtualizer for every profile
+# values [0-2] (default: 1)
+
+SVIRT=1
+
+-----------------------------------
+
+# This parameter is working only with enabled Speaker Virtualizer
+# Which mode of Speaker Virtualizer effect you want? (if your Dolby support it)
+# Mode 1 means, Speaker Virtualizer is center oriented, soundscene is narrow.
+# Mode 2 means, Speaker Virtualizer is much more expanded to sides.
+# values [1 or 2] (default: 2)
+
+SVIRTMOD=2
+
+-----------------------------------
+
