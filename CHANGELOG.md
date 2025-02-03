@@ -14,7 +14,7 @@
 
 ## v0.5 - 06.08.2024
 
-- Change in harmonics gains (testing different values)
+-Change in harmonics gains (testing different values)
 
 ## v0.6 - 13.08.2024
 
@@ -132,3 +132,7 @@
 ## v1.21 - 28.01.2025
 - Added Warm IEQ choice
 - Added safety switch, where user choose IEQ preset, which is not in their dolby config, balanced IEQ will be applied
+
+## v1.22 - 02.02.2025
+- Removed 141Hz attenuation in regulator for balanced IEQ
+- Minor code polishing

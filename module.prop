@@ -1,6 +1,6 @@
 id=sv_sndasphere
 name=SoundATMOSphere
-version=v1.21-DIY
+version=v1.22-DIY
 versionCode=100
 author=ShadoV90
 description=Do It Yourself Edition. This module is modifying dolby xml config tuning, to give user better audio experience.

@@ -90,7 +90,7 @@ esac
 sleep 0.5
 
 if [ "$HIEQSTR" -ge "1" -a "$HIEQSTR" -le "20" ];then
-	echo " -- Intelligent EQ strength setting is: '"$HIEQSTR"' -- "
+	echo " -- Intelligent EQ strength setting is: $HIEQSTR -- "
 	hieqamount="$HIEQSTR"
 else
 	echo " -- Wrong or no value for Intelligent EQ strength -- " 
@@ -103,7 +103,7 @@ sleep 0.5
 #Bass boost vars assign
 ###############
 if [ "$HBASS" -ge "0" -a "$HBASS" -le "20" ];then
-	echo " -- BassBoost setting is: '"$HBASS"' -- "
+	echo " -- BassBoost setting is: $HBASS -- "
 	hbass1="$(($HBASS*32))"
 	hbass2="$(($HBASS*20))"
 else
@@ -118,7 +118,7 @@ sleep 0.5
 #Headphone volume boost vars assign
 ###############
 if [ "$HVOLBOOST" -ge "0" -a "$HVOLBOOST" -le "15" ];then
-	echo " -- Headphone volume boost setting is: '"$HVOLBOOST" dB' -- "
+	echo " -- Headphone volume boost setting is: $HVOLBOOST dB -- "
 	hvolboost="$(($HVOLBOOST*16))"
 else
 	echo " -- Wrong or no value for Headphone volume boost -- " 
@@ -153,7 +153,7 @@ esac
 sleep 0.5
 
 if [ "$HDEA" -ge "1" -a "$HDEA" -le "10" ];then
-	echo " -- Dialog Enhancer strength setting is: '"$HDEA"' -- "
+	echo " -- Dialog Enhancer strength setting is: $HDEA -- "
 	hdeamount="$HDEA"
 else
 	echo " -- Wrong or no value for Dialog Enhancer strength -- " 
@@ -164,7 +164,7 @@ fi
 sleep 0.5
 
 if [ "$HDED" -ge "0" -a "$HDED" -le "10" ];then
-	echo " -- Dialog Enhancer ducking setting is: '"$HDED"' -- "
+	echo " -- Dialog Enhancer ducking setting is: $HDED -- "
 	hdeducking="$HDED"
 else
 	echo " -- Wrong or no value for Dialog Enhancer ducking -- " 
@@ -178,7 +178,7 @@ sleep 0.5
 ###############
 
 if [ "$HVIRTSTR" -ge "4" -a "$HVIRTSTR" -le "100" ];then
-	echo " -- Virtualizer strength setting is: '"$HVIRTSTR"' -- "
+	echo " -- Virtualizer strength setting is: $HVIRTSTR -- "
 	hvirtstr="$HVIRTSTR"
 else
 	echo " -- Wrong or no value for Virtualizer strength -- " 
@@ -188,7 +188,7 @@ fi
 sleep 0.5
 
 if [ "$HVIRTWID" -ge "45" -a "$HVIRTWID" -le "90" ];then
-	echo " -- Virtualizer left-right angle setting is: '"$HVIRTWID"' -- "
+	echo " -- Virtualizer left-right angle setting is: $HVIRTWID -- "
 	hvirtwid="$HVIRTWID"
 else
 	echo " -- Wrong or no value for Virtualizer left-right angle -- " 
@@ -198,7 +198,7 @@ fi
 sleep 0.5
 
 if [ "$HVIRTMOD" -eq "1" -o "$HVIRTMOD" -eq "2" ];then
-	echo " -- Headphone Virtualizer mode setting is: '"$HVIRTMOD"' -- "
+	echo " -- Headphone Virtualizer mode setting is: $HVIRTMOD -- "
 	hvirtmod="$HVIRTMOD"
 else
 	echo " -- Wrong or no Headphone Virtualizer mode -- " 
@@ -241,7 +241,7 @@ esac
 sleep 0.5
 
 if [ "$HLEVSTR" -ge "0" -a "$HLEVSTR" -le "10" ];then
-	echo " -- Volume Leveler Volmax Boost setting is: '"$HLEVSTR"' -- "
+	echo " -- Volume Leveler Volmax Boost setting is: $HLEVSTR -- "
 	hlevstr="$(($HLEVSTR*16))"
 else
 	echo " -- Wrong or no value for Volume Leveler Volmax Boost -- "
@@ -253,7 +253,7 @@ fi
 sleep 0.5
 
 if [ "$HLEVAMOUNT" -ge "0" -a "$HLEVAMOUNT" -le "10" ];then
-	echo " -- Volume Leveler amount setting is: '"$HLEVAMOUNT"' -- "
+	echo " -- Volume Leveler amount setting is: $HLEVAMOUNT -- "
 	hlevamount="$HLEVAMOUNT"
 else
 	echo " -- Wrong or no value for Volume Leveler amount -- "
@@ -264,7 +264,7 @@ fi
 sleep 0.5
 
 if [ "$HLEVTARGETIN" -ge "1" -a "$HLEVTARGETIN" -le "10" ];then
-	echo " -- Volume leveler target-in setting is: '"$HLEVTARGETIN"' -- "
+	echo " -- Volume leveler target-in setting is: $HLEVTARGETIN -- "
 	hlevtargetin="$((64+(32*$HLEVTARGETIN)))"
 else
 	echo " -- Wrong or no value for Volume leveler target-in -- "
@@ -275,7 +275,7 @@ fi
 sleep 0.5
 
 if [ "$HLEVTARGETOUT" -ge "1" -a "$HLEVTARGETOUT" -le "10" ];then
-	echo " -- Volume leveler target-out setting is: '"$HLEVTARGETOUT"' -- "
+	echo " -- Volume leveler target-out setting is: $HLEVTARGETOUT -- "
 	hlevtargetout="$((64+(32*$HLEVTARGETOUT)))"
 else
 	echo " -- Wrong or no value for Volume leveler target-out -- "
@@ -289,7 +289,7 @@ sleep 0.5
 #Regulator Timbre Preservation vars assign
 ###############
 if [ "$HTIMBRE" -ge "1" -a "$HTIMBRE" -le "4" ];then
-	echo " -- Timbre Preservation setting is: '"$HTIMBRE"' -- "
+	echo " -- Timbre Preservation setting is: $HTIMBRE -- "
 	htimbre="$(($HTIMBRE*6))"
 else
 	echo " -- Wrong or no value for Timbre Preservation -- "
@@ -321,7 +321,7 @@ esac
 sleep 0.5
 
 if [ "$SVOLBOOST" -ge "0" -a "$SVOLBOOST" -le "15" ];then
-	echo " -- Speaker Boost level setting is: '"$SVOLBOOST" dB' -- "
+	echo " -- Speaker Boost level setting is: $SVOLBOOST dB -- "
 	svolboost="$(($SVOLBOOST*16))"
 else
 	echo " -- Wrong or no value for Speaker Boost level -- "
@@ -373,7 +373,7 @@ esac
 sleep 0.5
 
 if [ "$SVIRTMOD" -eq "1" -o "$SVIRTMOD" -eq "2" ];then
-	echo " -- Speaker Virtualizer mode setting is: '"$SVIRTMOD"' -- "
+	echo " -- Speaker Virtualizer mode setting is: $SVIRTMOD -- "
 	svirtmod="$SVIRTMOD"
 else
 	echo " -- Wrong or no value for Speaker Virtualizer mode -- "
@@ -408,7 +408,7 @@ esac
 sleep 0.5
 
 if [ "$SDEA" -ge "1" -a "$SDEA" -le "10" ];then
-	echo " -- Dialog Enhancer strength setting is: '"$SDEA"' -- "
+	echo " -- Dialog Enhancer strength setting is: $SDEA -- "
 	sdeamount="$SDEA"
 else
 	echo " -- Wrong or no value for Speaker Dialog Enhancer strength -- "
@@ -419,7 +419,7 @@ fi
 sleep 0.5
 
 if [ "$SDED" -ge "0" -a "$SDED" -le "10" ];then
-	echo " -- Dialog Enhancer ducking setting is: '"$SDED"' -- "
+	echo " -- Dialog Enhancer ducking setting is: $SDED -- "
 	sdeducking="$SDED"
 else
 	echo " -- Wrong or no value for Speaker Dialog Enhancer ducking -- " 
@@ -550,11 +550,6 @@ sed -E -i $mov,$(($mov+5))'s/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'
 sed -E -i $mov,$(($mov+5))'s/ieq-amount value="[[:alnum:]]*"/ieq-amount value="6"/'  $i
 sed -E -i $mus,$(($mus+5))'s/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/' $i
 sed -E -i $mus,$(($mus+5))'s/ieq-amount value="[[:alnum:]]*"/ieq-amount value="6"/'  $i
-if [ ! -z $det ];then
-	sed -E -i 1,$(($last-1))'s/include preset="[[:alnum:]]*"/include preset="'"ieq_$hieq2"'"/g' $i
-else
-	sed -E -i 1,$(($last-1))'s/include preset="[[:alnum:]]*"/include preset="ieq_balanced"/g' $i
-fi
 sed -E -i 1,$(($last-1))'s/intermediate_profile_partial_virtual_bass_enable value="[[:alnum:]]*"/intermediate_profile_partial_virtual_bass_enable value="true"/g' $i
 sed -E -i $hphend,$(($last-1))'s/intermediate_tuning_bass-enhancer-enable value="[[:alnum:]]*"/intermediate_tuning_bass-enhancer-enable value="true"/g' $i
 sed -E -i $hphend,$(($last-1))'s/intermediate_tuning_partial_virtual_bass_enable value="[[:alnum:]]*"/intermediate_tuning_partial_virtual_bass_enable value="true"/g' $i
@@ -574,14 +569,13 @@ sed -E -i $dyn,$x1's/mi-ieq-steering-enable value="[[:alnum:]]*"/mi-ieq-steering
 sed -E -i $dyn,$x1's/mi-surround-compressor-steering-enable value="[[:alnum:]]*"/mi-surround-compressor-steering-enable value="true"/g' $i
 sed -E -i $dyn,$x1's/mi-adaptive-virtualizer-steering-enable value="[[:alnum:]]*"/mi-adaptive-virtualizer-steering-enable value="true"/g' $i
 if [ "$harm" == 'virtual-bass-harmgains' ]; then
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="false"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="false"/g' $i
 else
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="false"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="false"/g' $i
 fi
+sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 sed -E -i $x1,$x2's/include ieq_preset="[[:alnum:]]*"/include ieq_preset="'"$hieq1"'"/g' $i
 sed -E -i $x1,$x2's/ieq-amount value="[[:alnum:]]*"/ieq-amount value="'"$hieqamount"'"/g' $i
 sed -E -i $x1,$x2's/dialog-enhancer-enable value="[[:alnum:]]*"/dialog-enhancer-enable value="'"$hdialog2"'"/g' $i
@@ -614,14 +608,13 @@ x3=$(($mov+$diff1))
 
 #HEADPHONES
 if [ "$harm" == 'virtual-bass-harmgains' ]; then
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="true"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="false"/g' $i
 else
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="false"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="true"/g' $i
 fi
+sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 sed -E -i $x1,$x2's/include ieq_preset="[[:alnum:]]*"/include ieq_preset="'"$hieq1"'"/g' $i
 sed -E -i $x1,$x2's/ieq-amount value="[[:alnum:]]*"/ieq-amount value="'"$hieqamount"'"/g' $i
 sed -E -i $x1,$x2's/dialog-enhancer-enable value="[[:alnum:]]*"/dialog-enhancer-enable value="'"$hdialog1"'"/g' $i
@@ -654,14 +647,13 @@ x3=$(($mus+$diff1))
 
 #HEADPHONES
 if [ "$harm" == 'virtual-bass-harmgains' ]; then
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="true"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="false"/g' $i
 else
-	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="false"/g' $i
 	sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="true"/g' $i
 fi
+sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 sed -E -i $x1,$x2's/include ieq_preset="[[:alnum:]]*"/include ieq_preset="'"$hieq1"'"/g' $i
 sed -E -i $x1,$x2's/ieq-amount value="[[:alnum:]]*"/ieq-amount value="'"$hieqamount"'"/g' $i
 sed -E -i $x1,$x2's/dialog-enhancer-enable value="[[:alnum:]]*"/dialog-enhancer-enable value="'"$hdialog2"'"/g' $i
@@ -695,14 +687,13 @@ if [ ! -z $cus ]; then
 
 	#HEADPHONES
 	if [ "$harm" == 'virtual-bass-harmgains' ]; then
-		sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 		sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="true"/g' $i
 		sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="false"/g' $i
 	else
-		sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 		sed -E -i $x1,$x2's/virtual-bass-process-enable value="[[:alnum:]]*"/virtual-bass-process-enable value="false"/g' $i
 		sed -E -i $x1,$x2's/bass-enhancer-enable value="[[:alnum:]]*"/bass-enhancer-enable value="true"/g' $i
 	fi
+	sed -E -i $x1,$x2's/ieq-enable value="[[:alnum:]]*"/ieq-enable value="'"$hieq3"'"/g' $i
 	sed -E -i $x1,$x2's/include ieq_preset="[[:alnum:]]*"/include ieq_preset="'"$hieq1"'"/g' $i
 	sed -E -i $x1,$x2's/ieq-amount value="[[:alnum:]]*"/ieq-amount value="'"$hieqamount"'"/g' $i
 	sed -E -i $x1,$x2's/dialog-enhancer-enable value="[[:alnum:]]*"/dialog-enhancer-enable value="'"$hdialog2"'"/g' $i
