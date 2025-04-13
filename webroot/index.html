@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="title">Dolby Tuning DIY</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<img src="logo.png" alt="Logo" id="logo"><h1 data-lang-key="title">Dolby Tuning DIY</h1>
+	<!-- Controls -->
+	<div id="controls">
+		<button id="loadConfig" data-lang-key="load_config">Load Config</button>
+		<div class="select-container">
+			<label for="languageSelect" data-lang-key="language">Language:</label>
+			<select id="languageSelect"></select>
+		</div>
+		<div id="actionButtons">
+			<button id="saveConfig" data-lang-key="save_config">Save Config</button>
+			<button id="applyTuning" data-lang-key="apply_tuning">Apply Tuning</button>
+			<button id="resetToDefault" data-lang-key="reset_to_default">Reset to Default</button>
+		</div>
+	</div>
+	
+    <div class="section visible" id="action-log-section">
+        <h3 data-lang-key="action_log">Action Log</h3>
+        <textarea id="actionLog" readonly></textarea>
+    </div>
+<!-- Tuning Toggle -->
+	<div id="tuning-toggle">
+		<button id="headphone-toggle" class="toggle-tab active" data-lang-key="headphone_tuning">Headphone Tuning</button>
+		<button id="speaker-toggle" class="toggle-tab" data-lang-key="speaker_tuning">Speaker Tuning</button>
+	</div>
+
+    <div id="headphone-group" class="tuning-group">
+        <div class="section" id="headphone-tuning-section">
+            <h3 data-lang-key="headphone_tuning">Headphone Tuning</h3>
+            <div class="toggle-container">
+                <label for="headphonetuning" data-lang-key="enabled">Enabled:</label>
+                <button id="headphonetuning" class="toggle-btn active" data-state="true">YES</button>
+                <span class="default-value" id="headphonetuning-default"></span>
+            </div>
+        </div>
+        <div class="section" id="intelligent-eq-section">
+            <h3 data-lang-key="intelligent_eq">Intelligent EQ</h3>
+            <div class="select-container">
+                <label for="hieq" data-lang-key="preset">Preset:</label>
+                <select id="hieq">
+                    <option value="B" data-lang-key="balanced">Balanced</option>
+                    <option value="D" data-lang-key="detailed">Detailed</option>
+                    <option value="W" data-lang-key="warm">Warm</option>
+                    <option value="N" data-lang-key="no_ieq">No IEQ</option>
+                </select>
+                <span class="default-value" id="hieq-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hieqstr" data-lang-key="strength">Strength:</label>
+                <input type="range" id="hieqstr" min="1" max="20" value="6">
+                <span class="slider-value" id="hieqstr-value">6</span>
+                <span class="default-value" id="hieqstr-default"></span>
+            </div>
+        </div>
+        <div class="section" id="bass-boost-section">
+            <h3 data-lang-key="bass_boost">Bass Boost</h3>
+            <h4 data-lang-key="bass_toggle">VirtualBass <-> BassEnhancer Toggle</h4>
+            <div class="toggle-container">
+                <label for="hrenderbassToggle" data-lang-key="mode">Mode:</label>
+                <button id="hrenderbassToggle" class="toggle-btn" data-state="false">VB</button>
+                <span class="default-value" id="hrenderbass-default"></span>
+            </div>
+            <div class="slider-container" id="hbassboostContainer">
+                <label for="hbassboost" data-lang-key="bass_enhancer_strength">Bass Enhancer Strength:</label>
+                <input type="range" id="hbassboost" min="0" max="25" value="6">
+                <span class="slider-value" id="hbassboost-value">6</span>
+                <span class="default-value" id="hbassboost-default"></span>
+            </div>
+            <div class="slider-container" id="hbasscutoffContainer">
+                <label for="hbasscutoff" data-lang-key="bass_cutoff">Bass Cutoff:</label>
+                <input type="range" id="hbasscutoff" min="10" max="200" value="90">
+                <span class="slider-value" id="hbasscutoff-value">90</span>
+                <span class="default-value" id="hbasscutoff-default"></span>
+            </div>
+            <div class="slider-container" id="hbasswidthContainer">
+                <label for="hbasswidth" data-lang-key="bass_width">Bass Width:</label>
+                <input type="range" id="hbasswidth" min="1" max="128" value="32">
+                <span class="slider-value" id="hbasswidth-value">32</span>
+                <span class="default-value" id="hbasswidth-default"></span>
+            </div>
+            <div class="select-container" id="hbassharmtypeContainer">
+                <label for="hbassharmtype" data-lang-key="harmonics_type">Harmonics Type:</label>
+                <select id="hbassharmtype">
+                    <option value="1" data-lang-key="first_harmonic">First harmonic</option>
+                    <option value="2" data-lang-key="more_harmonics">More Harmonics</option>
+                    <option value="3" data-lang-key="boosted_harmonics">Boosted 2+ Harmonics</option>
+                </select>
+                <span class="default-value" id="hbassharmtype-default"></span>
+            </div>
+            <div class="slider-container" id="hbassharmboostContainer">
+                <label for="hbassharmboost" data-lang-key="harmonics_boost">Harmonics Boost:</label>
+                <input type="range" id="hbassharmboost" min="0" max="15" value="6">
+                <span class="slider-value" id="hbassharmboost-value">6</span>
+                <span class="default-value" id="hbassharmboost-default"></span>
+            </div>
+            <div class="slider-container" id="hbasslingainContainer">
+                <label for="hbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
+                <input type="range" id="hbasslingain" min="0" max="20" value="7">
+                <span class="slider-value" id="hbasslingain-value">7</span>
+                <span class="default-value" id="hbasslingain-default"></span>
+            </div>
+        </div>
+        <div class="section" id="headphone-volume-booster-section">
+            <h3 data-lang-key="headphone_volume_booster">Headphone Volume Booster</h3>
+            <div class="slider-container">
+                <label for="hvolboost" data-lang-key="boost_in_db">Boost in dB:</label>
+                <input type="range" id="hvolboost" min="-15" max="15" value="0">
+                <span class="slider-value" id="hvolboost-value">0</span>
+                <span class="default-value" id="hvolboost-default"></span>
+            </div>
+        </div>
+        <div class="section" id="dialog-enhancer-section">
+            <h3 data-lang-key="dialog_enhancer">Dialog Enhancer</h3>
+            <div class="select-container">
+                <label for="hde" data-lang-key="enabled">Enabled:</label>
+                <select id="hde">
+                    <option value="0" data-lang-key="off">0 - Off</option>
+                    <option value="1" data-lang-key="movie_profile_only">1 - Movie Profile Only</option>
+                    <option value="2" data-lang-key="all_profiles">2 - All Profiles</option>
+                </select>
+                <span class="default-value" id="hde-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hdea" data-lang-key="strength">Strength:</label>
+                <input type="range" id="hdea" min="1" max="10" value="6">
+                <span class="slider-value" id="hdea-value">6</span>
+                <span class="default-value" id="hdea-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hded" data-lang-key="ducking">Ducking:</label>
+                <input type="range" id="hded" min="0" max="10" value="0">
+                <span class="slider-value" id="hded-value">0</span>
+                <span class="default-value" id="hded-default"></span>
+            </div>
+        </div>
+        <div class="section" id="virtualizer-section">
+            <h3 data-lang-key="virtualizer">Virtualizer</h3>
+            <div class="slider-container">
+                <label for="hvirtdist" data-lang-key="source_distance">Source Distance:</label>
+                <input type="range" id="hvirtdist" min="4" max="100" value="40">
+                <span class="slider-value" id="hvirtdist-value">40</span>
+                <span class="default-value" id="hvirtdist-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hsurboost" data-lang-key="surround_boost">Surround Boost:</label>
+                <input type="range" id="hsurboost" min="0" max="15" value="3">
+                <span class="slider-value" id="hsurboost-value">3</span>
+                <span class="default-value" id="hsurboost-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hadvirtangle" data-lang-key="left_right_angle">Left-Right Angle:</label>
+                <input type="range" id="hadvirtangle" min="45" max="90" value="90">
+                <span class="slider-value" id="hadvirtangle-value">90</span>
+                <span class="default-value" id="hadvirtangle-default"></span>
+            </div>
+            <div class="select-container">
+                <label for="hvirtmod" data-lang-key="mode">Mode:</label>
+                <select id="hvirtmod">
+                    <option value="1" data-lang-key="center_oriented">1 - Center Oriented</option>
+                    <option value="2" data-lang-key="expanded">2 - Expanded</option>
+                </select>
+                <span class="default-value" id="hvirtmod-default"></span>
+            </div>
+            <div class="select-container">
+                <label for="hadvirtrend" data-lang-key="advanced_renderer">Advanced Renderer:</label>
+                <select id="hadvirtrend">
+                    <option value="103,32568,11164,5090,0,3,3,3" data-lang-key="stock">Stock</option>
+                    <option value="160,32767,14379,7090,2,2,3,1" data-lang-key="option_1">Option 1</option>
+                    <option value="200,32767,16379,7090,3,3,3,1" data-lang-key="option_2">Option 2</option>
+                    <option value="160,32767,16379,2065,0,3,3,0" data-lang-key="motorola_spatializer">Motorola Spatializer</option>
+                    <option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
+                    <option value="200,32568,15164,8090,1,2,2,1" data-lang-key="favorite_1">Favorite 1</option>
+                    <option value="200,32568,15164,8090,1,3,3,1" data-lang-key="favorite_2">Favorite 2</option>
+                    <option value="200,32568,15164,8090,1,2,3,1" data-lang-key="favorite_3">Favorite 3</option>
+                    <option value="custom" data-lang-key="custom">Custom</option>
+                </select>
+                <span class="default-value" id="hadvirtrend-default"></span>
+            </div>
+            <div id="hadvirtrend-values"></div>
+            <div id="customInput">
+                <input type="text" id="val1" placeholder="0-255">
+                <input type="text" id="val2" placeholder="16384-32767">
+                <input type="text" id="val3" placeholder="8192-16383">
+                <input type="text" id="val4" placeholder="0-8191">
+                <input type="text" id="val5" placeholder="0-3">
+                <input type="text" id="val6" placeholder="0-3">
+                <input type="text" id="val7" placeholder="0-3">
+                <input type="text" id="val8" placeholder="0-3">
+            </div>
+            <div id="errorMessage"></div>
+        </div>
+        <div class="section" id="volume-leveler-section">
+            <h3 data-lang-key="volume_leveler">Volume Leveler</h3>
+            <div class="toggle-container">
+                <label for="hleveler" data-lang-key="enabled">Enabled:</label>
+                <button id="hleveler" class="toggle-btn" data-state="false">OFF</button>
+                <span class="default-value" id="hleveler-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hlevstr" data-lang-key="strength">Strength:</label>
+                <input type="range" id="hlevstr" min="0" max="10" value="3">
+                <span class="slider-value" id="hlevstr-value">3</span>
+                <span class="default-value" id="hlevstr-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hlevamount" data-lang-key="reaction_speed">Reaction Speed:</label>
+                <input type="range" id="hlevamount" min="0" max="10" value="0">
+                <span class="slider-value" id="hlevamount-value">0</span>
+                <span class="default-value" id="hlevamount-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hlevtargetin" data-lang-key="peak_attenuation">Peak Attenuation:</label>
+                <input type="range" id="hlevtargetin" min="1" max="10" value="6">
+                <span class="slider-value" id="hlevtargetin-value">6</span>
+                <span class="default-value" id="hlevtargetin-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hlevtargetout" data-lang-key="signal_mod">Signal Mod:</label>
+                <input type="range" id="hlevtargetout" min="1" max="10" value="6">
+                <span class="slider-value" id="hlevtargetout-value">6</span>
+                <span class="default-value" id="hlevtargetout-default"></span>
+            </div>
+        </div>
+        <div class="section" id="regulator-section">
+            <h3 data-lang-key="regulator">Regulator</h3>
+            <div class="select-container">
+                <label for="htimbre" data-lang-key="timbre_preservation">Timbre Preservation:</label>
+                <select id="htimbre">
+                    <option value="1" data-lang-key="level_1">1</option>
+                    <option value="2" data-lang-key="level_2">2</option>
+                    <option value="3" data-lang-key="level_3">3</option>
+                    <option value="4" data-lang-key="level_4">4</option>
+                </select>
+                <span class="default-value" id="htimbre-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="hregoverdrive" data-lang-key="regulator_overdrive">Regulator Overdrive:</label>
+                <input type="range" id="hregoverdrive" min="0" max="10" value="8">
+                <span class="slider-value" id="hregoverdrive-value">8</span>
+                <span class="default-value" id="hregoverdrive-default"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="speaker-group" class="tuning-group">
+        <div class="section" id="speaker-tuning-section">
+            <h3 data-lang-key="speaker_tuning">Speaker Tuning</h3>
+            <div class="toggle-container">
+                <label for="speakertuning" data-lang-key="enabled">Enabled:</label>
+                <button id="speakertuning" class="toggle-btn active" data-state="true">YES</button>
+                <span class="default-value" id="speakertuning-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-intelligent-eq-section">
+            <h3 data-lang-key="intelligent_eq">Intelligent EQ</h3>
+            <div class="select-container">
+                <label for="sieq" data-lang-key="preset">Preset:</label>
+                <select id="sieq">
+                    <option value="B" data-lang-key="balanced">Balanced</option>
+                    <option value="D" data-lang-key="detailed">Detailed</option>
+                    <option value="W" data-lang-key="warm">Warm</option>
+                    <option value="N" data-lang-key="no_ieq">No IEQ</option>
+                </select>
+                <span class="default-value" id="sieq-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="sieqstr" data-lang-key="strength">Strength:</label>
+                <input type="range" id="sieqstr" min="1" max="20" value="6">
+                <span class="slider-value" id="sieqstr-value">6</span>
+                <span class="default-value" id="sieqstr-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-bass-boost-section">
+            <h3 data-lang-key="bass_boost">Bass Boost</h3>
+            <h4 data-lang-key="bass_toggle">VirtualBass <-> BassEnhancer Toggle</h4>
+            <div class="toggle-container">
+                <label for="srenderbassToggle" data-lang-key="mode">Mode:</label>
+                <button id="srenderbassToggle" class="toggle-btn" data-state="false">VB</button>
+                <span class="default-value" id="srenderbass-default"></span>
+            </div>
+            <div class="slider-container" id="sbassboostContainer">
+                <label for="sbassboost" data-lang-key="bass_enhancer_strength">Bass Enhancer Strength:</label>
+                <input type="range" id="sbassboost" min="0" max="25" value="6">
+                <span class="slider-value" id="sbassboost-value">6</span>
+                <span class="default-value" id="sbassboost-default"></span>
+            </div>
+            <div class="select-container" id="sbassharmtypeContainer">
+                <label for="sbassharmtype" data-lang-key="harmonics_type">Harmonics Type:</label>
+                <select id="sbassharmtype">
+                    <option value="1" data-lang-key="first_harmonic">First harmonic</option>
+                    <option value="2" data-lang-key="more_harmonics">More Harmonics</option>
+                    <option value="3" data-lang-key="boosted_harmonics">Boosted 2+ Harmonics</option>
+                </select>
+                <span class="default-value" id="sbassharmtype-default"></span>
+            </div>
+            <div class="slider-container" id="sbassharmboostContainer">
+                <label for="sbassharmboost" data-lang-key="harmonics_boost">Harmonics Boost:</label>
+                <input type="range" id="sbassharmboost" min="0" max="15" value="6">
+                <span class="slider-value" id="sbassharmboost-value">6</span>
+                <span class="default-value" id="sbassharmboost-default"></span>
+            </div>
+            <div class="slider-container" id="sbasslingainContainer">
+                <label for="sbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
+                <input type="range" id="sbasslingain" min="0" max="20" value="7">
+                <span class="slider-value" id="sbasslingain-value">7</span>
+                <span class="default-value" id="sbasslingain-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-volume-booster-section">
+            <h3 data-lang-key="speaker_volume_booster">Speaker Volume Booster</h3>
+            <div class="slider-container">
+                <label for="svolboost" data-lang-key="volume_boost_in_db">Vol Boost in dB:</label>
+                <input type="range" id="svolboost" min="-15" max="15" value="0">
+                <span class="slider-value" id="svolboost-value">0</span>
+                <span class="default-value" id="svolboost-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-dialog-enhancer-section">
+            <h3 data-lang-key="dialog_enhancer">Dialog Enhancer</h3>
+            <div class="select-container">
+                <label for="sde" data-lang-key="enabled">Enabled:</label>
+                <select id="sde">
+                    <option value="0" data-lang-key="off">0 - Off</option>
+                    <option value="1" data-lang-key="movie_profile_only">1 - Movie Profile Only</option>
+                    <option value="2" data-lang-key="all_profiles">2 - All Profiles</option>
+                </select>
+                <span class="default-value" id="sde-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="sdea" data-lang-key="strength">Strength:</label>
+                <input type="range" id="sdea" min="1" max="10" value="6">
+                <span class="slider-value" id="sdea-value">6</span>
+                <span class="default-value" id="sdea-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="sded" data-lang-key="ducking">Ducking:</label>
+                <input type="range" id="sded" min="0" max="10" value="0">
+                <span class="slider-value" id="sded-value">0</span>
+                <span class="default-value" id="sded-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-virtualizer-section">
+            <h3 data-lang-key="virtualizer">Virtualizer</h3>
+            <div class="slider-container">
+                <label for="ssurboost" data-lang-key="surround_boost">Surround Boost:</label>
+                <input type="range" id="ssurboost" min="0" max="15" value="3">
+                <span class="slider-value" id="ssurboost-value">3</span>
+                <span class="default-value" id="ssurboost-default"></span>
+            </div>
+            <div class="select-container">
+                <label for="svirtmod" data-lang-key="mode">Mode:</label>
+                <select id="svirtmod">
+                    <option value="1" data-lang-key="center_oriented">1 - Center Oriented</option>
+                    <option value="2" data-lang-key="expanded">2 - Expanded</option>
+                </select>
+                <span class="default-value" id="svirtmod-default"></span>
+            </div>
+            <div class="select-container">
+                <label for="sadvirtrend" data-lang-key="advanced_renderer">Advanced Renderer:</label>
+                <select id="sadvirtrend">
+                    <option value="103,32568,11164,5090,0,3,3,3" data-lang-key="stock">Stock</option>
+                    <option value="160,32767,14379,7090,2,2,3,1" data-lang-key="option_1">Option 1</option>
+                    <option value="200,32767,16379,7090,3,3,3,1" data-lang-key="option_2">Option 2</option>
+                    <option value="160,32767,16379,2065,0,3,3,0" data-lang-key="motorola_spatializer">Motorola Spatializer</option>
+                    <option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
+                    <option value="200,32568,15164,8090,1,2,2,1" data-lang-key="favorite_1">Favorite 1</option>
+                    <option value="200,32568,15164,8090,1,3,3,1" data-lang-key="favorite_2">Favorite 2</option>
+                    <option value="200,32568,15164,8090,1,2,3,1" data-lang-key="favorite_3">Favorite 3</option>
+                    <option value="custom" data-lang-key="custom">Custom</option>
+                </select>
+                <span class="default-value" id="sadvirtrend-default"></span>
+            </div>
+            <div id="sadvirtrend-values"></div>
+            <div id="scustomInput">
+                <input type="text" id="sval1" placeholder="0-255">
+                <input type="text" id="sval2" placeholder="16384-32767">
+                <input type="text" id="sval3" placeholder="8192-16383">
+                <input type="text" id="sval4" placeholder="0-8191">
+                <input type="text" id="sval5" placeholder="0-3">
+                <input type="text" id="sval6" placeholder="0-3">
+                <input type="text" id="sval7" placeholder="0-3">
+                <input type="text" id="sval8" placeholder="0-3">
+            </div>
+            <div id="serrorMessage"></div>
+        </div>
+        <div class="section" id="speaker-volume-leveler-section">
+            <h3 data-lang-key="volume_leveler">Volume Leveler</h3>
+            <div class="toggle-container">
+                <label for="sleveler" data-lang-key="enabled">Enabled:</label>
+                <button id="sleveler" class="toggle-btn" data-state="false">OFF</button>
+                <span class="default-value" id="sleveler-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="slevstr" data-lang-key="strength">Strength:</label>
+                <input type="range" id="slevstr" min="0" max="10" value="3">
+                <span class="slider-value" id="slevstr-value">3</span>
+                <span class="default-value" id="slevstr-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="slevamount" data-lang-key="reaction_speed">Reaction Speed:</label>
+                <input type="range" id="slevamount" min="0" max="10" value="0">
+                <span class="slider-value" id="slevamount-value">0</span>
+                <span class="default-value" id="slevamount-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="slevtargetin" data-lang-key="peak_attenuation">Peak Attenuation:</label>
+                <input type="range" id="slevtargetin" min="1" max="10" value="6">
+                <span class="slider-value" id="slevtargetin-value">6</span>
+                <span class="default-value" id="slevtargetin-default"></span>
+            </div>
+            <div class="slider-container">
+                <label for="slevtargetout" data-lang-key="signal_mod">Signal Mod:</label>
+                <input type="range" id="slevtargetout" min="1" max="10" value="6">
+                <span class="slider-value" id="slevtargetout-value">6</span>
+                <span class="default-value" id="slevtargetout-default"></span>
+            </div>
+        </div>
+        <div class="section" id="speaker-regulator-section">
+            <h3 data-lang-key="regulator">Regulator</h3>
+            <div class="select-container">
+                <label for="stimbre" data-lang-key="timbre_preservation">Timbre Preservation:</label>
+                <select id="stimbre">
+                    <option value="1" data-lang-key="level_1">1</option>
+                    <option value="2" data-lang-key="level_2">2</option>
+                    <option value="3" data-lang-key="level_3">3</option>
+                    <option value="4" data-lang-key="level_4">4</option>
+                </select>
+                <span class="default-value" id="stimbre-default"></span>
+            </div>
+        </div>
+    </div>
+<!-- Output Section -->
+		<div class="section" id="output-section">
+			<h3 data-lang-key="output">Output</h3>
+			<textarea id="output" readonly></textarea>
+		</div>
+    <script src="scripts.js"></script>
+</body>
+</html>

@@ -5,18 +5,18 @@ MODPATH=${0%/*}
 exec 2>$MODPATH/debug.txt
 set -x
 #locations variables
-ADDLB="$(find /data/adb/modules -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/*")"
+ADDLB=$(find /data/adb/modules -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/*")
 if [ ! -z "$ADDLB" ];then
-DDLB="$(find "$ADDLB" -type f -name "*dax*.xml" -o -name "*dap*.xml")"
+DDLB=$(find "$ADDLB" -type f -name "*dax*.xml" -o -name "*dap*.xml")
 sleep 0.2
 fi
-ADLB="$(find /system /vendor /odm /my* /product -type d -name "dolby")"
+ADLB=$(find /system /vendor /odm /my* /product -type d -name "dolby")
 if [ ! -z "$ADLB" ];then
-DLB="$(find "$ADLB" -type f -name "*dax*.xml" -o -name "*dap*.xml")"
+DLB=$(find "$ADLB" -type f -name "*dax*.xml" -o -name "*dap*.xml")
 sleep 0.2
 fi
 
-MODE="$(find "$MODPATH" -maxdepth 1 -name "*builtinmode" -o -name "*modulemode")"
+MODE=$(find "$MODPATH" -maxdepth 1 -name "*builtinmode" -o -name "*modulemode")
 if [ "$MODE" == "$MODPATH/.modulemode" ];then
 MODE=M
 elif [ "$MODE" == "$MODPATH/.builtinmode" ];then

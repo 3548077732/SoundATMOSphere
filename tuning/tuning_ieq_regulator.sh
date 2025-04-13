@@ -66,9 +66,66 @@ if [ ! -z $warm ];then
 fi
 echo " -- Configuring audio optimizer -- "
 
-sed -E -i $hphend,$(($last-1))'s/gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/gain_left="0" gain_right="0"/g' $i
+if [ "$sam" == 'false' ];then
+#SPEAKER VOLUME BOOST
+gleft="$(sed -E -n '/endpoint_type="speaker"/,/<\/tuning>/p' $i | grep 'gain_left' | awk -F'"' '{print $4}' | sort -nru)"
+gright="$(sed -E -n '/endpoint_type="speaker"/,/<\/tuning>/p' $i | grep 'gain_right' | awk -F'"' '{print $6}' | sort -nru)"
+	
+	for sgleft in ${gleft};do
+	sed -E -i '/endpoint_type="speaker"/,/<\/tuning>/s/gain_left="'"$sgleft"'"/gain_left="'"$(($sgleft+$svolboost))"'"/g' $i
+	done
+	
+	for sgright in ${gright};do
+	sed -E -i '/endpoint_type="speaker"/,/<\/tuning>/s/gain_right="'"$sgright"'"/gain_right="'"$(($sgright+$svolboost))"'"/g' $i
+	done
+	
+#HEADPHONE VOLUME BOOST
+if [ "$spookertuning" == 'true' ];then
+	sed -E -i '/endpoint_type="speaker"/,/audio-optimizer-enable/s/audio-optimizer-enable value="[[:alnum:]]*"/audio-optimizer-enable value="true"/g' $i
+fi
+if [ "$headphonetuning" == 'true' ];then
+	sed -E -i '/endpoint_type="headphone"/,/audio-optimizer-enable value/s/audio-optimizer-enable value="false"/audio-optimizer-enable value="true"/g' $i
+	sed -E -i '/endpoint_type="bluetooth"/,/audio-optimizer-enable value/s/audio-optimizer-enable value="false"/audio-optimizer-enable value="true"/g' $i
+	sed -E -i '/endpoint_type="other"/,/audio-optimizer-enable value/s/audio-optimizer-enable value="false"/audio-optimizer-enable value="true"/g' $i
+
+fi
+
+sed -E -i '/endpoint_type="headphone"/,/<\/tuning>/s/gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/gain_left="'"$hvolboost"'" gain_right="'"$hvolboost"'"/g' $i
+sed -E -i '/endpoint_type="bluetooth"/,/<\/tuning>/s/gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/gain_left="'"$hvolboost"'" gain_right="'"$hvolboost"'"/g' $i
+sed -E -i '/endpoint_type="other"/,/<\/tuning>/s/gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/gain_left="'"$hvolboost"'" gain_right="'"$hvolboost"'"/g' $i
+
+if [ "$hrenderbass" == 'BE' -a "$headphonetuning" == 'true' ] ;then
+	
+	sed -E -i '/endpoint_type="headphone"/,/<\/tuning>/s/frequency="47" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="47" gain_left="'"$((($hbassboost/4)+$hvolboost))"'" gain_right="'"$((($hbassboost/4)+$hvolboost))"'"/g' $i
+	sed -E -i '/endpoint_type="bluetooth"/,/<\/tuning>/s/frequency="47" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="47" gain_left="'"$((($hbassboost/4)+$hvolboost))"'" gain_right="'"$((($hbassboost/4)+$hvolboost))"'"/g' $i
+	sed -E -i '/endpoint_type="other"/,/<\/tuning>/s/frequency="47" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="47" gain_left="'"$((($hbassboost/4)+$hvolboost))"'" gain_right="'"$((($hbassboost/4)+$hvolboost))"'"/g' $i
+
+	sed -E -i '/endpoint_type="headphone"/,/<\/tuning>/s/frequency="141" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="141" gain_left="'"$((($hbassboost/8)+$hvolboost))"'" gain_right="'"$((($hbassboost/8)+$hvolboost))"'"/g' $i
+	sed -E -i '/endpoint_type="bluetooth"/,/<\/tuning>/s/frequency="141" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="141" gain_left="'"$((($hbassboost/8)+$hvolboost))"'" gain_right="'"$((($hbassboost/8)+$hvolboost))"'"/g' $i
+	sed -E -i '/endpoint_type="other"/,/<\/tuning>/s/frequency="141" gain_left="[-[:digit:]]*" gain_right="[-[:digit:]]*"/frequency="141" gain_left="'"$((($hbassboost/8)+$hvolboost))"'" gain_right="'"$((($hbassboost/8)+$hvolboost))"'"/g' $i
+fi
+
+###SAMSUNG VOLUME BOOST
+#######################
+elif [ $sam == "true" ];then
+	spksysgain="$(sed -E -n '/<endpoint_type id="speaker">/,/<system-gain/p' $i | grep 'system-gain' | awk -F'"' '{print $2}' | sort -nru)"
+	hphsysgain="$(sed -E -n '/<endpoint_type id="headphone">/,/<system-gain/p' $i | grep 'system-gain' | awk -F'"' '{print $2}' | sort -nru)"
+	for ssysgain in ${spksysgain};do
+		sed -E -i '/<endpoint_type id="speaker">/,/<system-gain/s/system-gain value ="'"sysgain"'"/system-gain value ="'"$(($sysgain+$svolboost))"'"/g' $i
+	done
+	
+	for hsysgain in ${hphsysgain};do
+		sed -E -i '/<endpoint_type id="headphone">/,/<system-gain/s/system-gain value ="'"$hsysgain"'"/system-gain value ="'"$(($hsysgain+$hvolboost))"'"/g' $i
+		sed -E -i '/<endpoint_type id="bluetooth">/,/<system-gain/s/system-gain value ="'"$hsysgain"'"/system-gain value ="'"$(($hsysgain+$hvolboost))"'"/g' $i
+		sed -E -i '/<endpoint_type id="usb">/,/<system-gain/s/system-gain value ="'"$hsysgain"'"/system-gain value ="'"$(($hsysgain+$hvolboost))"'"/g' $i
+		sed -E -i '/<endpoint_type id="default">/,/<system-gain/s/system-gain value ="'"$hsysgain"'"/system-gain value ="'"$(($hsysgain+$hvolboost))"'"/g' $i
+	done
+fi
+
 sleep 1
 
 echo " -- Configuring band regulator -- "
 
-sed -E -i $hphend,$(($last-1))'s/threshold_low="[-[:digit:]]*" threshold_high="[-[:digit:]]*" isolated_band="[a-z]*"/threshold_low="-384" threshold_high="0" isolated_band="true"/g' $i		
+sed -E -i '/endpoint_type="headphone"/,/<\/tuning>/s/threshold_low="[-[:digit:]]*" threshold_high="[-[:digit:]]*" isolated_band="[a-z]*"/threshold_low="-192" threshold_high="0" isolated_band="true"/g' $i
+sed -E -i '/endpoint_type="bluetooth"/,/<\/tuning>/s/threshold_low="[-[:digit:]]*" threshold_high="[-[:digit:]]*" isolated_band="[a-z]*"/threshold_low="-192" threshold_high="0" isolated_band="true"/g' $i
+sed -E -i '/endpoint_type="other"/,/<\/tuning>/s/threshold_low="[-[:digit:]]*" threshold_high="[-[:digit:]]*" isolated_band="[a-z]*"/threshold_low="-192" threshold_high="0" isolated_band="true"/g' $i

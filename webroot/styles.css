@@ -1,0 +1,209 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0px;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom, #0E6583, #5D3569); /* Dolby Access gradient */
+    min-height: 100vh; /* Ensure the gradient covers the full viewport height */
+    color: #64D0E8; /* Keep text color readable against the dark background */
+    overflow-x: hidden;
+}
+
+h1, h3 {
+    color: #fff;
+}
+
+h4 {
+    color: #64D0E8;
+}
+
+#logo {
+	vertical-align: middle;
+	float:left;
+    position: relative;
+    margin-top: -10px;
+    width: 50px; 
+    height: auto;
+}
+
+#controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.select-container, .toggle-container, .slider-container {
+    margin: 10px 0;
+}
+
+.slider-container input[type="range"] {
+    width: 160px;
+    height: 6px;
+    appearance: none;
+    outline: none;
+    border-radius: 8px;
+    vertical-align: middle;
+    background: transparent; /* Allow custom track styling */
+}
+
+/* Track styling with gradient (WebKit - Android WebView) */
+.slider-container input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(to right, #0E6583, #5400CF); /* Teal to deep purple gradient */
+    border-radius: 10px;
+}
+
+/* Thumb styling (WebKit - Android WebView) */
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ffffff; /* White thumb */
+    border: 3px solid #00C4B4; /* Teal border (matching the start of the gradient) */
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -6px; /* Center thumb on track */
+}
+
+.slider-value {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+.default-value {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-left: 5px;
+}
+
+.section {
+    background: transparent;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.section.visible {
+    display: block;
+}
+
+#actionButtons {
+    display: none; /* Hidden by default */
+    gap: 5px; /* Increase spacing between buttons */
+    margin-top: 10px; /* Slightly more top margin for breathing room */
+    justify-content: space-between; /* Spread buttons evenly across the container */
+    align-items: left; /* Vertically center the buttons */
+    flex-wrap: nowrap; /* Prevent wrapping unless absolutely necessary */
+    max-width: 90%; /* Ensure it doesn’t exceed the parent width */
+}
+
+#actionButtons.visible {
+    display: flex; /* Show as flex when visible */
+}
+
+/* Style for the buttons to ensure consistent sizing */
+button {
+    padding: 8px 16px;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 60px;
+    text-align: center; /* Center the text */
+}
+
+.toggle-btn {
+    background-color: #ccc;
+    color: black;
+}
+
+.toggle-btn.active {
+    background-color: #28a745; 
+    color: white;
+}
+
+#actionLog, #output {
+    width: 100%;
+    height: 150px;
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid #55aabb;
+    padding: 10px;
+    resize: vertical;
+    font-family: monospace;
+    font-size: 0.6em;
+    color: #64D0E8;
+    box-sizing: border-box;
+}
+
+#output {
+    height: 300px;
+}
+
+#customInput, #scustomInput {
+    display: none;
+    visibility: hidden;
+    margin-top: 10px;
+}
+
+#customInput.visible, #scustomInput.visible {
+    display: block;
+    visibility: visible;
+}
+
+#customInput input, #scustomInput input {
+    width: 60px;
+    margin-right: 5px;
+}
+
+#errorMessage, #serrorMessage {
+    color: red;
+    margin-top: 5px;
+    display: none;
+}
+
+html, body {
+    width: 95%;
+    max-width: 95%;
+}
+
+#tuning-toggle {
+    margin-bottom: 20px;
+    display: none;
+    gap: 10px;
+}
+
+#tuning-toggle.visible {
+    display: flex;
+}
+
+.toggle-tab {
+    padding: 8px 16px;
+    background-color: purple;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.toggle-tab.active {
+    background-color: purple;
+    color: white;
+}
+
+.tuning-group {
+    display: none;
+}
+
+.tuning-group.active {
+    display: block;
+}
