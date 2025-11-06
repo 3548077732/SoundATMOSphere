@@ -1,0 +1,40 @@
+LEGAL DISCLAIMER
+
+This software module (“the Module”) is provided strictly for educational, research, and configuration testing purposes. It was created to explore user-accessible audio configuration files already present on Android systems that include licensed audio technologies.
+
+By downloading, using, modifying, or distributing this Module, you agree to the following terms:
+
+1. EDUCATIONAL INTENT
+- This Module was developed as a personal learning project to understand and demonstrate configuration tuning where such access is already granted by the device firmware.
+- It is not intended for general end-user use, commercial deployment, or feature unlocking.
+
+2. NO PROPRIETARY CODE OR REVERSE ENGINEERING
+- This Module does not contain, distribute, or rely on any proprietary libraries, binaries, assets, or intellectual property owned by Dolby Laboratories, Harman International, Google LLC, or any other vendor.
+- It does not perform or enable reverse engineering, license circumvention, DRM bypassing, or unauthorized activation of any software or firmware components.
+- All modifications apply only to exposed and user-editable configuration values already available on devices with officially licensed and preinstalled audio frameworks.
+
+3. Transparency and Inspection
+- All scripts and files used in this Module are provided in clear, readable form and may be fully inspected by the end user.
+- There is no obfuscation, hidden code, remote access behavior, or data collection functionality embedded in the Module.
+
+4. OPEN SOURCE USAGE
+- The Module is open source and may be inspected, studied, or modified in accordance with the LICENSE.txt.
+- Redistribution or reuse that results in infringement of third-party licensing obligations is the sole responsibility of the user.
+
+5. THIRD-PARTY IP RESPONSIBILITY
+- The author claims no affiliation with Dolby, Harman, Google, or any OEM.
+- You are solely responsible for ensuring your use of this Module does not violate any EULA, copyright, license terms, or device warranties.
+
+6. NO WARRANTY OR LIABILITY
+- This Module is provided “AS IS”, with no guarantees of safety, compatibility, or function.
+- The author assumes no liability for any damage, malfunction, data loss, legal consequences, or loss of warranty.
+
+7.Compliance with Applicable Law
+- You are solely responsible for ensuring that your use of this Module complies with all applicable local, national, and international laws, device EULAs, license agreements, and intellectual property rights.
+- If you do not have a valid license for the technologies or systems referenced by this Module, you must not use it in any way.
+
+8. Termination
+- Any breach of the terms outlined herein will result in immediate revocation of all rights to use the Module.
+- Unauthorized use or redistribution may subject you to legal liability.
+
+BY USING THIS MODULE, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREED TO THESE TERMS. IF YOU DO NOT AGREE, IMMEDIATELY DISCONTINUE ALL USE.

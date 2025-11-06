@@ -1,19 +1,13 @@
 #!/bin/sh
 MODPATH=/data/adb/modules/sv_sndasphere
-exec 2>$MODPATH/debug2.txt
+if [ ! -d $MODPATH/debug ]; then
+mkdir $MODPATH/debug
+fi
+exec 2>$MODPATH/debug/debug2.txt
 set -x
 #locations variables
-
-ADDLB=$(find /data/adb/modules -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/*")
-if [ ! -z "$ADDLB" ];then
-	DDLB=$(find $ADDLB -type f -name "*dax*.xml" -o -name "*dap*.xml")
-fi
-sleep 0.2
-ASVDLB=$(find /data/adb/modules/sv_sndasphere -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/original/*")
-if [ ! -z "$ASVDLB" ];then
-	SVDLB=$(find $ASVDLB -type f -name "*dax*.xml" -o -name "*dap*.xml")
-fi
-sleep 0.2
+DDLB=$(find /data/adb/modules -path "*/dolby/*" -not -path "/data/adb/modules/sv_sndasphere/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
+SVDLB=$(find /data/adb/modules/sv_sndasphere -path "*/dolby/*" -not -path "/data/adb/modules/sv_sndasphere/original/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
 
 MODULE=$(find $MODPATH -maxdepth 1 -name "*modulemode")
 

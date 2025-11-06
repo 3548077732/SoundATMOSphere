@@ -202,3 +202,35 @@
 - Equalize "More Harmonics" to other options (boost by 50%)
 - Change "Even More Harmonics" to "Boosted 2+ Harmonics"
 - Improved harmonic subgains
+
+## v1.46
+- Added Simple Mode and Expert Mode, to help/not confuse new users
+- Loading config is done automatically now
+
+## v1.47
+- Added background service watcher, which will keep dolby service alive if config file is okay
+- Added safety switch, when the tuningDIY.txt file is deleted
+
+## v1.48
+- Added Virtual Bass min/max MIX and SRC values (available when toggled to VB on expert mode)
+- Moved mounting files to post-fs-data.sh from service.sh
+
+## v1.49
+- Added Headphones Height Filter mode
+- Added Headphones Regulator toggle ON/OFF
+- Added Legal Disclaimer (thanks @Its_general)
+
+## v1.50
+- Added Dolby Media Intelligence - this feature let dolby algo itself decide about setting of some parameters 
+- Virtual Bass refactoring
+- Attempt to disable visibility certain sections in UI which aren't supported in Dolby config XML
+- Rebalanced detailed IEQ
+- If detailed or warm IEQ is chosen but not supported, script will replace values of balanced IEQ with desired IEQ preset
+- Optimizations in sh scripts
+- Huge changes in background service watcher (as safe as possible)
+- Slight visual changes in WebUI
+- WebUI pixel count based sizes are now changed to relative based sizes, to be coherent with different screens (in different phones it should look the same)
+- WebUI scripts refactoring. Now it's several specialized script files instead of one
+- WebUI now will show in Action Log (upon launch) which features of user dolby are supported (there are some specific ones, not every dolby have them)
+- WebUI will hide not supported features
+- Banner added (if root solution is supporting it)

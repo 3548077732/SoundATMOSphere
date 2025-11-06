@@ -1,21 +1,23 @@
 mount -o rw,remount /data
 
+[ -z $MODPATH ] && MODPATH=/data/adb/modules/sv_sndasphere
+
+if [ ! -d $MODPATH/debug ]; then
+	mkdir -p $MODPATH/debug
+	chmod 0755 $MODPATH/debug
+fi
+
+exec 2>$MODPATH/debug/main_or_emergency_debug.txt
+set -x
+
 #locations variables
 ###############
-ADDLB=$(find /data/adb/modules -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/*")
-if [ ! -z "$ADDLB" ];then
-	DDLB=$(find $ADDLB -type f -name "*dax*.xml" -o -name "*dap*.xml")
-	sleep 0.2
-fi
-ASVDLB=$(find /data/adb/modules/sv_sndasphere -type d -name "dolby" -not -path "/data/adb/modules/sv_sndasphere/original/*")
-if [ ! -z "$ASVDLB" ];then
-	SVDLB=$(find $ASVDLB -type f -name "*dax*.xml" -o -name "*dap*.xml")
-	sleep 0.2
-fi
-ADLB=$(find /system /vendor /odm /my* /product -type d -name "dolby")
-if [ ! -z "$ADLB" ];then
-	DLB=$(find $ADLB -type f -name "*dax*.xml" -o -name "*dap*.xml")
-	sleep 0.2
+DDLB=$(find /data/adb/modules -path "*/dolby/*" -not -path "/data/adb/modules/sv_sndasphere/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
+SVDLB=$(find /data/adb/modules/sv_sndasphere -path "*/dolby/*" -not -path "/data/adb/modules/sv_sndasphere/original/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
+DLB=$(find /system /vendor /odm /my* /product -path "*/dolby/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
+
+if [ -f $MODPATH/.emergency ];then
+DIY="$MODPATH/tuningDIY.txt"
 fi
 
 #permission settings
@@ -23,20 +25,66 @@ fi
 
 perms()
 {
-ui_print " "
-ui_print "- Setting Permissions"
-set_perm_recursive $MODPATH 0 0 0755 0644
-for i in /system/vendor /vendor /system/vendor/app /vendor/app /system/vendor/etc /vendor/etc /system/odm/etc /odm/etc /system/vendor/odm/etc /vendor/odm/etc /system/vendor/overlay /vendor/overlay /vendor/etc/dolby /odm/etc/dolby /system/etc/dolby; do
-  if [ -d "$MODPATH$i" ] && [ ! -L "$MODPATH$i" ]; then
-    case $i in
-      *"/vendor") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_file:s0;;
-      *"/app") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_app_file:s0;;
-      *"/overlay") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_overlay_file:s0;;
-      *"/etc") set_perm_recursive $MODPATH$i 0 2000 0755 0644 u:object_r:vendor_configs_file:s0;;
-      *"/dolby") set_perm_recursive $MODPATH$i 0 0 0755 0644 u:object_r:vendor_configs_file:s0;;
-    esac
-  fi
+echo " "
+echo " -- Setting Permissions --"
+
+permset() {
+mod=$(stat -c %a "$orig" 2>/dev/null || echo "755")
+own=$(stat -c %U:%G "$orig" 2>/dev/null || echo "root:root")
+con=$(ls -Zd "$orig" | awk '{print $1}')
+
+if [ -z "$con" ]; then 
+
+	ext=$(echo "$filedir" | grep -oE '\.[^.]+$' | tr -d '.' || echo "none")
+	
+	orig_dir=$(dirname "$orig")
+	
+	if [ "$ext" == "none" ]; then 
+		con=$(ls -Z "$orig_dir"/* 2>/dev/null | grep -vE '\.' | awk '{print $1}' | sort | uniq -c | sort -nr | head -1 | awk '{print $2}') 
+	else 
+		con=$(ls -Z "$orig_dir"/*."$ext" 2>/dev/null | awk '{print $1}' | sort | uniq -c | sort -nr | head -1 | awk '{print $2}') 
+	fi
+	
+	if [ -z "$con" ]; then 
+		case "$orig_dir" in 
+			/system/*) con="u:object_r:system_file:s0" ;; 
+			/vendor/*) con="u:object_r:vendor_file:s0" ;; 
+			/vendor/etc*) con="u:object_r:vendor_configs_file:s0" ;; 
+			/odm/*) con="u:object_r:vendor_file:s0" ;; 
+			/odm/etc/*) con="u:object_r:vendor_configs_file:s0" ;; 
+			/data/*) con="u:object_r:app_data_file:s0" ;; 
+			*) con="u:object_r:system_file:s0" ;; 
+		esac
+	fi 
+fi
+
+    chmod "$mod" "$filedir"
+    chown "$own" "$filedir"
+    chcon "$con" "$filedir"
+    echo " -- ********************************* -- "
+	echo " "
+    echo " -- Setting permissions for $filedir -- "
+    echo " -- Permissions = $mod -- "
+    echo " -- owner:group = $own -- "
+    echo " -- SeLinux Context = $con -- "
+	echo " "
+}
+
+filedirlist=$(find "$MODPATH")
+
+printf "%b\n" "$filedirlist" | while IFS= read -r filedir; do
+    if [ "$filedir" = "$MODPATH" ]; then
+        continue
+    fi
+    local orig=$(echo "$filedir" | sed "s|$MODPATH||")
+    if [ -e "$orig" ]; then
+        permset
+    else
+        local orig=$(echo "$filedir" | sed "s|$MODPATH/system||")
+        permset
+    fi
 done
+
 chmod +x $MODPATH/action.sh
 sleep 1
 }
@@ -65,18 +113,11 @@ echo " "
 sleep 0.5
 echo " -- It may take some seconds. Please wait. -- "
 echo " "
-sleep 1
 
-echo " -- Extracting settings from file: -- "
-. $MODPATH/tuning/config_vars.sh
 builtinmode=false
-FILES_TOTAL="$(echo "$DDLB" | wc -w)"
-FILE_COUNTER=1
-echo "-- Files to patch: $FILES_TOTAL --"
-echo "-- Proceed --"
-#if xml is in module
+
 if [ ! -z $DDLB ]; then
-	for j in ${DDLB}; do
+	printf "%b\n" "$DDLB" | while IFS= read -r j; do
 		i="$(echo $j | sed "s|/data/adb/modules/[[:alnum:]]*/|$MODPATH/|")"
 		k=/data/adb/modules/sv_sndasphere/original$i
 		m="$(echo $i | sed "s|$MODPATH|$MODPATH/original|")" 
@@ -85,39 +126,14 @@ if [ ! -z $DDLB ]; then
 		mkdir -p "$(dirname "$m")"
 
 	if [ -f $k ]; then
-		cp -f $k $m
-		cp -f $m $i
+		cp -p $k $m
+		cp -p $m $i
 	else
-		cp -f $j $m
-		cp -f $m $i
+		cp -p $j $m
+		cp -p $m $i
 	fi
-		echo " "
-		echo " -- Applying tuning to file number: $FILE_COUNTER -- "
-		echo " "
-		sleep 0.5
-		. $MODPATH/tuning/tuning_vars.sh
-		if [ $headphonetuning == "true" ] || [ $spookertuning == "true" ];then
-			. $MODPATH/tuning/tuning_global_profiles.sh
-			. $MODPATH/tuning/tuning_ieq_regulator.sh
-		fi
-		if [ $headphonetuning == "true" ];then
-			. $MODPATH/tuning/tuning_headphone_profiles.sh
-			. $MODPATH/tuning/tuning_headphones.sh
-		fi
-		if [ $spookertuning == "true" ];then
-			. $MODPATH/tuning/tuning_speaker_profiles.sh
-			. $MODPATH/tuning/tuning_speaker.sh
-		fi
-
-		FILE_COUNTER=$(($FILE_COUNTER+1))
-
-#un-setting variables
-unset harm angle distance advancedvirt dyn mov mus cus bal det warm spk spk1 hph hph1 sam pass diff1 diff2 spkend hphend last rang1 rang2
-
 	done
 fi
-echo " -- Done -- "
-sleep 0.5
 }
 
 #ROM integrated mode
@@ -132,17 +148,10 @@ echo " "
 sleep 0.5
 echo " -- It may take some seconds. Please wait. -- "
 echo " "
-sleep 1
 
-echo " -- Extracting settings from file: -- "
-. $MODPATH/tuning/config_vars.sh
 builtinmode=true
-FILES_TOTAL="$(echo "$DLB" | wc -w)"
-FILE_COUNTER=1
-echo "-- Files to patch: $FILES_TOTAL --"
-echo "-- Proceed --"
-sleep 1
-for j in ${DLB}; do
+
+printf "%b\n" "$DLB" | while IFS= read -r j; do
 	i=$MODPATH$j
 	k=/data/adb/modules/sv_sndasphere/original$j
 	m=$MODPATH/original$j
@@ -151,44 +160,19 @@ for j in ${DLB}; do
 	mkdir -p "$(dirname "$m")"
 
 	if [ -f $k ]; then
-		cp -f $k $m
-		cp -f $m $i
+		cp -p $k $m
+		cp -p $m $i
 	else
-		cp -f $j $m
-		cp -f $m $i
+		cp -p $j $m
+		cp -p $m $i
 	fi
-	echo " "
-	echo " -- Applying tuning to file number: $FILE_COUNTER -- "
-	echo " "
-	sleep 0.5
-	. $MODPATH/tuning/tuning_vars.sh
-	if [ $headphonetuning == "true" ] || [ $spookertuning == "true" ];then
-		. $MODPATH/tuning/tuning_global_profiles.sh
-		. $MODPATH/tuning/tuning_ieq_regulator.sh
-	fi
-	if [ $headphonetuning == "true" ];then
-		. $MODPATH/tuning/tuning_headphone_profiles.sh
-		. $MODPATH/tuning/tuning_headphones.sh
-	fi
-	if [ $spookertuning == "true" ];then
-		. $MODPATH/tuning/tuning_speaker_profiles.sh
-		. $MODPATH/tuning/tuning_speaker.sh
-	fi
-
-FILE_COUNTER=$(($FILE_COUNTER+1))
-
-#un-setting variables
-unset harm angle distance advancedvirt dyn mov mus cus bal det warm spk spk1 hph hph1 sam pass diff1 diff2 spkend hphend last rang1 rang2
-
 done
-echo " -- Done -- "
-sleep 0.5
 }
+
 
 #main logic
 #########
 
-sleep 1
 set +x
 check
 set -x
@@ -202,20 +186,13 @@ sleep 0.75
 echo " "
 echo " -- Detecting active Dolby -- "
 echo " "
-sleep 2
+sleep 1
 
 if [ ! -z "$DDLB" ]; then
-
 	module
-	perms
-
 elif [[ ! -z "$DLB" && ! -z "$SVDLB" ]] || [ ! -z "$DLB" ]; then
-
 	builtin
-	perms
-
 else
-
 	echo " -- No Dolby found -- "
 	sleep 1
 	echo " -- ABORT --"
@@ -224,4 +201,10 @@ else
 	exit 1
 fi
 
-
+perms
+. $MODPATH/action.sh
+	
+if [ -f $MODPATH/.emergency ]; then
+rm -f $MODPATH/.emergency
+touch $MODPATH/.emergencydone
+fi

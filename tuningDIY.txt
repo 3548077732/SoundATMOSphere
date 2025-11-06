@@ -1,4 +1,5 @@
-V=45
+
+V=55
 ### Dolby tuning DIY
 #Blank or wrong filled variable will cause setting default value
 
@@ -6,6 +7,20 @@ V=45
 #########################
 ### HEADPHONE SECTION ###
 #########################
+-----------------------------------
+
+# Dolby Media Intelligence 
+# (Dolby choose values and parameters itself)
+# should it be turned ON or OFF globally?
+# Values [ON or OFF] (default OFF)
+
+DOLBYMIDVLEV=OFF
+DOLBYMIIEQ=OFF
+DOLBYMISURCOMP=OFF
+DOLBYMIADAPTVIRT=OFF
+DOLBYMIVIRTBIN=OFF
+DOLBYMIDIALENH=OFF
+
 -----------------------------------
 
 # Do you want to modify your headphones experience?
@@ -16,20 +31,40 @@ HEADPHONETUNING=YES
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, N - no IEQ)
+# (values B - balanced, D - detailed, W - Warm, C - Custom, N - no IEQ)
 # (default and stock: B)
 
 HIEQ=B
 
+#INTELLIGENT EQUALIZER
+# Values [-500 to 500]
+# HIEQ must be set to "C" to freely change values
+
+HIET_47=150
+HIET_141=142
+HIET_234=188
+HIET_328=216
+HIET_469=189
+HIET_656=195
+HIET_844=202
+HIET_1031=199
+HIET_1313=210
+HIET_1688=225
+HIET_2250=230
+HIET_3000=236
+HIET_3750=235
+HIET_4688=235
+HIET_5813=214
+HIET_7125=165
+HIET_9000=112
+HIET_11250=49
+HIET_13875=-24
+HIET_19688=-217
+
 -----------------------------------
 
 # How strong Intelligent EQ should be? 
-# Generally values:
-# 1-3 is weak
-# 4-6 is medium
-# 7-10 is strong
-# 10-15 is very strong
-# 16-20 is extreme
+# Generally values: 1-3 is weak, 4-6 is medium, 7-10 is strong, 10-15 is very strong, 16-20 is extreme
 # ** stock values differ, mostly 3-8 **
 # values [1-20] (default: 6)
 
@@ -37,20 +72,50 @@ HIEQSTR=6
 
 -----------------------------------
 
+# Headphone Equalizer Preset
+# Values [flat, bass_emphasis, treble_emphasis, vocal_clarity, custom] (default: flat)
+
+HEQPRESET=flat
+
+-----------------------------------
+
+#EQUALIZER
+# Values [-12 to 12] (default: 0 for all frequencies)
+# HEQPRESET must be set to custom to freely change values
+
+HEQ_47=0
+HEQ_141=0
+HEQ_234=0
+HEQ_328=0
+HEQ_469=0
+HEQ_656=0
+HEQ_844=0
+HEQ_1031=0
+HEQ_1313=0
+HEQ_1688=0
+HEQ_2250=0
+HEQ_3000=0
+HEQ_3750=0
+HEQ_4688=0
+HEQ_5813=0
+HEQ_7125=0
+HEQ_9000=0
+HEQ_11250=0
+HEQ_13875=0
+HEQ_19688=0
+
+-----------------------------------
+
 # Bass enhancer (BE) or Virtual Bass (VB)?
 # values [BE or VB] (default: Virtual Bass)
-# If you will set Virtual Bass and your dolby will not support it
-# Bass Enhancer will be used instead
-# ** stock settings use Bass Enhancer **
 
 HRENDERBASS=VB
 
 -----------------------------------
-
 # This parameter work ONLY with Bass Enhancer
 # How strong Bass Enhancer boost you want?
 # ** stock settings uses wide range, from 2 to 6 **
-# values [0-25] (default: 6)
+# values [0-30] (default: 6)
 
 HBASSBOOST=6
 
@@ -68,21 +133,16 @@ HBASSCUTOFF=90
 # This parameter work ONLY with Bass Enhancer
 # How broad Bass Enhancer boost you want around cutoff?
 # ** stock settings mostly use ranges from 16 to 32 **
-# values [1-128] (default: 32)
+# values [1-128] (default: 16)
 
-HBASSWIDTH=32
+HBASSWIDTH=16
 
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
 # Value 1 will render bass like in 1.16 (only first harmonic)
-#
 # Value 2 will boost bass with more harmonics
-#
 # Value 3 will also boost bass with even more harmonics
-#
-# ** stock settings don't use Virtual bass **
-# 
 # Values [1-3] (default: 2)
 
 HBASSHARMTYPE=2
@@ -90,8 +150,39 @@ HBASSHARMTYPE=2
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
+# Minimum frequency on which Virtual Bass will operate
+# values [10-200] (default: 10)
+
+HBASSHARMMIXFREQMIN=10
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum frequency on which Virtual Bass will operate
+# values [10-500] (default: 90)
+
+HBASSHARMMIXFREQMAX=90
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Minimum source frequency for Virtual Bass harmonics
+# values [10-200] (default: 10)
+
+HBASSHARMSRCFREQMIN=10
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum source frequency for Virtual Bass harmonics
+# values [10-500] (default: 90)
+
+HBASSHARMSRCFREQMAX=90
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
 # How strong Bass Harmonics boost you want?
-# ** stock settings don't use Virtual bass **
 # values [0-15] (default: 6)
 
 HBASSHARMBOOST=6
@@ -100,15 +191,12 @@ HBASSHARMBOOST=6
 
 # This parameter work ONLY with Virtual Bass
 # Here you can set linear bass gain
-# More = stronger bass and its harmonics
-#
-# ** stock settings don't use Virtual bass **
-#
 # Values [0-20] (default: 7)
 
 HBASSLINGAIN=7
 
 -----------------------------------
+
 # Headphone Digital Volume booster
 # How much in dB volume should be boosted?
 # values [-15 to 15] (default and stock:0)
@@ -121,7 +209,6 @@ HVOLBOOST=0
 # Value of 0 will turn off Dialog Enhancer
 # Value of 1 will turn on Dialog Enhancer only for Movie profile
 # Value of 2 will turn on Dialog Enhancer for every profile
-# ** stock values differ and depend on OEM, but mostly it's 1 **
 # values [0-2] (default: 0)
 
 HDE=0
@@ -138,18 +225,23 @@ HDEA=6
 
 # This setting is working only with enabled Dialog Enhancer
 # How strong Dialog Enhancer ducking should be?
-# (ducking will attenuate audio when dialogue appear)
 # values [0-10] (default: 0)
 
 HDED=0
 
 -----------------------------------
 
-# Virtualizer will be enabled in Movie preset 
-# and disabled in Music preset
+# Choose how virtualizer setting should be set
+# 0 - virtualizer will be off
+# 1 - Virtualizer will be enabled in Movie preset and disabled in Music preset
+# 2 - virtualizer will be enabled in every profile
+
+HVIRTUALIZER=1
+
+-----------------------------------
+
 # This will set Virtualizer source distance 
 # FOR SUPPORTED DOLBY
-# ** stock value is mostly 4 but sometimes 12, 24 or 40 **
 # values [4-100] (default: 40)
 
 HVIRTDIST=40
@@ -157,7 +249,6 @@ HVIRTDIST=40
 -----------------------------------
 
 # Surround boost
-# 
 # values [0-15] (default: 3)
 
 HSURBOOST=3
@@ -167,7 +258,6 @@ HSURBOOST=3
 # Headphone Advanced left-right Angle
 # How wide (left-right angle) Virtualizer effect you want? 
 # FOR SUPPORTED DOLBY
-# ** stock value is 45 **
 # values [45-90] (default: 90)
 
 HADVIRTANGLE=90
@@ -196,11 +286,21 @@ HVIRTMOD=2
 # 103,32568,11164,5090,0,1,2,2 - xiaomi 15 spatializer
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
-# 200,32568,15164,8090,1,3,3,1 (also one of my favorite)
-# 200,32568,15164,8090,1,2,3,1 (one of my favorite and currently used)
+# 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
+# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
-HADVIRTREND=200,32568,15164,8090,1,2,3,1
+HADVIRTREND=160,85000,42000,12000,0,1,1,1
+
+-----------------------------------
+
+# Which value of Virtualizer height filter effect you want?
+# Value of 0 means, Virtualizer height filter is off.
+# Value of 1 means, Virtualizer height filter is on, sound should be slightly elevated.
+# Value of 2 means, Virtualizer height filter is on, sound should be more elevated.
+# values [0-2] (default and stock: 1)
+
+HHEIGHTFILTER=1
 
 -----------------------------------
 
@@ -212,8 +312,6 @@ HLEVELER=OFF
 -----------------------------------
 
 # How strong volume boost with volume leveler should be? 
-# HLEVELER must be turned ON if you want this feature
-# IF HLEVELER is off, then no matter what value is here
 # values [0-10] (default: 3)
 
 HLEVSTR=3
@@ -222,8 +320,6 @@ HLEVSTR=3
 
 # This setting is working when Volume Leveler
 # How fast HLEVELER should react?
-# Value of 0 means no reaction, but still volume boost will be active
-# Larger value means faster reaction
 # values [0-10] (default: 0)
 
 HLEVAMOUNT=0
@@ -233,9 +329,6 @@ HLEVAMOUNT=0
 # FOR A BIT MORE ADVANCED USERS!
 # This setting is working when Volume Leveler
 # How aggressive volume leveler should be in attenuation peaks?
-# SUGGESTION: 
-# Set it lower than 6, to have more aggressive type of sound
-# Set it higher than 6, to have softer sound
 # values [1-10] (default and stock: 6)
 
 HLEVTARGETIN=6
@@ -244,10 +337,7 @@ HLEVTARGETIN=6
 
 # FOR A BIT MORE ADVANCED USERS!
 # This setting is working when Volume Leveler
-# This parameter is also dependent on previous parameter.
-# How aggressive volume leveler should be in 
-# modifying signal from previous parameter?
-# RECOMMENDED to set it like previous value
+# How aggressive volume leveler should be in modifying signal?
 # values [1-10] (default and stock: 6)
 
 HLEVTARGETOUT=6
@@ -255,10 +345,18 @@ HLEVTARGETOUT=6
 -----------------------------------
 
 # FOR A BIT MORE ADVANCED USERS!
-# Regulator overdrive let enhance signal above regulator restrictions
-# values [0-10] (default: 0 stock: 8)
+# Regulator applies restrictions to overly gained signal
+# values [ON or OFF] (default: ON)
 
-HREGOVERDRIVE=8
+HREGULATOR=ON
+
+-----------------------------------
+
+# FOR A BIT MORE ADVANCED USERS!
+# Regulator overdrive let enhance signal above regulator restrictions
+# values [0-10] (default: 0 stock: 0)
+
+HREGOVERDRIVE=0
 
 -----------------------------------
 
@@ -268,10 +366,26 @@ HREGOVERDRIVE=8
 HTIMBRE=2
 
 -----------------------------------
-#######################
-### SPEAKER SECTION ###
-#######################
+
+# To which samplerate should dolby tune itself?
+# possible values [44100,48000,88200,96000,176400,192000,352800,384000] 
+# (default and stock: 48000)
+
+HTUNEDRATE=48000
+
 -----------------------------------
+
+# Select amount of output channels
+# values [1-8] (default and stock: 2)
+
+H_OUTPUT_CHANNELS=2
+
+-----------------------------------
+#########################
+### SPEAKER SECTION ###
+#########################
+-----------------------------------
+
 # Do you want to modify your Speaker experience?
 # Values [YES or NO] (default YES)
 
@@ -288,13 +402,6 @@ SIEQ=B
 -----------------------------------
 
 # How strong Intelligent EQ should be? 
-# Generally values:
-# 1-3 is weak
-# 4-6 is medium
-# 7-10 is strong
-# 10-15 is very strong
-# 16-20 is extreme
-# ** stock values differ, mostly 3-8 **
 # values [1-20] (default: 6)
 
 SIEQSTR=6
@@ -303,9 +410,6 @@ SIEQSTR=6
 
 # Bass enhancer (BE) or Virtual Bass (VB)?
 # values [BE or VB] (default: Virtual Bass)
-# If you will set Virtual Bass and your dolby will not support it
-# Bass Enhancer will be used instead
-# ** stock settings use Bass Enhancer **
 
 SRENDERBASS=VB
 
@@ -313,7 +417,6 @@ SRENDERBASS=VB
 
 # This parameter work ONLY with Bass Enhancer
 # How strong Bass Enhancer boost you want?
-# ** stock settings uses wide range, from 2 to 6 **
 # values [0-15] (default: 6)
 
 SBASSBOOST=6
@@ -322,13 +425,8 @@ SBASSBOOST=6
 
 # This parameter work ONLY with Virtual Bass
 # Value 1 will render bass like in 1.16 (only first harmonic)
-#
 # Value 2 will boost bass with more harmonics
-#
 # Value 3 will also boost bass with even more harmonics
-#
-# ** stock settings don't use Virtual bass **
-# 
 # Values [1-3] (default: 3)
 
 SBASSHARMTYPE=3
@@ -337,7 +435,6 @@ SBASSHARMTYPE=3
 
 # This parameter work ONLY with Virtual Bass
 # How strong Bass Harmonics boost you want?
-# ** stock settings don't use Virtual bass **
 # values [0-15] (default: 3)
 
 SBASSHARMBOOST=3
@@ -346,10 +443,6 @@ SBASSHARMBOOST=3
 
 # This parameter work ONLY with Virtual Bass
 # Here you can set linear bass gain
-# More = stronger bass and its harmonics
-#
-# ** stock settings don't use Virtual bass **
-#
 # Values [0-20] (default: 5)
 
 SBASSLINGAIN=5
@@ -368,7 +461,6 @@ SVOLBOOST=0
 # Value of 0 will turn off Dialog Enhancer
 # Value of 1 will turn on Dialog Enhancer only for Movie profile
 # Value of 2 will turn on Dialog Enhancer for every profile
-# ** stock values differ and depend on OEM, but mostly it's 1 **
 # values [0-2] (default: 0)
 
 SDE=0
@@ -385,15 +477,22 @@ SDEA=6
 
 # This setting is working only with enabled Dialog Enhancer
 # How strong Dialog Enhancer ducking should be?
-# (ducking will attenuate audio when dialogue appear)
 # values [0-10] (default: 0)
 
 SDED=0
 
 -----------------------------------
 
+# Choose how virtualizer setting should be set
+# 0 - virtualizer will be off
+# 1 - Virtualizer will be enabled in Movie preset and disabled in Music preset
+# 2 - virtualizer will be enabled in every profile
+
+SVIRTUALIZER=1
+
+-----------------------------------
+
 # Surround boost
-# 
 # values [0-15] (default: 3)
 
 SSURBOOST=3
@@ -418,14 +517,12 @@ SVIRTMOD=2
 # STOCK values are: 103,32568,11164,5090,0,3,3,3
 # Some good and possible options:
 # 160,32767,14379,7090,2,2,3,1
-# 160,32767,16379,2065,0,3,3,0
-# 103,32568,11164,5090,0,1,2,2
+# 160,32767,16379,2065,0,3,3,0 - motorola spatializer 
+# 103,32568,11164,5090,0,1,2,2 - xiaomi 15 spatializer
 # 200,32767,16379,7090,3,3,3,1
-# 200,32568,15164,8090,1,2,2,1
-# 200,32568,15164,8090,1,3,3,1
-# 200,32568,15164,8090,1,2,3,1
-
-*** for speaker i suggest to use stock value ***
+# 200,32568,15164,8090,1,2,2,1 (one of my favorite)
+# 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
+# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=103,32568,11164,5090,0,3,3,3
@@ -438,10 +535,7 @@ SADVIRTREND=103,32568,11164,5090,0,3,3,3
 SLEVELER=OFF
 
 -----------------------------------
-
 # How strong volume boost with volume leveler should be? 
-# HLEVELER must be turned ON if you want this feature
-# IF HLEVELER is off, then no matter what value is here
 # values [0-10] (default: 3)
 
 SLEVSTR=3
@@ -449,9 +543,7 @@ SLEVSTR=3
 -----------------------------------
 
 # This setting is working when Volume Leveler
-# How fast HLEVELER should react?
-# Value of 0 means no reaction, but still volume boost will be active
-# Larger value means faster reaction
+# How fast SLEVELER should react?
 # values [0-10] (default: 0)
 
 SLEVAMOUNT=0
@@ -461,9 +553,6 @@ SLEVAMOUNT=0
 # FOR A BIT MORE ADVANCED USERS!
 # This setting is working when Volume Leveler
 # How aggressive volume leveler should be in attenuation peaks?
-# SUGGESTION: 
-# Set it lower than 6, to have more aggressive type of sound
-# Set it higher than 6, to have softer sound
 # values [1-10] (default and stock: 6)
 
 SLEVTARGETIN=6
@@ -472,10 +561,7 @@ SLEVTARGETIN=6
 
 # FOR A BIT MORE ADVANCED USERS!
 # This setting is working when Volume Leveler
-# This parameter is also dependent on previous parameter.
-# How aggressive volume leveler should be in 
-# modifying signal from previous parameter?
-# RECOMMENDED to set it like previous value
+# How aggressive volume leveler should be in modifying signal?
 # values [1-10] (default and stock: 6)
 
 SLEVTARGETOUT=6
@@ -488,3 +574,19 @@ SLEVTARGETOUT=6
 STIMBRE=2
 
 -----------------------------------
+
+# To which samplerate should dolby tune itself?
+# possible values [44100,48000,88200,96000,176400,192000,352800,384000] 
+# (default and stock: 48000)
+
+STUNEDRATE=48000
+
+-----------------------------------
+
+# Select amount of output channels
+# values [1-8] (default and stock: 2)
+
+S_OUTPUT_CHANNELS=2
+
+-----------------------------------
+
