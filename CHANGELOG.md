@@ -234,3 +234,9 @@
 - WebUI now will show in Action Log (upon launch) which features of user dolby are supported (there are some specific ones, not every dolby have them)
 - WebUI will hide not supported features
 - Banner added (if root solution is supporting it)
+
+## v1.55 (beta)
+- Complete refactor of sh and WebUI scripts
+- Dolby Media Intelligence Expand
+- Added 20 band GEQ
+- Numerous small improvements
