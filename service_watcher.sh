@@ -66,15 +66,13 @@ if [ $bootcomplete -eq 1 ] && [ $dolbyservice -eq 1 ];then
                 fi
             fi
         }
-        
+        set +x
         #main watcher loop
         while sleep 1; do
             echo "$DLBSERV" | while read -r SRV; do
-                
                 if [ -s "$SRV" ]; then
                     SRV_NAME=$(basename "$SRV")
                     PID=$(pidof "$SRV_NAME")
-                    
                     if [ -z "$PID" ]; then
                         set -x
                         echo " -- Service $SRV_NAME seems to be down! -- "
