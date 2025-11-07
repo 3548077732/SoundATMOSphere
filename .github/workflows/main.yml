@@ -33,9 +33,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            🚀 **Nowe wydanie dostępne!**
+            🚀 **New release available!**
             
-            📦 **Wersja:** ${{ github.event.release.tag_name }}
-            📄 **Tytuł:** ${{ github.event.release.name }}
+            📦 **Version:** ${{ github.event.release.tag_name }}
+            📄 **Name:** ${{ github.event.release.name }}
             
-            [👉 Kliknij tutaj, aby pobrać](${{ github.event.release.html_url }})
+            [👉 Tap here to download ](${{ github.event.release.html_url }})
