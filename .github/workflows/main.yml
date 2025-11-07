@@ -13,13 +13,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Get current date
+        run: echo "TIMESTAMP=$(date +'%Y.%m.%d-%H:%M')" >> $GITHUB_ENV
 
       - name: Create flat ZIP
-        run: zip -r release.zip . -x "*.git*"
+        run: zip -r SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip . -x "*.git*"
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: release.zip
+          files: SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
