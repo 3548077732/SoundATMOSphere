@@ -1,0 +1,26 @@
+name: Auto Flat ZIP
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  attach-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create flat ZIP
+        # Zmiana tutaj: -x "*.git*" wykluczy wszystko, co zawiera ".git" w nazwie
+        # (czyli folder .git, folder .github, pliki .gitignore itp.)
+        run: |
+          zip -r SoundATMOSphere-beta.zip . -x "*.git*"
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SoundATMOSphere-beta.zip
