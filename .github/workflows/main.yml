@@ -2,7 +2,7 @@ name: Auto Flat ZIP
 
 on:
   release:
-    types: [published, prereleased]
+    types: [published, edited, prereleased]
 
 permissions:
   contents: write
@@ -15,8 +15,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create flat ZIP
-        # Zmiana tutaj: -x "*.git*" wykluczy wszystko, co zawiera ".git" w nazwie
-        # (czyli folder .git, folder .github, pliki .gitignore itp.)
         run: |
           zip -r SoundATMOSphere-beta.zip . -x "*.git*"
 
