@@ -8,14 +8,14 @@ permissions:
   contents: write
 
 jobs:
-  attach-zip:
+  attach-zip-and-notify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Get current date
-        run: echo "TIMESTAMP=$(date +'%Y.%m.%d-%H:%M')" >> $GITHUB_ENV
+        run: echo "TIMESTAMP=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
 
       - name: Create flat ZIP
         run: zip -r SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip . -x "*.git*"
@@ -26,3 +26,16 @@ jobs:
           files: SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Send Telegram Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            🚀 **Nowe wydanie dostępne!**
+            
+            📦 **Wersja:** ${{ github.event.release.tag_name }}
+            📄 **Tytuł:** ${{ github.event.release.name }}
+            
+            [👉 Kliknij tutaj, aby pobrać](${{ github.event.release.html_url }})
