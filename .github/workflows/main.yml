@@ -2,7 +2,7 @@ name: Auto Flat ZIP
 
 on:
   release:
-    types: [published]
+    types: [published, prereleased]
 
 permissions:
   contents: write
