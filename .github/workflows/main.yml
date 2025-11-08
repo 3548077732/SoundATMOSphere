@@ -1,14 +1,28 @@
-name: Auto Flat ZIP
+name: Auto Flat ZIP + Tests
 
 on:
   release:
     types: [released, prereleased, edited]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 permissions:
   contents: write
 
 jobs:
+  test_code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
   attach-zip-and-notify:
+    needs: test_code
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -35,6 +49,11 @@ jobs:
           format: markdown
           document: SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip
           message: |
+            🚀 **New release available!**
+            📦 Version: `${{ github.event.release.tag_name }}`
+            
+            File ready for download 👇
+            [🔗 View full changelog on GitHub](${{ github.event.release.html_url }})          message: |
             🚀 **New release available!**
             📦 Version: `${{ github.event.release.tag_name }}`
             
