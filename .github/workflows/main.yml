@@ -26,16 +26,17 @@ jobs:
           files: SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Send Telegram Notification
+
+      - name: Send File to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
+          document: SoundATMOSphere-beta-${{ env.TIMESTAMP }}.zip
           message: |
             🚀 **New release available!**
+            📦 Version: `${{ github.event.release.tag_name }}`
             
-            📦 **Version:** ${{ github.event.release.tag_name }}
-            📄 **Name:** ${{ github.event.release.name }}
-            
-            [👉 Tap here to download ](${{ github.event.release.html_url }})
+            File ready for download 👇
+            [🔗 View full changelog on GitHub](${{ github.event.release.html_url }})
