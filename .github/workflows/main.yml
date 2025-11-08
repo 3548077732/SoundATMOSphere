@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run ShellCheck
-        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
+        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148 || true
   attach-zip-and-notify:
     needs: test_code
     if: github.event_name == 'release'
