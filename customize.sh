@@ -31,6 +31,9 @@ if [ ! -f "$DIY" ]; then
 	echo " "
 	echo " -- NOW MODULE WILL PROCEED WITH DEFAULT VALUES -- "
 	sleep 5
+else
+	cp "$DIY" "$MODPATH/$(basename "$DIY")"
+	sleep 1
 fi
 
 set +x
