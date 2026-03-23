@@ -17,7 +17,7 @@ set_perm_recursive "$MODPATH" 0 0 0755 0644
 find "$MODPATH" -type f -name "*.sh" -exec chmod 0755 {} \;
 
 # Assigning variable with path to tuningDIY.txt
-DIY="$MODPATH/tuningDIY.txt"
+DIY="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
 
 export IS_FLASHING=true
 
