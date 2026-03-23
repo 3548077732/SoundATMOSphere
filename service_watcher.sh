@@ -4,24 +4,23 @@ if [ ! -d "$MODPATH/debug" ]; then
     mkdir "$MODPATH/debug"
 fi
 
-#error redirection
 exec >"$MODPATH/debug/watcher.txt" 2>&1
 set -x
 
-#looking for builtin mode, it's important
+# Looking for builtin mode, it's important
 [ -f "$MODPATH/.builtinmode" ] && BUILTIN=true || BUILTIN=false
 
-#assigning variables, by default they are zero
+# Assigning variables, by default they are zero
 bootcomplete=0
 dolbyservice=0
 DLBSERV=""
 
-#function - checking for boot complete
+# Checking for boot complete
 boottest(){
     timeout1=60
     while [ "$(getprop sys.boot_completed)" != 1 ] && [ $timeout1 -gt 0 ];do
         sleep 1
-        timeout1=$(($timeout1-1))
+        timeout1=$((timeout1-1))
     done
 
     if [ "$timeout1" -eq 0 ]; then
@@ -33,9 +32,9 @@ boottest(){
     fi
 }
 
-#function - checking for dolby service files
+# Checking for dolby service files
 servicetest(){
-    DLBSERV=$(find /*/bin/hw -type f -name *dms* -o -name *dolby* 2>/dev/null)
+    DLBSERV=$(find /*/bin/hw -type f -name '*dms*' -o -name '*dolby*' 2>/dev/null)
 
     if [ -z "$DLBSERV" ]; then
         echo " -- no Dolby service BINARIES found - break operation immediately! -- "
@@ -46,11 +45,11 @@ servicetest(){
     fi
 }
 
-#launching functions
+# Launching functions
 boottest
 servicetest
 
-#main watcher logic
+# Main watcher logic
 if [ $bootcomplete -eq 1 ] && [ $dolbyservice -eq 1 ];then
     if [ ! -z "$DLBSERV" ]; then
         restart_service() {
@@ -59,15 +58,14 @@ if [ $bootcomplete -eq 1 ] && [ $dolbyservice -eq 1 ];then
             PID_RECHECK=$(pidof "$srv_name")
             if [ -z "$PID_RECHECK" ]; then
                 echo " -- restarting service: $srv_name -- "
-                start "$srv_name"
-                if [ $? -ne 0 ]; then
+                if ! start "$srv_name"; then
                     echo " -- 'start' failed (service unknown to init?), trying su -c fallback -- "
                     su -c "$srv_path" &
                 fi
             fi
         }
         set +x
-        #main watcher loop
+        # Main watcher loop
         while sleep 1; do
             echo "$DLBSERV" | while read -r SRV; do
                 if [ -s "$SRV" ]; then
@@ -90,4 +88,3 @@ if [ $bootcomplete -eq 1 ] && [ $dolbyservice -eq 1 ];then
         done
     fi
 fi
-

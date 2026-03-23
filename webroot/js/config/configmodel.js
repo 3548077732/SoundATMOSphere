@@ -1,7 +1,11 @@
 import { state } from '../shared/state.js';
-import { getDomElement } from '../shared/dom.js';
 import { convertFromLanguageNumerals } from '../shared/language.js';
-import { getAdvancedRendererValue } from '../shared/utils.js';
+
+const getCustomVal = (sourceString, index, fallback) => {
+    if (!sourceString) return fallback;
+    const val = parseFloat(sourceString.split(',')[index]);
+    return isNaN(val) ? fallback : val;
+};
 
 export const defaultValues = {
 	dolbymidvlev: 'OFF',
@@ -59,13 +63,14 @@ export const defaultValues = {
     hbassboost: '6',
     hbasscutoff: '90',
     hbasswidth: '16',
-    hbassharmtype: '2',
+    hbassharmtype: '3',
     hbassharmmixfreqmin: '10',
     hbassharmmixfreqmax: '90',
     hbassharmsrcfreqmin: '10',
     hbassharmsrcfreqmax: '90',
     hbassharmboost: '6',
     hbasslingain: '7',
+    hbasscompstrength: '0',
     hvolboost: '0',
     hde: '0',
     hdea: '6',
@@ -75,7 +80,7 @@ export const defaultValues = {
     hvirtualizer: '1',
     hadvirtangle: '90',
     hvirtmod: '2',
-    hadvirtrend: '160,85000,42000,12000,0,1,1,1',
+    hadvirtrend: '103,32568,11164,5090,0,3,3,3',
     hheightfilter: '1',
     hleveler: 'OFF',
     hlevstr: '3',
@@ -84,17 +89,39 @@ export const defaultValues = {
     hlevtargetout: '6',
     hregulator: 'ON',
     hregoverdrive: '0',
-    htimbre: '2',
+    htimbre: '3',
 	htunedrate: '48000',
 	h_output_channels: '2',
     speakertuning: 'YES',
     sieq: 'B',
     sieqstr: '6',
+	seq_47: '0',
+    seq_141: '0',
+    seq_234: '0',
+    seq_328: '0',
+    seq_469: '0',
+    seq_656: '0',
+    seq_844: '0',
+    seq_1031: '0',
+    seq_1313: '0',
+    seq_1688: '0',
+    seq_2250: '0',
+    seq_3000: '0',
+    seq_3750: '0',
+    seq_4688: '0',
+    seq_5813: '0',
+    seq_7125: '0',
+    seq_9000: '0',
+    seq_11250: '0',
+    seq_13875: '0',
+    seq_19688: '0',
+	seqpreset: 'flat',
     srenderbass: 'VB',
     sbassboost: '6',
     sbassharmtype: '3',
     sbassharmboost: '2',
     sbasslingain: '6',
+    sbasscompstrength: '0',
     svolboost: '0',
     sde: '0',
     sdea: '6',
@@ -108,7 +135,7 @@ export const defaultValues = {
     slevamount: '0',
     slevtargetin: '6',
     slevtargetout: '6',
-    stimbre: '2',
+    stimbre: '3',
 	stunedrate: '48000',
 	s_output_channels: '2'
 };
@@ -138,62 +165,63 @@ export const configMap = {
     DOLBYMIVIRTBIN: { id: 'dolbymivirtbin', type: 'toggle', default: 'OFF', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'ON' : 'OFF' },
     DOLBYMIDIALENH: { id: 'dolbymidialenh', type: 'toggle', default: 'OFF', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'ON' : 'OFF' },
     HEADPHONETUNING: { id: 'headphonetuning', type: 'toggle', default: 'YES', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'YES' : 'NO' },
-    HIEQ: { id: 'hieq', type: 'select', default: 'B' },
+	HIEQ: { id: 'hieq', type: 'select', default: 'B', transform: (el) => el ? el.value : 'B' },
     HIEQSTR: { id: 'hieqstr', type: 'range', default: '6' },
 	HEQPRESET: { id: 'heqpreset', type: 'select', default: 'flat', transform: (el) => el ? el.value : 'flat' },
-	HIEQ: { id: 'hieq', type: 'select', default: 'B', transform: (el) => el ? el.value : 'B' },
-    HIET_47: { id: 'hiet47', type: 'text', default: '150', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_47'] : (parseFloat(state.hieqCustomValues.split(',')[0]) || 150) },
-    HIET_141: { id: 'hiet141', type: 'text', default: '142', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_141'] : (parseFloat(state.hieqCustomValues.split(',')[1]) || 142) },
-    HIET_234: { id: 'hiet234', type: 'text', default: '188', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_234'] : (parseFloat(state.hieqCustomValues.split(',')[2]) || 188) },
-    HIET_328: { id: 'hiet328', type: 'text', default: '216', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_328'] : (parseFloat(state.hieqCustomValues.split(',')[3]) || 216) },
-    HIET_469: { id: 'hiet469', type: 'text', default: '189', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_469'] : (parseFloat(state.hieqCustomValues.split(',')[4]) || 189) },
-    HIET_656: { id: 'hiet656', type: 'text', default: '195', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_656'] : (parseFloat(state.hieqCustomValues.split(',')[5]) || 195) },
-    HIET_844: { id: 'hiet844', type: 'text', default: '202', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_844'] : (parseFloat(state.hieqCustomValues.split(',')[6]) || 202) },
-    HIET_1031: { id: 'hiet1031', type: 'text', default: '199', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_1031'] : (parseFloat(state.hieqCustomValues.split(',')[7]) || 199) },
-    HIET_1313: { id: 'hiet1313', type: 'text', default: '210', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_1313'] : (parseFloat(state.hieqCustomValues.split(',')[8]) || 210) },
-    HIET_1688: { id: 'hiet1688', type: 'text', default: '225', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_1688'] : (parseFloat(state.hieqCustomValues.split(',')[9]) || 225) },
-    HIET_2250: { id: 'hiet2250', type: 'text', default: '230', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_2250'] : (parseFloat(state.hieqCustomValues.split(',')[10]) || 230) },
-    HIET_3000: { id: 'hiet3000', type: 'text', default: '236', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_3000'] : (parseFloat(state.hieqCustomValues.split(',')[11]) || 236) },
-    HIET_3750: { id: 'hiet3750', type: 'text', default: '235', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_3750'] : (parseFloat(state.hieqCustomValues.split(',')[12]) || 235) },
-    HIET_4688: { id: 'hiet4688', type: 'text', default: '235', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_4688'] : (parseFloat(state.hieqCustomValues.split(',')[13]) || 235) },
-    HIET_5813: { id: 'hiet5813', type: 'text', default: '214', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_5813'] : (parseFloat(state.hieqCustomValues.split(',')[14]) || 214) },
-    HIET_7125: { id: 'hiet7125', type: 'text', default: '165', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_7125'] : (parseFloat(state.hieqCustomValues.split(',')[15]) || 165) },
-    HIET_9000: { id: 'hiet9000', type: 'text', default: '112', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_9000'] : (parseFloat(state.hieqCustomValues.split(',')[16]) || 112) },
-    HIET_11250: { id: 'hiet11250', type: 'text', default: '49', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_11250'] : (parseFloat(state.hieqCustomValues.split(',')[17]) || 49) },
-    HIET_13875: { id: 'hiet13875', type: 'text', default: '-24', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_13875'] : (parseFloat(state.hieqCustomValues.split(',')[18]) || -24) },
-    HIET_19688: { id: 'hiet19688', type: 'text', default: '-217', transform: (el) => state.domCache.hieq?.value !== 'C' ? defaultValues['hiet_19688'] : (parseFloat(state.hieqCustomValues.split(',')[19]) || -217) },
-	HEQ_47: { id: 'heq47', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[0] : (parseFloat(state.heqCustomValues.split(',')[0] || '0')) },
-	HEQ_141: { id: 'heq141', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[1] : (parseFloat(state.heqCustomValues.split(',')[1] || '0')) },
-	HEQ_234: { id: 'heq234', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[2] : (parseFloat(state.heqCustomValues.split(',')[2] || '0')) },
-	HEQ_328: { id: 'heq328', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[3] : (parseFloat(state.heqCustomValues.split(',')[3] || '0')) },
-	HEQ_469: { id: 'heq469', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[4] : (parseFloat(state.heqCustomValues.split(',')[4] || '0')) },
-	HEQ_656: { id: 'heq656', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[5] : (parseFloat(state.heqCustomValues.split(',')[5] || '0')) },
-	HEQ_844: { id: 'heq844', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[6] : (parseFloat(state.heqCustomValues.split(',')[6] || '0')) },
-	HEQ_1031: { id: 'heq1031', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[7] : (parseFloat(state.heqCustomValues.split(',')[7] || '0')) },
-	HEQ_1313: { id: 'heq1313', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[8] : (parseFloat(state.heqCustomValues.split(',')[8] || '0')) },
-	HEQ_1688: { id: 'heq1688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[9] : (parseFloat(state.heqCustomValues.split(',')[9] || '0')) },
-	HEQ_2250: { id: 'heq2250', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[10] : (parseFloat(state.heqCustomValues.split(',')[10] || '0')) },
-	HEQ_3000: { id: 'heq3000', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[11] : (parseFloat(state.heqCustomValues.split(',')[11] || '0')) },
-	HEQ_3750: { id: 'heq3750', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[12] : (parseFloat(state.heqCustomValues.split(',')[12] || '0')) },
-	HEQ_4688: { id: 'heq4688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[13] : (parseFloat(state.heqCustomValues.split(',')[13] || '0')) },
-	HEQ_5813: { id: 'heq5813', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[14] : (parseFloat(state.heqCustomValues.split(',')[14] || '0')) },
-	HEQ_7125: { id: 'heq7125', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[15] : (parseFloat(state.heqCustomValues.split(',')[15] || '0')) },
-	HEQ_9000: { id: 'heq9000', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[16] : (parseFloat(state.heqCustomValues.split(',')[16] || '0')) },
-	HEQ_11250: { id: 'heq11250', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[17] : (parseFloat(state.heqCustomValues.split(',')[17] || '0')) },
-	HEQ_13875: { id: 'heq13875', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[18] : (parseFloat(state.heqCustomValues.split(',')[18] || '0')) },
-	HEQ_19688: { id: 'heq19688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[19] : (parseFloat(state.heqCustomValues.split(',')[19] || '0')) },
+    HIET_1: { id: 'hiet47', type: 'range', default: '150', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_47'] : getCustomVal(state.hieqCustomValues, 0, 150) },
+    HIET_2: { id: 'hiet141', type: 'range', default: '142', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_141'] : getCustomVal(state.hieqCustomValues, 1, 142) },
+    HIET_3: { id: 'hiet234', type: 'range', default: '188', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_234'] : getCustomVal(state.hieqCustomValues, 2, 188) },
+    HIET_4: { id: 'hiet328', type: 'range', default: '216', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_328'] : getCustomVal(state.hieqCustomValues, 3, 216) },
+    HIET_5: { id: 'hiet469', type: 'range', default: '189', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_469'] : getCustomVal(state.hieqCustomValues, 4, 189) },
+    HIET_6: { id: 'hiet656', type: 'range', default: '195', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_656'] : getCustomVal(state.hieqCustomValues, 5, 195) },
+    HIET_7: { id: 'hiet844', type: 'range', default: '202', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_844'] : getCustomVal(state.hieqCustomValues, 6, 202) },
+    HIET_8: { id: 'hiet1031', type: 'range', default: '199', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1031'] : getCustomVal(state.hieqCustomValues, 7, 199) },
+    HIET_9: { id: 'hiet1313', type: 'range', default: '210', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1313'] : getCustomVal(state.hieqCustomValues, 8, 210) },
+    HIET_10: { id: 'hiet1688', type: 'range', default: '225', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1688'] : getCustomVal(state.hieqCustomValues, 9, 225) },
+    HIET_11: { id: 'hiet2250', type: 'range', default: '230', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_2250'] : getCustomVal(state.hieqCustomValues, 10, 230) },
+    HIET_12: { id: 'hiet3000', type: 'range', default: '236', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3000'] : getCustomVal(state.hieqCustomValues, 11, 236) },
+    HIET_13: { id: 'hiet3750', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3750'] : getCustomVal(state.hieqCustomValues, 12, 235) },
+    HIET_14: { id: 'hiet4688', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_4688'] : getCustomVal(state.hieqCustomValues, 13, 235) },
+    HIET_15: { id: 'hiet5813', type: 'range', default: '214', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_5813'] : getCustomVal(state.hieqCustomValues, 14, 214) },
+    HIET_16: { id: 'hiet7125', type: 'range', default: '165', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_7125'] : getCustomVal(state.hieqCustomValues, 15, 165) },
+    HIET_17: { id: 'hiet9000', type: 'range', default: '112', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_9000'] : getCustomVal(state.hieqCustomValues, 16, 112) },
+    HIET_18: { id: 'hiet11250', type: 'range', default: '49', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_11250'] : getCustomVal(state.hieqCustomValues, 17, 49) },
+    HIET_19: { id: 'hiet13875', type: 'range', default: '-24', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_13875'] : getCustomVal(state.hieqCustomValues, 18, -24) },
+    HIET_20: { id: 'hiet19688', type: 'range', default: '-217', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_19688'] : getCustomVal(state.hieqCustomValues, 19, -217) },
+	HEQ_1: { id: 'heq47', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[0] : (parseFloat(state.heqCustomValues.split(',')[0] || '0')) },
+	HEQ_2: { id: 'heq141', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[1] : (parseFloat(state.heqCustomValues.split(',')[1] || '0')) },
+	HEQ_3: { id: 'heq234', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[2] : (parseFloat(state.heqCustomValues.split(',')[2] || '0')) },
+	HEQ_4: { id: 'heq328', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[3] : (parseFloat(state.heqCustomValues.split(',')[3] || '0')) },
+	HEQ_5: { id: 'heq469', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[4] : (parseFloat(state.heqCustomValues.split(',')[4] || '0')) },
+	HEQ_6: { id: 'heq656', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[5] : (parseFloat(state.heqCustomValues.split(',')[5] || '0')) },
+	HEQ_7: { id: 'heq844', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[6] : (parseFloat(state.heqCustomValues.split(',')[6] || '0')) },
+	HEQ_8: { id: 'heq1031', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[7] : (parseFloat(state.heqCustomValues.split(',')[7] || '0')) },
+	HEQ_9: { id: 'heq1313', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[8] : (parseFloat(state.heqCustomValues.split(',')[8] || '0')) },
+	HEQ_10: { id: 'heq1688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[9] : (parseFloat(state.heqCustomValues.split(',')[9] || '0')) },
+	HEQ_11: { id: 'heq2250', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[10] : (parseFloat(state.heqCustomValues.split(',')[10] || '0')) },
+	HEQ_12: { id: 'heq3000', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[11] : (parseFloat(state.heqCustomValues.split(',')[11] || '0')) },
+	HEQ_13: { id: 'heq3750', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[12] : (parseFloat(state.heqCustomValues.split(',')[12] || '0')) },
+	HEQ_14: { id: 'heq4688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[13] : (parseFloat(state.heqCustomValues.split(',')[13] || '0')) },
+	HEQ_15: { id: 'heq5813', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[14] : (parseFloat(state.heqCustomValues.split(',')[14] || '0')) },
+	HEQ_16: { id: 'heq7125', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[15] : (parseFloat(state.heqCustomValues.split(',')[15] || '0')) },
+	HEQ_17: { id: 'heq9000', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[16] : (parseFloat(state.heqCustomValues.split(',')[16] || '0')) },
+	HEQ_18: { id: 'heq11250', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[17] : (parseFloat(state.heqCustomValues.split(',')[17] || '0')) },
+	HEQ_19: { id: 'heq13875', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[18] : (parseFloat(state.heqCustomValues.split(',')[18] || '0')) },
+	HEQ_20: { id: 'heq19688', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[19] : (parseFloat(state.heqCustomValues.split(',')[19] || '0')) },
     HRENDERBASS: { id: 'hrenderbass', type: 'toggle', default: 'VB', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'BE' : 'VB' },
     HBASSBOOST: { id: 'hbassboost', type: 'range', default: '6' },
     HBASSCUTOFF: { id: 'hbasscutoff', type: 'range', default: '90' },
     HBASSWIDTH: { id: 'hbasswidth', type: 'range', default: '16' },
-    HBASSHARMTYPE: { id: 'hbassharmtype', type: 'select', default: '2' },
+    HBASSHARMTYPE: { id: 'hbassharmtype', type: 'range', default: '3' },
     HBASSHARMMIXFREQMIN: { id: 'hbassharmmixfreqmin', type: 'range', default: '10' },
     HBASSHARMMIXFREQMAX: { id: 'hbassharmmixfreqmax', type: 'range', default: '90' },
     HBASSHARMSRCFREQMIN: { id: 'hbassharmsrcfreqmin', type: 'range', default: '10' },
     HBASSHARMSRCFREQMAX: { id: 'hbassharmsrcfreqmax', type: 'range', default: '90' },
     HBASSHARMBOOST: { id: 'hbassharmboost', type: 'range', default: '6' },
     HBASSLINGAIN: { id: 'hbasslingain', type: 'range', default: '7' },
+    HBASSCOMPSTRENGTH: { id: 'hbasscompstrength', type: 'range', default: '0' },
     HVOLBOOST: { id: 'hvolboost', type: 'range', default: '0' },
+    HVOLBALANCE: { id: 'hvolbalance', type: 'range', default: '0' },
     HDE: { id: 'hde', type: 'select', default: '0' },
     HDEA: { id: 'hdea', type: 'range', default: '6' },
     HDED: { id: 'hded', type: 'range', default: '0' },
@@ -202,7 +230,7 @@ export const configMap = {
     HVIRTUALIZER: { id: 'hvirtualizer', type: 'select', default: '1' },
     HADVIRTANGLE: { id: 'hadvirtangle', type: 'range', default: '90' },
     HVIRTMOD: { id: 'hvirtmod', type: 'select', default: '2' },
-    HADVIRTREND: { id: 'hadvirtrend', type: 'select', default: '160,85000,42000,12000,0,1,1,1', transform: (el) => { if (el && el.value && el.value !== 'custom') { return el.value; } return state.hadvirtrend; } },
+    HADVIRTREND: { id: 'hadvirtrend', type: 'select', default: '360,65535,12288,8192,0,2,3,3', transform: (el) => { if (el && el.value && el.value !== 'custom') { return el.value; } return state.hadvirtrend; } },
     HHEIGHTFILTER: { id: 'hheightfilter', type: 'select', default: '1' },
     HLEVELER: { id: 'hleveler', type: 'toggle', default: 'OFF', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'ON' : 'OFF' },
     HLEVSTR: { id: 'hlevstr', type: 'range', default: '3' },
@@ -211,17 +239,39 @@ export const configMap = {
     HLEVTARGETOUT: { id: 'hlevtargetout', type: 'range', default: '6' },
     HREGULATOR: { id: 'hregulator', type: 'toggle', default: 'ON', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'ON' : 'OFF' },
     HREGOVERDRIVE: { id: 'hregoverdrive', type: 'range', default: '0' },
-    HTIMBRE: { id: 'htimbre', type: 'select', default: '2' },
+    HTIMBRE: { id: 'htimbre', type: 'range', default: '3' },
 	HTUNEDRATE: { id: 'htunedrate', type: 'select', default: '48000' },
 	H_OUTPUT_CHANNELS: { id: 'h_output_channels', type: 'select', default: '2' },
     SPEAKERTUNING: { id: 'speakertuning', type: 'toggle', default: 'YES', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'YES' : 'NO' },
     SIEQ: { id: 'sieq', type: 'select', default: 'B' },
     SIEQSTR: { id: 'sieqstr', type: 'range', default: '6' },
+	SEQPRESET: { id: 'seqpreset', type: 'select', default: 'flat', transform: (el) => el ? el.value : 'flat' },
+    SEQ_1: { id: 'seq47', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[0] : (parseFloat(state.seqCustomValues.split(',')[0] || '0')) },
+	SEQ_2: { id: 'seq141', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[1] : (parseFloat(state.seqCustomValues.split(',')[1] || '0')) },
+	SEQ_3: { id: 'seq234', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[2] : (parseFloat(state.seqCustomValues.split(',')[2] || '0')) },
+	SEQ_4: { id: 'seq328', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[3] : (parseFloat(state.seqCustomValues.split(',')[3] || '0')) },
+	SEQ_5: { id: 'seq469', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[4] : (parseFloat(state.seqCustomValues.split(',')[4] || '0')) },
+	SEQ_6: { id: 'seq656', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[5] : (parseFloat(state.seqCustomValues.split(',')[5] || '0')) },
+	SEQ_7: { id: 'seq844', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[6] : (parseFloat(state.seqCustomValues.split(',')[6] || '0')) },
+	SEQ_8: { id: 'seq1031', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[7] : (parseFloat(state.seqCustomValues.split(',')[7] || '0')) },
+	SEQ_9: { id: 'seq1313', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[8] : (parseFloat(state.seqCustomValues.split(',')[8] || '0')) },
+	SEQ_10: { id: 'seq1688', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[9] : (parseFloat(state.seqCustomValues.split(',')[9] || '0')) },
+	SEQ_11: { id: 'seq2250', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[10] : (parseFloat(state.seqCustomValues.split(',')[10] || '0')) },
+	SEQ_12: { id: 'seq3000', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[11] : (parseFloat(state.seqCustomValues.split(',')[11] || '0')) },
+	SEQ_13: { id: 'seq3750', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[12] : (parseFloat(state.seqCustomValues.split(',')[12] || '0')) },
+	SEQ_14: { id: 'seq4688', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[13] : (parseFloat(state.seqCustomValues.split(',')[13] || '0')) },
+	SEQ_15: { id: 'seq5813', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[14] : (parseFloat(state.seqCustomValues.split(',')[14] || '0')) },
+	SEQ_16: { id: 'seq7125', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[15] : (parseFloat(state.seqCustomValues.split(',')[15] || '0')) },
+	SEQ_17: { id: 'seq9000', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[16] : (parseFloat(state.seqCustomValues.split(',')[16] || '0')) },
+	SEQ_18: { id: 'seq11250', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[17] : (parseFloat(state.seqCustomValues.split(',')[17] || '0')) },
+	SEQ_19: { id: 'seq13875', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[18] : (parseFloat(state.seqCustomValues.split(',')[18] || '0')) },
+	SEQ_20: { id: 'seq19688', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[19] : (parseFloat(state.seqCustomValues.split(',')[19] || '0')) },
     SRENDERBASS: { id: 'srenderbass', type: 'toggle', default: 'VB', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'BE' : 'VB' },
     SBASSBOOST: { id: 'sbassboost', type: 'range', default: '6' },
-    SBASSHARMTYPE: { id: 'sbassharmtype', type: 'select', default: '3' },
+    SBASSHARMTYPE: { id: 'sbassharmtype', type: 'range', default: '3' },
     SBASSHARMBOOST: { id: 'sbassharmboost', type: 'range', default: '2' },
     SBASSLINGAIN: { id: 'sbasslingain', type: 'range', default: '6' },
+    SBASSCOMPSTRENGTH: { id: 'sbasscompstrength', type: 'range', default: '0' },
     SVOLBOOST: { id: 'svolboost', type: 'range', default: '0' },
     SDE: { id: 'sde', type: 'select', default: '0' },
     SDEA: { id: 'sdea', type: 'range', default: '6' },
@@ -235,27 +285,29 @@ export const configMap = {
     SLEVAMOUNT: { id: 'slevamount', type: 'range', default: '0' },
     SLEVTARGETIN: { id: 'slevtargetin', type: 'range', default: '6' },
     SLEVTARGETOUT: { id: 'slevtargetout', type: 'range', default: '6' },
-    STIMBRE: { id: 'stimbre', type: 'select', default: '2' },
+    STIMBRE: { id: 'stimbre', type: 'range', default: '3' },
 	STUNEDRATE: { id: 'stunedrate', type: 'select', default: '48000' },
 	S_OUTPUT_CHANNELS: { id: 's_output_channels', type: 'select', default: '2' }
 };
 
 export const visibilityMap = {
     headphone: {
-		ieqCustomInput: { id: 'hieqCustomInput', showWhen: () => state.domCache.hieq?.value === 'C' },
-        bassboostContainer: { id: 'hbassboostContainer', showWhen: (isVB, features) => !isVB },
-        basscutoffContainer: { id: 'hbasscutoffContainer', showWhen: (isVB, features) => !isVB },
-        basswidthContainer: { id: 'hbasswidthContainer', showWhen: (isVB, features) => !isVB },
-        bassharmtypeContainer: { id: 'hbassharmtypeContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmmixfreqminContainer: { id: 'hbassharmmixfreqminContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmmixfreqmaxContainer: { id: 'hbassharmmixfreqmaxContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmsrcfreqminContainer: { id: 'hbassharmsrcfreqminContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmsrcfreqmaxContainer: { id: 'hbassharmsrcfreqmaxContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmboostContainer: { id: 'hbassharmboostContainer', showWhen: (isVB, features) => isVB && features.harm },
-        basslingainContainer: { id: 'hbasslingainContainer', showWhen: (isVB, features) => isVB && features.harm },
+		ieqCustomInput: { id: 'hieqCustomInput', showWhen: () => state.domCache.hieq?.value === 'C' || state.domCache.hieq?.value === 'CB'},
+        bassboostContainer: { id: 'hbassboostContainer', showWhen: (_, isVB) => !isVB },
+        basscutoffContainer: { id: 'hbasscutoffContainer', showWhen: (_, isVB) => !isVB },
+        basswidthContainer: { id: 'hbasswidthContainer', showWhen: (_, isVB) => !isVB },
+        bassharmtextContainer: { id: 'hbassharmtextContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmtypeContainer: { id: 'hbassharmtypeContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmmixfreqminContainer: { id: 'hbassharmmixfreqminContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmmixfreqmaxContainer: { id: 'hbassharmmixfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmsrcfreqminContainer: { id: 'hbassharmsrcfreqminContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmsrcfreqmaxContainer: { id: 'hbassharmsrcfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmboostContainer: { id: 'hbassharmboostContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        basslingainContainer: { id: 'hbasslingainContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        basscompstrengthContainer: { id: 'hbasscompstrengthContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         advirtangleContainer: { id: 'hadvirtangleContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.angle },
         advirtdistContainer: { id: 'hvirtdistContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.distance },
-        advirtrendContainer: { id: 'hadvirtrendContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.advancedvirt },
+        advirtrendContainer: { id: 'hadvirtrendContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.hadvancedvirt },
         virtmodContainer: { id: 'hvirtmodContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.hvirtmode },
         ieqstrContainer: { id: 'hieqstrContainer', showWhen: () => true },
         eqPreset: { id: 'heqpreset', showWhen: () => true },
@@ -276,12 +328,14 @@ export const visibilityMap = {
 		output_channelsContainer: { id: 'h_output_channelsContainer', showWhen: (isSimpleMode) => !isSimpleMode }
     },
     speaker: {
-        bassboostContainer: { id: 'sbassboostContainer', showWhen: (isVB, features) => !isVB },
-        basscutoffContainer: { id: 'sbasscutoffContainer', showWhen: (isVB, features) => !isVB },
-        basswidthContainer: { id: 'sbasswidthContainer', showWhen: (isVB, features) => !isVB },
-        bassharmtypeContainer: { id: 'sbassharmtypeContainer', showWhen: (isVB, features) => isVB && features.harm },
-        bassharmboostContainer: { id: 'sbassharmboostContainer', showWhen: (isVB, features) => isVB && features.harm },
-        basslingainContainer: { id: 'sbasslingainContainer', showWhen: (isVB, features) => isVB && features.harm },
+        bassboostContainer: { id: 'sbassboostContainer', showWhen: (_, isVB) => !isVB },
+        basscutoffContainer: { id: 'sbasscutoffContainer', showWhen: (_, isVB) => !isVB },
+        basswidthContainer: { id: 'sbasswidthContainer', showWhen: (_, isVB) => !isVB },
+        bassharmtextContainer: { id: 'sbassharmtextContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmtypeContainer: { id: 'sbassharmtypeContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmboostContainer: { id: 'sbassharmboostContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        basslingainContainer: { id: 'sbasslingainContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        basscompstrengthContainer: { id: 'sbasscompstrengthContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         advirtrendContainer: { id: 'sadvirtrendContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.sadvancedvirt },
         virtmodContainer: { id: 'svirtmodContainer', showWhen: (isSimpleMode) => !isSimpleMode && state.supportedFeatures.svirtmode },
         ieqstrContainer: { id: 'sieqstrContainer', showWhen: () => true },
@@ -314,7 +368,7 @@ export const translationMaps = {
         '103,32568,11164,5090,0,1,2,2': 'xiaomi_15_spatializer',
         '200,32568,15164,8090,1,2,2,1': 'ShadoV_favorite_1',
         '200,32568,15164,8090,1,2,3,1': 'ShadoV_favorite_2',
-        '160,85000,42000,12000,0,1,1,1': 'ShadoV_favorite_3'
+        '360,65535,12288,8192,0,2,3,3': 'ShadoV_favorite_3'
     },
     timbre: { '1': 'level_1', '2': 'level_2', '3': 'level_3', '4': 'level_4' }
 };
@@ -406,35 +460,35 @@ HEADPHONETUNING=${config.headphonetuning}
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, C - Custom, N - no IEQ)
+# (values B - balanced, D - detailed, W - Warm, C - Custom (new ieq profile), CB - Custom (Balanced profile override), N - no IEQ)
 # (default and stock: B)
 
 HIEQ=${config.hieq}
 
 #INTELLIGENT EQUALIZER
 # Values [-500 to 500]
-# HIEQ must be set to "C" to freely change values
+# HIEQ must be set to "C" or "CB" to freely change values
 
-HIET_47=${parseFloat(config.hiet_47)}
-HIET_141=${parseFloat(config.hiet_141)}
-HIET_234=${parseFloat(config.hiet_234)}
-HIET_328=${parseFloat(config.hiet_328)}
-HIET_469=${parseFloat(config.hiet_469)}
-HIET_656=${parseFloat(config.hiet_656)}
-HIET_844=${parseFloat(config.hiet_844)}
-HIET_1031=${parseFloat(config.hiet_1031)}
-HIET_1313=${parseFloat(config.hiet_1313)}
-HIET_1688=${parseFloat(config.hiet_1688)}
-HIET_2250=${parseFloat(config.hiet_2250)}
-HIET_3000=${parseFloat(config.hiet_3000)}
-HIET_3750=${parseFloat(config.hiet_3750)}
-HIET_4688=${parseFloat(config.hiet_4688)}
-HIET_5813=${parseFloat(config.hiet_5813)}
-HIET_7125=${parseFloat(config.hiet_7125)}
-HIET_9000=${parseFloat(config.hiet_9000)}
-HIET_11250=${parseFloat(config.hiet_11250)}
-HIET_13875=${parseFloat(config.hiet_13875)}
-HIET_19688=${parseFloat(config.hiet_19688)}
+HIET_1=${parseFloat(config.hiet_1)}
+HIET_2=${parseFloat(config.hiet_2)}
+HIET_3=${parseFloat(config.hiet_3)}
+HIET_4=${parseFloat(config.hiet_4)}
+HIET_5=${parseFloat(config.hiet_5)}
+HIET_6=${parseFloat(config.hiet_6)}
+HIET_7=${parseFloat(config.hiet_7)}
+HIET_8=${parseFloat(config.hiet_8)}
+HIET_9=${parseFloat(config.hiet_9)}
+HIET_10=${parseFloat(config.hiet_10)}
+HIET_11=${parseFloat(config.hiet_11)}
+HIET_12=${parseFloat(config.hiet_12)}
+HIET_13=${parseFloat(config.hiet_13)}
+HIET_14=${parseFloat(config.hiet_14)}
+HIET_15=${parseFloat(config.hiet_15)}
+HIET_16=${parseFloat(config.hiet_16)}
+HIET_17=${parseFloat(config.hiet_17)}
+HIET_18=${parseFloat(config.hiet_18)}
+HIET_19=${parseFloat(config.hiet_19)}
+HIET_20=${parseFloat(config.hiet_20)}
 
 -----------------------------------
 
@@ -458,26 +512,26 @@ HEQPRESET=${config.heqpreset}
 # Values [-12 to 12] (default: 0 for all frequencies)
 # HEQPRESET must be set to custom to freely change values
 
-HEQ_47=${parseFloat(config.heq_47)}
-HEQ_141=${parseFloat(config.heq_141)}
-HEQ_234=${parseFloat(config.heq_234)}
-HEQ_328=${parseFloat(config.heq_328)}
-HEQ_469=${parseFloat(config.heq_469)}
-HEQ_656=${parseFloat(config.heq_656)}
-HEQ_844=${parseFloat(config.heq_844)}
-HEQ_1031=${parseFloat(config.heq_1031)}
-HEQ_1313=${parseFloat(config.heq_1313)}
-HEQ_1688=${parseFloat(config.heq_1688)}
-HEQ_2250=${parseFloat(config.heq_2250)}
-HEQ_3000=${parseFloat(config.heq_3000)}
-HEQ_3750=${parseFloat(config.heq_3750)}
-HEQ_4688=${parseFloat(config.heq_4688)}
-HEQ_5813=${parseFloat(config.heq_5813)}
-HEQ_7125=${parseFloat(config.heq_7125)}
-HEQ_9000=${parseFloat(config.heq_9000)}
-HEQ_11250=${parseFloat(config.heq_11250)}
-HEQ_13875=${parseFloat(config.heq_13875)}
-HEQ_19688=${parseFloat(config.heq_19688)}
+HEQ_1=${parseFloat(config.heq_1)}
+HEQ_2=${parseFloat(config.heq_2)}
+HEQ_3=${parseFloat(config.heq_3)}
+HEQ_4=${parseFloat(config.heq_4)}
+HEQ_5=${parseFloat(config.heq_5)}
+HEQ_6=${parseFloat(config.heq_6)}
+HEQ_7=${parseFloat(config.heq_7)}
+HEQ_8=${parseFloat(config.heq_8)}
+HEQ_9=${parseFloat(config.heq_9)}
+HEQ_10=${parseFloat(config.heq_10)}
+HEQ_11=${parseFloat(config.heq_11)}
+HEQ_12=${parseFloat(config.heq_12)}
+HEQ_13=${parseFloat(config.heq_13)}
+HEQ_14=${parseFloat(config.heq_14)}
+HEQ_15=${parseFloat(config.heq_15)}
+HEQ_16=${parseFloat(config.heq_16)}
+HEQ_17=${parseFloat(config.heq_17)}
+HEQ_18=${parseFloat(config.heq_18)}
+HEQ_19=${parseFloat(config.heq_19)}
+HEQ_20=${parseFloat(config.heq_20)}
 
 -----------------------------------
 
@@ -573,11 +627,30 @@ HBASSLINGAIN=${config.hbasslingain}
 
 -----------------------------------
 
+# This parameter work ONLY with Virtual Bass
+# Here you can set strength of bass compressor
+# Values [0-10] (default: 0)
+
+HBASSCOMPSTRENGTH=${config.hbasscompstrength}
+
+-----------------------------------
+
 # Headphone Digital Volume booster
 # How much in dB volume should be boosted?
 # values [-15 to 15] (default and stock:0)
 
 HVOLBOOST=${config.hvolboost}
+
+-----------------------------------
+
+# Headphone Digital Volume balance
+# How much in dB volume should be balanced?
+# -- -15 to -1 means less to right channel (left boost) --
+# -- 0 means balanced volume between channels --
+# -- 1 to 15 means less to left channel (right boost) --
+# values [-15 to 15] (default and stock:0)
+
+HVOLBALANCE=${config.hvolbalance}
 
 -----------------------------------
 
@@ -663,7 +736,7 @@ HVIRTMOD=${config.hvirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
+# 360,65535,12288,8192,0,2,3,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 HADVIRTREND=${config.hadvirtrend}
@@ -737,7 +810,7 @@ HREGOVERDRIVE=${config.hregoverdrive}
 -----------------------------------
 
 # How hard regulator should try to preserve timbre?
-# values [1-4] (default and stock: 2)
+# values [0-10] (default and stock: 3)
 
 HTIMBRE=${config.htimbre}
 
@@ -784,6 +857,40 @@ SIEQSTR=${config.sieqstr}
 
 -----------------------------------
 
+# Headphone Equalizer Preset
+# Values [flat, bass_emphasis, treble_emphasis, vocal_clarity, custom] (default: flat)
+
+SEQPRESET=${config.seqpreset}
+
+-----------------------------------
+
+#EQUALIZER
+# Values [-12 to 12] (default: 0 for all frequencies)
+# HEQPRESET must be set to custom to freely change values
+
+SEQ_1=${parseFloat(config.seq_1)}
+SEQ_2=${parseFloat(config.seq_2)}
+SEQ_3=${parseFloat(config.seq_3)}
+SEQ_4=${parseFloat(config.seq_4)}
+SEQ_5=${parseFloat(config.seq_5)}
+SEQ_6=${parseFloat(config.seq_6)}
+SEQ_7=${parseFloat(config.seq_7)}
+SEQ_8=${parseFloat(config.seq_8)}
+SEQ_9=${parseFloat(config.seq_9)}
+SEQ_10=${parseFloat(config.seq_10)}
+SEQ_11=${parseFloat(config.seq_11)}
+SEQ_12=${parseFloat(config.seq_12)}
+SEQ_13=${parseFloat(config.seq_13)}
+SEQ_14=${parseFloat(config.seq_14)}
+SEQ_15=${parseFloat(config.seq_15)}
+SEQ_16=${parseFloat(config.seq_16)}
+SEQ_17=${parseFloat(config.seq_17)}
+SEQ_18=${parseFloat(config.seq_18)}
+SEQ_19=${parseFloat(config.seq_19)}
+SEQ_20=${parseFloat(config.seq_20)}
+
+-----------------------------------
+
 # Bass enhancer (BE) or Virtual Bass (VB)?
 # values [BE or VB] (default: Virtual Bass)
 
@@ -822,6 +929,14 @@ SBASSHARMBOOST=${config.sbassharmboost}
 # Values [0-20] (default: 5)
 
 SBASSLINGAIN=${config.sbasslingain}
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Here you can set strength of bass compressor
+# Values [0-10] (default: 0)
+
+SBASSCOMPSTRENGTH=${config.sbasscompstrength}
 
 -----------------------------------
 
@@ -898,7 +1013,7 @@ SVIRTMOD=${config.svirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
+# 360,65535,12288,8192,0,2,3,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=${config.sadvirtrend}
@@ -945,7 +1060,7 @@ SLEVTARGETOUT=${config.slevtargetout}
 -----------------------------------
 
 # How hard regulator should try to preserve timbre?
-# values [1-4] (default and stock: 2)
+# values [0-10] (default and stock: 3)
 
 STIMBRE=${config.stimbre}
 

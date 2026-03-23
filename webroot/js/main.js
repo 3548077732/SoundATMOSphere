@@ -1,7 +1,7 @@
 import { state } from './shared/state.js';
 import { cacheDomElements, getDomElement } from './shared/dom.js';
-import { loadTranslations, switchLanguage } from './shared/language.js';
-import { actionLog, sleep } from './shared/utils.js';
+import { loadTranslations } from './shared/language.js';
+import { actionLog } from './shared/utils.js';
 import { loadConfig, checkFeatureSupport, ensureDefaultValuesLoaded } from './config/configservice.js';
 import { setupCommonEvents, applyUIMode } from './events/events.js';
 import { initBass } from './features/bass.js';
@@ -13,7 +13,7 @@ import { initEndpointSettings } from './features/endpoint.js';
 import { initIeq } from './features/ieq.js';
 import { initMediaIntelligence } from './features/mediaintelligence.js';
 import { initRegulator } from './features/regulator.js';
-import { initVirtualizer, virtListeners, loadVirtualizerState } from './features/virtualizer.js';
+import { initVirtualizer, virtListeners } from './features/virtualizer.js';
 import { initVolBoost } from './features/volboost.js';
 import { initVolumeLeveler } from './features/volumeleveler.js';
 import { updateOutput, updateDefaultValuesDisplay } from './view/renderer.js';
@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         virtListeners();
         await checkFeatureSupport();
         ensureDefaultValuesLoaded(); 
-            
-        const lang = state.domCache.languageSelect?.value || localStorage.getItem('selectedLanguage') || 'en'; 
         
         if (state.isSimpleMode === undefined) {
             state.isSimpleMode = true;

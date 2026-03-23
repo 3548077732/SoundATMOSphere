@@ -3,26 +3,68 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>Dolby Tuning DIY</title>
 	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 	<h1>SoundATMOSphere</h1>
-	<img src="logo.png" alt="Logo" id="logo"><h1 data-lang-key="title">Dolby Tuning DIY</h1>
-	<div id="controls">
+	<img src="logo.png" alt="Logo" id="logo">
+	<img src="logo.png" alt="Logo" id="logo2">
+	<h2 data-lang-key="title">Dolby Tuning DIY</h2>
+	<div id="controls" class="visible">
 		<button id="loadConfig" data-lang-key="load_config">Load Config</button>
 		<div>
 			<button id="simple-mode" class="mode-btn active" data-lang-key="simple_mode">Simple Mode</button>
 			<button id="expert-mode" class="mode-btn" data-lang-key="expert_mode">Expert Mode</button>
 		</div>
 	</div>
-	
+	<div class="select-container" style="margin-top: 10px;">
+		<label for="themeSelect" style="margin-right:10px;">Theme:</label>
+		<select id="themeSelect" onchange="changeTheme(this.value)">
+			<option value="default">Neon Cyan (Default)</option>
+			</select>
+	</div>
+
+	<details id="customThemePanel" class="section" style="display: none; margin-top: 15px;">
+		<summary>
+		<h3 data-lang-key="custom_theme_colors">Advanced Custom Theme</h3>
+		</summary>
+		<div id="recentColorsContainer" style="margin-bottom: 20px;">
+			<label style="font-size: 0.9em; color: var(--text-muted);">Recent Colors (Click to apply):</label>
+			<div id="recentColorsList" style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;"></div>
+		</div>
+		<div class="toggle-container"><label>App Background:</label><input type="color" id="c_bg_app" value="#121212"></div>
+		<div class="toggle-container"><label>Card Background:</label><input type="color" id="c_bg_card" value="#1E1E1E"></div>
+		<div class="toggle-container"><label>Nav Background:</label><input type="color" id="c_bg_nav" value="#121212" title="Solid color fallback for rgba"></div>
+		<div class="toggle-container"><label>Input Background:</label><input type="color" id="c_input_bg" value="#2C2C2C"></div>
+		<div class="toggle-container"><label>Log Background:</label><input type="color" id="c_log_bg" value="#000000"></div>
+		
+		<div class="toggle-container"><label>Main Text:</label><input type="color" id="c_text_main" value="#E0E0E0"></div>
+		<div class="toggle-container"><label>Muted Text:</label><input type="color" id="c_text_muted" value="#A0A0A0"></div>
+		<div class="toggle-container"><label>Border:</label><input type="color" id="c_border" value="#333333"></div>
+		<div class="toggle-container"><label>Danger:</label><input type="color" id="c_danger" value="#FF5555"></div>
+		<div class="toggle-container"><label>Log Text:</label><input type="color" id="c_log_text" value="#00FF00"></div>
+		<div class="toggle-container"><label>Log Border:</label><input type="color" id="c_log_border" value="#00E5FF"></div>
+
+		<div class="toggle-container"><label>Accent:</label><input type="color" id="c_accent" value="#00E5FF"></div>
+		<div class="toggle-container"><label>Accent Glow (RGBA/HEX):</label><input type="text" id="c_accent_glow" value="rgba(0, 229, 255, 0.4)"></div>
+		<div class="toggle-container"><label>Accent Dim (RGBA/HEX):</label><input type="text" id="c_accent_dim" value="rgba(0, 229, 255, 0.05)"></div>
+
+		<div class="toggle-container"><label>Button Bg:</label><input type="color" id="c_btn_bg" value="#2C2C2C"></div>
+		<div class="toggle-container"><label>Button Active Bg:</label><input type="color" id="c_btn_act_bg" value="#00E5FF"></div>
+		<div class="toggle-container"><label>Button Text:</label><input type="color" id="c_btn_text" value="#E0E0E0"></div>
+		<div class="toggle-container"><label>Button Active Text:</label><input type="color" id="c_btn_act_text" value="#000000"></div>
+
+		<div class="toggle-container"><label>Slider Track:</label><input type="color" id="c_slider_track" value="#333333"></div>
+		<div class="toggle-container"><label>Slider Thumb:</label><input type="color" id="c_slider_thumb" value="#E0E0E0"></div>
+		<div class="toggle-container"><label>Slider Thumb Border:</label><input type="color" id="c_slider_thumb_border" value="#00E5FF"></div>
+	</details>
+		
 	<div class="select-container">
 		<label for="languageSelect" data-lang-key="language">Language:</label>
 		<select id="languageSelect"></select>
 	</div>
 	
-	<div id="controls-secondary"> 
+	<div id="controls-secondary">
 		<div class="section visible" id="actionButtons">
 			<button id="saveConfig" data-lang-key="save_config">Save Config</button>
 			<button id="applyTuning" data-lang-key="apply_tuning">Apply Tuning</button>
@@ -31,13 +73,17 @@
 	</div>
 
 	<div class="section visible" id="action-log-section">
+		<summary>
 		<h3 data-lang-key="action_log">Action Log</h3>
+		</summary>
 		<textarea id="actionLog" readonly></textarea>
 	</div>
 	
 	<!-- Dolby Media Intelligence -->
-	<div id="dolby-mi-section" class="section visible">
+	<details id="dolby-mi-section" class="section visible">
+		<summary>
 		<h3 data-lang-key="media_intelligence">Dolby Media Intelligence</h3>
+		</summary>
 		<div id="dolbymiContainer" class="toggle-container">
 			<label for="dolbymidvlev" data-lang-key="dolbymidvlev">mi-volume-leveler</label>
 			<button id="dolbymidvlev" class="toggle-btn" data-state="false">OFF</button>
@@ -63,13 +109,8 @@
 			<button id="dolbymidialenh" class="toggle-btn" data-state="false">OFF</button>
 			<span id="dolbymidialenh-default" class="default-value">(Default: OFF)</span>
 		</div>
-	</div>
-	<!-- HP/Speaker toggle buttons -->
-	<div class="section visible" id="tuning-toggle">
-		<button id="headphone-toggle" class="toggle-tab active" data-lang-key="headphone_tuning">Headphone Tuning</button>
-		<button id="speaker-toggle" class="toggle-tab" data-lang-key="speaker_tuning">Speaker Tuning</button>
-	</div>
-
+	</details>
+	
 	<div id="headphone-group" class="tuning-group active">
 		
 		<!-- Headphone Tuning -->
@@ -83,29 +124,44 @@
 		</div>
 
 		<!-- Intelligent EQ -->
-		<div id="hieq-section" class="section visible">
+		<details id="hieq-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="intelligent_eq">Intelligent EQ</h3>
+			</summary>
 			<div id="hieqContainer" class="select-container">
 				<label for="hieq" data-lang-key="preset">Preset:</label>
 				<select id="hieq">
 					<option value="B" data-lang-key="balanced">Balanced</option>
 					<option value="D" data-lang-key="detailed">Detailed</option>
 					<option value="W" data-lang-key="warm">Warm</option>
-					<option value="C" data-lang-key="custom">Custom</option>
+					<option value="C" data-lang-key="custom_new">Custom (New IEQ profile)</option>
+					<option value="CB" data-lang-key="custom_balanced">Custom (override Balanced IEQ)</option>
 					<option value="N" data-lang-key="no_ieq">No IEQ</option>
 				</select>
 				<span id="hieq-default" class="default-value">(Default: Balanced)</span>
 			</div>
-			<div id="hieqCustomInput" class="custom-input-container" style="display: none;">
-				<label>Custom IEQ Values:</label>
+			<div id="hieqCustomInput" class="select-container">
+			    <div id="hieqCustomBaseContainer" class="input-group" style="margin-bottom: 1rem; border-bottom: 1px solid #555; padding-bottom: 10px;">
+			        <label for="hieqCustomBase" data-lang-key="load_base">Load Base:</label>
+			        <div style="display: flex; gap: 10px;">
+			            <select id="hieqCustomBase" style="flex-grow: 1;">
+			                <option value="" disabled selected data-lang-key="select_placeholder">-- Select --</option>
+			                <option value="B" data-lang-key="balanced">Balanced</option>
+			                <option value="D" data-lang-key="detailed">Detailed</option>
+			                <option value="W" data-lang-key="warm">Warm</option>
+			            </select>
+			            <button id="resetCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
+			        </div>
+		        </div>
+				<label for="hieqCustomValues" data-lang-key="custom_ieq_val" style="margin-bottom: 1rem";>Custom IEQ Targets:</label>
 				<div class="input-group">
 					<label for="hiet47">47 Hz Target:</label>
-					<input type="text" id="hiet47" data-lang-key="freq_47">
+					<input type="number" id="hiet47" data-lang-key="freq_47">
 					<span class="error-message" id="hietErrorMessage"></span>
 				</div>
 				<div class="input-group">
 					<label for="hiet141">141 Hz Target:</label>
-					<input type="text" id="hiet141" data-lang-key="freq_141">
+					<input type="number" id="hiet141" data-lang-key="freq_141">
 				</div>
 				<div class="input-group">
 					<label for="hiet234">234 Hz Target:</label>
@@ -113,243 +169,250 @@
 				</div>
 				<div class="input-group">
 					<label for="hiet328">328 Hz Target:</label>
-					<input type="text" id="hiet328" data-lang-key="freq_328">
+					<input type="number" id="hiet328" data-lang-key="freq_328">
 				</div>
 				<div class="input-group">
 					<label for="hiet469">469 Hz Target:</label>
-					<input type="text" id="hiet469" data-lang-key="freq_469">
+					<input type="number" id="hiet469" data-lang-key="freq_469">
 				</div>
 				<div class="input-group">
 					<label for="hiet656">656 Hz Target:</label>
-					<input type="text" id="hiet656" data-lang-key="freq_656">
+					<input type="number" id="hiet656" data-lang-key="freq_656">
 				</div>
 				<div class="input-group">
 					<label for="hiet844">844 Hz Target:</label>
-					<input type="text" id="hiet844" data-lang-key="freq_844">
+					<input type="number" id="hiet844" data-lang-key="freq_844">
 				</div>
 				<div class="input-group">
 					<label for="hiet1031">1031 Hz Target:</label>
-					<input type="text" id="hiet1031" data-lang-key="freq_1031">
+					<input type="number" id="hiet1031" data-lang-key="freq_1031">
 				</div>
 				<div class="input-group">
 					<label for="hiet1313">1313 Hz Target:</label>
-					<input type="text" id="hiet1313" data-lang-key="freq_1313">
+					<input type="number" id="hiet1313" data-lang-key="freq_1313">
 				</div>
 				<div class="input-group">
 					<label for="hiet1688">1688 Hz Target:</label>
-					<input type="text" id="hiet1688" data-lang-key="freq_1688">
+					<input type="number" id="hiet1688" data-lang-key="freq_1688">
 				</div>
 				<div class="input-group">
 					<label for="hiet2250">2250 Hz Target:</label>
-					<input type="text" id="hiet2250" data-lang-key="freq_2250">
+					<input type="number" id="hiet2250" data-lang-key="freq_2250">
 				</div>
 				<div class="input-group">
 					<label for="hiet3000">3000 Hz Target:</label>
-					<input type="text" id="hiet3000" data-lang-key="freq_3000">
+					<input type="number" id="hiet3000" data-lang-key="freq_3000">
 				</div>
 				<div class="input-group">
 					<label for="hiet3750">3750 Hz Target:</label>
-					<input type="text" id="hiet3750" data-lang-key="freq_3750">
+					<input type="number" id="hiet3750" data-lang-key="freq_3750">
 				</div>
 				<div class="input-group">
 					<label for="hiet4688">4688 Hz Target:</label>
-					<input type="text" id="hiet4688" data-lang-key="freq_4688">
+					<input type="number" id="hiet4688" data-lang-key="freq_4688">
 				</div>
 				<div class="input-group">
 					<label for="hiet5813">5813 Hz Target:</label>
-					<input type="text" id="hiet5813" data-lang-key="freq_5813">
+					<input type="number" id="hiet5813" data-lang-key="freq_5813">
 				</div>
 				<div class="input-group">
 					<label for="hiet7125">7125 Hz Target:</label>
-					<input type="text" id="hiet7125" data-lang-key="freq_7125">
+					<input type="number" id="hiet7125" data-lang-key="freq_7125">
 				</div>
 				<div class="input-group">
 					<label for="hiet9000">9000 Hz Target:</label>
-					<input type="text" id="hiet9000" data-lang-key="freq_9000">
+					<input type="number" id="hiet9000" data-lang-key="freq_9000">
 				</div>
 				<div class="input-group">
 					<label for="hiet11250">11250 Hz Target:</label>
-					<input type="text" id="hiet11250" data-lang-key="freq_11250">
+					<input type="number" id="hiet11250" data-lang-key="freq_11250">
 				</div>
 				<div class="input-group">
 					<label for="hiet13875">13875 Hz Target:</label>
-					<input type="text" id="hiet13875" data-lang-key="freq_13875">
+					<input type="number" id="hiet13875" data-lang-key="freq_13875">
 				</div>
 				<div class="input-group">
 					<label for="hiet19688">19688 Hz Target:</label>
-					<input type="text" id="hiet19688" data-lang-key="freq_19688">
+					<input type="number" id="hiet19688" data-lang-key="freq_19688">
+				</div>
+				<div id="hieqstrContainer" class="slider-container">
+					<label for="hieqstr" data-lang-key="strength">Strength:</label>
+					<input type="range" id="hieqstr" min="1" max="20" value="6">
+					<span id="hieqstr-value" class="slider-value">6</span>
+					<span id="hieqstr-default" class="default-value">(Default: 6)</span>
 				</div>
 			</div>
-			<div id="hieqstrContainer" class="slider-container">
-				<label for="hieqstr" data-lang-key="strength">Strength:</label>
-				<input type="range" id="hieqstr" min="1" max="20" value="6">
-				<span id="hieqstr-value" class="slider-value">6</span>
-				<span id="hieqstr-default" class="default-value">(Default: 6)</span>
-			</div>
-		</div>
-		<!-- Equalizer -->
-	<div id="equalizer-section" class="section visible">
-		<div class="equalizer-container">
+		</details>
+			<!-- Equalizer -->
+		<details id="equalizer-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="headphone_equalizer">Headphone Equalizer</h3>
-			<div class="select-container">
-				<label for="heqpreset">Preset:</label>
-				<select id="heqpreset" data-lang-key="preset" style="visibility: visible !important; display:block !important;">
-					<option value="flat" data-lang-key="flat">Flat</option>
-					<option value="bass_emphasis" data-lang-key="bass_emphasis">Bass Emphasis</option>
-					<option value="treble_emphasis" data-lang-key="treble_emphasis">Treble Emphasis</option>
-					<option value="vocal_clarity" data-lang-key="vocal_clarity">Vocal Clarity</option>
-					<option value="pop_rock" data-lang-key="pop_rock">Pop/Rock</option>
-					<option value="electro_dance" data-lang-key="electro_dance">Electro/Dance</option>
-					<option value="edm" data-lang-key="edm">EDM</option>
-					<option value="drum_bass" data-lang-key="drum_bass">Drum & Bass</option>
-					<option value="classical_acoustic" data-lang-key="classical_acoustic">Classical/Acoustic</option>
-					<option value="metal" data-lang-key="metal">Metal</option>
-					<option value="reggae" data-lang-key="reggae">Drum & Bass</option>
-					<option value="loudness" data-lang-key="loudness">Loudness</option>
-					<option value="custom" data-lang-key="custom">Custom</option>
-				</select>
-				<span id="heqpreset-default"></span>
+			</summary>
+			<div class="equalizer-container">
+				<div class="select-container">
+					<label for="heqpreset">Preset:</label>
+					<select id="heqpreset" data-lang-key="preset" style="visibility: visible !important; display:block !important;">
+						<option value="flat" data-lang-key="flat">Flat</option>
+						<option value="bass_emphasis" data-lang-key="bass_emphasis">Bass Emphasis</option>
+						<option value="treble_emphasis" data-lang-key="treble_emphasis">Treble Emphasis</option>
+						<option value="vocal_clarity" data-lang-key="vocal_clarity">Vocal Clarity</option>
+						<option value="pop_rock" data-lang-key="pop_rock">Pop/Rock</option>
+						<option value="electro_dance" data-lang-key="electro_dance">Electro/Dance</option>
+						<option value="edm" data-lang-key="edm">EDM</option>
+						<option value="drum_bass" data-lang-key="drum_bass">Drum & Bass</option>
+						<option value="classical_acoustic" data-lang-key="classical_acoustic">Classical/Acoustic</option>
+						<option value="metal" data-lang-key="metal">Metal</option>
+						<option value="reggae" data-lang-key="reggae">Drum & Bass</option>
+						<option value="loudness" data-lang-key="loudness">Loudness</option>
+						<option value="custom" data-lang-key="custom">Custom</option>
+					</select>
+					<span id="heqpreset-default" class="default-value"></span>
+				</div>
+				<div class="sticky-action-bar">
+				    <button id="slidershrinkheq" data-lang-key="shrink_sliders">Shrink sliders</button>
+				    <button id="sliderexpandheq" data-lang-key="expand_sliders">Expand sliders</button>
+				    <button id="resetCustomEqheq" data-lang-key="reset_custom_eq">Reset Custom Equalizer</button>
+				</div>
+				<div class="eq-sliders" id="heqCustomEqContainer">
+					<div class="slider-container">
+						<span class="slider-value" id="heq47-value">0 dB</span>
+						<span id="heq47-default"></span>
+						<input type="range" orient="vertical" id="heq47" name="HEQ_47" min="-12" max="12" value="0" step="0.5">
+						<label>47 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq141-value">0 dB</span>
+						<span id="heq141-default"></span>
+						<input type="range" orient="vertical" id="heq141" name="HEQ_141" min="-12" max="12" value="0" step="0.5">
+						<label>141 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq234-value">0 dB</span>
+						<span id="heq234-default"></span>
+						<input type="range" orient="vertical" id="heq234" name="HEQ_234" min="-12" max="12" value="0" step="0.5">
+						<label>234 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq328-value">0 dB</span>
+						<span id="heq328-default"></span>
+						<input type="range" orient="vertical" id="heq328" name="HEQ_328" min="-12" max="12" value="0" step="0.5">
+						<label>328 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq469-value">0 dB</span>
+						<span id="heq469-default"></span>
+						<input type="range" orient="vertical" id="heq469" name="HEQ_469" min="-12" max="12" value="0" step="0.5">
+						<label>469 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq656-value">0 dB</span>
+						<span id="heq656-default"></span>
+						<input type="range" orient="vertical" id="heq656" name="HEQ_656" min="-12" max="12" value="0" step="0.5">
+						<label>656 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq844-value">0 dB</span>
+						<span id="heq844-default"></span>
+						<input type="range" orient="vertical" id="heq844" name="HEQ_844" min="-12" max="12" value="0" step="0.5">
+						<label>844 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq1031-value">0 dB</span>
+						<span id="heq1031-default"></span>
+						<input type="range" orient="vertical" id="heq1031" name="HEQ_1031" min="-12" max="12" value="0" step="0.5">
+						<label>1031 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq1313-value">0 dB</span>
+						<span id="heq1313-default"></span>
+						<input type="range" orient="vertical" id="heq1313" name="HEQ_1313" min="-12" max="12" value="0" step="0.5">
+						<label>1313 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq1688-value">0 dB</span>
+						<span id="heq1688-default"></span>
+						<input type="range" orient="vertical" id="heq1688" name="HEQ_1688" min="-12" max="12" value="0" step="0.5">
+						<label>1688 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq2250-value">0 dB</span>
+						<span id="heq2250-default"></span>
+						<input type="range" orient="vertical" id="heq2250" name="HEQ_2250" min="-12" max="12" value="0" step="0.5">
+						<label>2250 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq3000-value">0 dB</span>
+						<span id="heq3000-default"></span>
+						<input type="range" orient="vertical" id="heq3000" name="HEQ_3000" min="-12" max="12" value="0" step="0.5">
+						<label>3000 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq3750-value">0 dB</span>
+						<span id="heq3750-default"></span>
+						<input type="range" orient="vertical" id="heq3750" name="HEQ_3750" min="-12" max="12" value="0" step="0.5">
+						<label>3750 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq4688-value">0 dB</span>
+						<span id="heq4688-default"></span>
+						<input type="range" orient="vertical" id="heq4688" name="HEQ_4688" min="-12" max="12" value="0" step="0.5">
+						<label>4688 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq5813-value">0 dB</span>
+						<span id="heq5813-default"></span>
+						<input type="range" orient="vertical" id="heq5813" name="HEQ_5813" min="-12" max="12" value="0" step="0.5">
+						<label>5813 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq7125-value">0 dB</span>
+						<span id="heq7125-default"></span>
+						<input type="range" orient="vertical" id="heq7125" name="HEQ_7125" min="-12" max="12" value="0" step="0.5">
+						<label>7125 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq9000-value">0 dB</span>
+						<span id="heq9000-default"></span>
+						<input type="range" orient="vertical" id="heq9000" name="HEQ_9000" min="-12" max="12" value="0" step="0.5">
+						<label>9000 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq11250-value">0 dB</span>
+						<span id="heq11250-default"></span>
+						<input type="range" orient="vertical" id="heq11250" name="HEQ_11250" min="-12" max="12" value="0" step="0.5">
+						<label>11250 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq13875-value">0 dB</span>
+						<span id="heq13875-default"></span>
+						<input type="range" orient="vertical" id="heq13875" name="HEQ_13875" min="-12" max="12" value="0" step="0.5">
+						<label>13875 Hz</label>
+					</div>
+					<div class="slider-container">
+						<span class="slider-value" id="heq19688-value">0 dB</span>
+						<span id="heq19688-default"></span>
+						<input type="range" orient="vertical" id="heq19688" name="HEQ_19688" min="-12" max="12" value="0" step="0.5">
+						<label>19688 Hz</label>
+					</div>
+				</div>
 			</div>
-			<div class="slidersizebutton-container">
-			    <button id="slidershrink" type="button" class="slidersize-button" data-lang-key="shrink_sliders">Shrink sliders</button>
-			    <button id="sliderexpand" type="button" class="slidersize-button" data-lang-key="expand_sliders">Expand sliders</button>
-			    <button id="resetCustomEq" type="button" class="slidersize-button" data-lang-key="reset_custom_eq">Reset Custom Equalizer</button>
-			</div>
-			<div class="eq-sliders">
-				<div class="slider-container">
-					<span class="slider-value" id="heq47-value">0 dB</span>
-					<span id="heq47-default"></span>
-					<input type="range" orient="vertical" id="heq47" name="HEQ_47" min="-12" max="12" value="0" step="0.5">
-					<label>47 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq141-value">0 dB</span>
-					<span id="heq141-default"></span>
-					<input type="range" orient="vertical" id="heq141" name="HEQ_141" min="-12" max="12" value="0" step="0.5">
-					<label>141 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq234-value">0 dB</span>
-					<span id="heq234-default"></span>
-					<input type="range" orient="vertical" id="heq234" name="HEQ_234" min="-12" max="12" value="0" step="0.5">
-					<label>234 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq328-value">0 dB</span>
-					<span id="heq328-default"></span>
-					<input type="range" orient="vertical" id="heq328" name="HEQ_328" min="-12" max="12" value="0" step="0.5">
-					<label>328 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq469-value">0 dB</span>
-					<span id="heq469-default"></span>
-					<input type="range" orient="vertical" id="heq469" name="HEQ_469" min="-12" max="12" value="0" step="0.5">
-					<label>469 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq656-value">0 dB</span>
-					<span id="heq656-default"></span>
-					<input type="range" orient="vertical" id="heq656" name="HEQ_656" min="-12" max="12" value="0" step="0.5">
-					<label>656 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq844-value">0 dB</span>
-					<span id="heq844-default"></span>
-					<input type="range" orient="vertical" id="heq844" name="HEQ_844" min="-12" max="12" value="0" step="0.5">
-					<label>844 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq1031-value">0 dB</span>
-					<span id="heq1031-default"></span>
-					<input type="range" orient="vertical" id="heq1031" name="HEQ_1031" min="-12" max="12" value="0" step="0.5">
-					<label>1031 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq1313-value">0 dB</span>
-					<span id="heq1313-default"></span>
-					<input type="range" orient="vertical" id="heq1313" name="HEQ_1313" min="-12" max="12" value="0" step="0.5">
-					<label>1313 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq1688-value">0 dB</span>
-					<span id="heq1688-default"></span>
-					<input type="range" orient="vertical" id="heq1688" name="HEQ_1688" min="-12" max="12" value="0" step="0.5">
-					<label>1688 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq2250-value">0 dB</span>
-					<span id="heq2250-default"></span>
-					<input type="range" orient="vertical" id="heq2250" name="HEQ_2250" min="-12" max="12" value="0" step="0.5">
-					<label>2250 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq3000-value">0 dB</span>
-					<span id="heq3000-default"></span>
-					<input type="range" orient="vertical" id="heq3000" name="HEQ_3000" min="-12" max="12" value="0" step="0.5">
-					<label>3000 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq3750-value">0 dB</span>
-					<span id="heq3750-default"></span>
-					<input type="range" orient="vertical" id="heq3750" name="HEQ_3750" min="-12" max="12" value="0" step="0.5">
-					<label>3750 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq4688-value">0 dB</span>
-					<span id="heq4688-default"></span>
-					<input type="range" orient="vertical" id="heq4688" name="HEQ_4688" min="-12" max="12" value="0" step="0.5">
-					<label>4688 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq5813-value">0 dB</span>
-					<span id="heq5813-default"></span>
-					<input type="range" orient="vertical" id="heq5813" name="HEQ_5813" min="-12" max="12" value="0" step="0.5">
-					<label>5813 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq7125-value">0 dB</span>
-					<span id="heq7125-default"></span>
-					<input type="range" orient="vertical" id="heq7125" name="HEQ_7125" min="-12" max="12" value="0" step="0.5">
-					<label>7125 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq9000-value">0 dB</span>
-					<span id="heq9000-default"></span>
-					<input type="range" orient="vertical" id="heq9000" name="HEQ_9000" min="-12" max="12" value="0" step="0.5">
-					<label>9000 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq11250-value">0 dB</span>
-					<span id="heq11250-default"></span>
-					<input type="range" orient="vertical" id="heq11250" name="HEQ_11250" min="-12" max="12" value="0" step="0.5">
-					<label>11250 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq13875-value">0 dB</span>
-					<span id="heq13875-default"></span>
-					<input type="range" orient="vertical" id="heq13875" name="HEQ_13875" min="-12" max="12" value="0" step="0.5">
-					<label>13875 Hz</label>
-				</div>
-				<div class="slider-container">
-					<span class="slider-value" id="heq19688-value">0 dB</span>
-					<span id="heq19688-default"></span>
-					<input type="range" orient="vertical" id="heq19688" name="HEQ_19688" min="-12" max="12" value="0" step="0.5">
-					<label>19688 Hz</label>
-				</div>
-			</div>
-		</div>
-	</div>
+		</details>
 		<!-- Bass Boost -->
-		<div id="bass-boost-section" class="section visible">
+		<details id="bass-boost-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="bass_boost">Bass Boost</h3>
+			</summary>
 			<div id="hrenderbassContainer" class="toggle-container expert-only">
 				<h4 data-lang-key="bass_toggle">Bass Enhancer <-> Virtual Bass Toggle:</h4>
-				<button id="hrenderbass" class="toggle-btn" data-state="false">VB</button>
+				<button id="hrenderbass" class="button" data-state="false">VB</button>
 				<span id="hrenderbass-default" class="default-value">(Default: VB)</span>
 				<span id="vb-warning-headphone"></span>
 			</div>
 
 	<!-- Bass Enhancer -->
+			<div id="hbassboosttextContainer" class="visible">
+				<h3 data-lang-key="bass_enhancer">Virtual Bass</h3>
+			</div>
 			<div id="hbassboostContainer" class="slider-container">
 				<label for="hbassboost" data-lang-key="bass_enhancer_boost">Bass Enhancer Boost:</label>
 				<input type="range" id="hbassboost" min="0" max="30" value="6">
@@ -364,20 +427,20 @@
 			</div>
 			<div id="hbasswidthContainer" class="slider-container">
 				<label for="hbasswidth" data-lang-key="bass_width">Bass Width:</label>
-				<input type="range" id="hbasswidth" min="1" max="128" value="32">
-				<span id="hbasswidth-value" class="slider-value">32</span>
-				<span id="hbasswidth-default" class="default-value">(Default: 32)</span>
+				<input type="range" id="hbasswidth" min="0" max="128" value="16">
+				<span id="hbasswidth-value" class="slider-value">16</span>
+				<span id="hbasswidth-default" class="default-value">(Default: 16)</span>
 			</div>
 
 	<!-- Bass Harmonics -->
-			<div id="hbassharmtypeContainer" class="select-container expert-only">
+			<div id="hbassharmtextContainer" class="expert-only">
+				<h3 data-lang-key="virtual_bass">Virtual Bass</h3>
+			</div>
+			<div id="hbassharmtypeContainer" class="slider-container expert-only">
 				<label for="hbassharmtype" data-lang-key="harmonics_type">Harmonics Type:</label>
-				<select id="hbassharmtype">
-					<option value="1" data-lang-key="first_harmonic">First Harmonic</option>
-					<option value="2" data-lang-key="more_harmonics">More Harmonics</option>
-					<option value="3" data-lang-key="extra_harmonics">Extra Harmonics</option>
-				</select>
-				<span id="hbassharmtype-default" class="default-value">(Default: More Harmonics)</span>
+				<input type="range" id="hbassharmtype" min="0" max="3" value="3">
+				<span id="hbassharmtype-value" class="slider-value">3</span>
+				<span id="hbassharmtype-default" class="default-value">(Default: 3)</span>
 			</div>
 			<div id="hbassharmmixfreqminContainer" class="slider-container expert-only">
 				<label for="hbassharmmixfreqmin" data-lang-key="min_mix_frequency">Min Mix Frequency:</label>
@@ -415,22 +478,38 @@
 				<span id="hbasslingain-value" class="slider-value">7</span>
 				<span id="hbasslingain-default" class="default-value">(Default: 7)</span>
 			</div>
-		</div>
+			<div id="hbasscompstrengthContainer" class="slider-container expert-only">
+				<label for="hbasscompstrength" data-lang-key="bass_compressor_strength">Bass Compressor Strength:</label>
+				<input type="range" id="hbasscompstrength" min="0" max="10" value="0">
+				<span id="hbasscompstrength-value" class="slider-value">0</span>
+				<span id="hbasscompstrength-default" class="default-value">(Default: 0)</span>
+			</div>
+		</details>
 
 		<!-- Headphone Volume Booster -->
-		<div id="hvolboost-section" class="section visible">
+		<details id="hvolboost-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="headphone_volume_booster">Headphone Volume Booster</h3>
+			</summary>
 			<div id="hvolboostContainer" class="slider-container">
 				<label for="hvolboost" data-lang-key="boost_in_db">Boost in dB:</label>
 				<input type="range" id="hvolboost" min="-15" max="15" value="0">
-				<span id="hvolboost-value" class="slider-value">0</span>
+				<span id="hvolboost-value" class="slider-value" class="slider-value">0</span>
 				<span id="hvolboost-default" class="default-value">(Default: 0)</span>
 			</div>
-		</div>
-
+			<h3 data-lang-key="headphone_volume_balancer">Headphone Volume Balancer</h3>
+			<div id="hvolbalanceContainer" class="slider-container">
+				<label for="hvolbalance" data-lang-key="boost_in_db">Boost in dB:</label>
+				<input type="range" id="hvolbalance" min="-15" max="15" value="0">
+				<span id="hvolbalance-value" class="slider-value" class="slider-value">0</span>
+				<span id="hvolbalance-default" class="default-value">(Default: 0)</span>
+			</div>
+		</details>
 		<!-- Dialog Enhancer -->
-		<div id="hde-section" class="section visible">
+		<details id="hde-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="dialog_enhancer">Dialog Enhancer</h3>
+			</summary>
 			<div id="hdeContainer" class="select-container">
 				<label for="hde" data-lang-key="enabled">Enabled:</label>
 				<select id="hde">
@@ -443,20 +522,22 @@
 			<div id="hdeaContainer" class="slider-container">
 				<label for="hdea" data-lang-key="strength">Strength:</label>
 				<input type="range" id="hdea" min="1" max="10" value="6">
-				<span id="hdea-value" class="slider-value">6</span>
+				<span id="hdea-value" class="slider-value" class="slider-value">6</span>
 				<span id="hdea-default" class="default-value">(Default: 6)</span>
 			</div>
 			<div id="hdedContainer" class="slider-container">
 				<label for="hded" data-lang-key="ducking">Ducking:</label>
 				<input type="range" id="hded" min="0" max="10" value="0">
-				<span id="hded-value" class="slider-value">0</span>
+				<span id="hded-value" class="slider-value" class="slider-value">0</span>
 				<span id="hded-default" class="default-value">(Default: 0)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Virtualizer -->
-		<div id="hvirtualizer-section" class="section visible">
+		<details id="hvirtualizer-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="virtualizer">Virtualizer</h3>
+			</summary>
 			<div id="hvirtualizerContainer" class="select-container">
 				<label for="hvirtualizer" data-lang-key="virtualizer">Virtualizer:</label>
 				<select id="hvirtualizer">
@@ -511,62 +592,66 @@
 					<option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
 					<option value="200,32568,15164,8090,1,2,2,1" data-lang-key="ShadoV_favorite_1">ShadoV Favorite 1</option>
 					<option value="200,32568,15164,8090,1,2,3,1" data-lang-key="ShadoV_favorite_2">ShadoV Favorite 2</option>
-					<option value="160,85000,42000,12000,0,1,1,1" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
+					<option value="360,65535,12288,8192,0,2,3,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
 					<option value="custom" data-lang-key="custom">Custom</option>
 				</select>
 				<span id="hadvirtrend-values"></span>
-				<div id="customInput">
-					<input type="number" id="val1" value="160" min="0" max="512">
-					<input type="number" id="val2" value="55000" min="0" max="65535">
-					<input type="number" id="val3" value="24000" min="0" max="65535">
-					<input type="number" id="val4" value="10000" min="0" max="65535">
+				<div id="customInput" class="input-group">
+					<input type="number" id="val1" value="103">
+					<input type="number" id="val2" value="32568">
+					<input type="number" id="val3" value="11164">
+					<input type="number" id="val4" value="5090">
 					<input type="number" id="val5" value="0" min="0" max="3">
-					<input type="number" id="val6" value="1" min="0" max="3">
-					<input type="number" id="val7" value="1" min="0" max="3">
+					<input type="number" id="val6" value="3" min="0" max="3">
+					<input type="number" id="val7" value="3" min="0" max="3">
 					<input type="number" id="val8" value="3" min="0" max="3">
 					<div id="errorMessage"></div>
 				</div>
 				<span id="hadvirtrend-default" class="default-value">(Default: ShadoV Favorite 3)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Volume Leveler -->
-		<div id="hleveler-section" class="section visible">
+		<details id="hleveler-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="volume_leveler">Volume Leveler</h3>
+			</summary>
 			<div id="hlevelerContainer" class="toggle-container">
 				<label for="hleveler" data-lang-key="enabled">Enabled:</label>
 				<button id="hleveler" class="toggle-btn" data-state="false">OFF</button>
 				<span id="hleveler-default" class="default-value">(Default: OFF)</span>
 			</div>
 			<div id="hlevstrContainer" class="slider-container expert-only">
-				<label for="hlevstr" data-lang-key="strength">Strength:</label>
+				<label for="hlevstr" data-lang-key="volmax_boost">Volume Max Boost:</label>
 				<input type="range" id="hlevstr" min="0" max="10" value="3">
 				<span id="hlevstr-value" class="slider-value">3</span>
 				<span id="hlevstr-default" class="default-value">(Default: 3)</span>
 			</div>
 			<div id="hlevamountContainer" class="slider-container expert-only">
-				<label for="hlevamount" data-lang-key="reaction_speed">Reaction Speed:</label>
+				<label for="hlevamount" data-lang-key="leveler_responsiveness">Leveler Responsiveness:</label>
 				<input type="range" id="hlevamount" min="0" max="10" value="0">
 				<span id="hlevamount-value" class="slider-value">0</span>
 				<span id="hlevamount-default" class="default-value">(Default: 0)</span>
 			</div>
 			<div id="hlevtargetinContainer" class="slider-container expert-only">
-				<label for="hlevtargetin" data-lang-key="peak_attenuation">Peak Attenuation:</label>
-				<input type="range" id="hlevtargetin" min="1" max="10" value="6">
+				<label for="hlevtargetin" data-lang-key="leveler_target_in">Leveler Target-in:</label>
+				<input type="range" id="hlevtargetin" min="1" max="15" value="6">
 				<span id="hlevtargetin-value" class="slider-value">6</span>
 				<span id="hlevtargetin-default" class="default-value">(Default: 6)</span>
 			</div>
 			<div id="hlevtargetoutContainer" class="slider-container expert-only">
-				<label for="hlevtargetout" data-lang-key="signal_mod">Signal Mod:</label>
-				<input type="range" id="hlevtargetout" min="1" max="10" value="6">
+				<label for="hlevtargetout" data-lang-key="leveler_target_out">Leveler Target-out:</label>
+				<input type="range" id="hlevtargetout" min="1" max="15" value="6">
 				<span id="hlevtargetout-value" class="slider-value">6</span>
 				<span id="hlevtargetout-default" class="default-value">(Default: 6)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Regulator -->
-		<div id="hregulator-section" class="section visible ">
+		<details id="hregulator-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="regulator">Regulator</h3>
+			</summary>
 			<div id="hregulatorContainer" class="toggle-container">
 				<label for="hregulator" data-lang-key="regulator">Regulator Toggle:</label>
 				<button id="hregulator" class="toggle-btn active" data-state="true">ON</button>
@@ -578,45 +663,45 @@
 				<span id="hregoverdrive-value" class="slider-value">0</span>
 				<span id="hregoverdrive-default" class="default-value">(Default: 0)</span>
 			</div>
-			<div id="htimbreContainer" class="select-container">
+			<div id="htimbreContainer" class="slider-container">
 				<label for="htimbre" data-lang-key="timbre_preservation">Timbre Preservation:</label>
-				<select id="htimbre">
-					<option value="1" data-lang-key="level_1">1</option>
-					<option value="2" data-lang-key="level_2">2</option>
-					<option value="3" data-lang-key="level_3">3</option>
-					<option value="4" data-lang-key="level_4">4</option>
-				</select>
-				<span id="htimbre-default" class="default-value">(Default: 2)</span>
+				<input type="range" id="htimbre" min="0" max="10" value="3">
+				<span id="htimbre-value" class="slider-value">3</span>
+				<span id="htimbre-default" class="default-value">(Default: 3)</span>
 			</div>
-		</div>
-		<div id="htunedrateContainer" class="section visible">
-	    <label data-lang-key="htunedrate">Tuned Sample Rate:</label>
-	    <select id="htunedrate">
-	        <option value="44100" data-lang-key="samplerate_44100">44100 Hz</option>
-	        <option value="48000" data-lang-key="samplerate_48000">48000 Hz</option>
-	        <option value="88200" data-lang-key="samplerate_88200">88200 Hz</option>
-	        <option value="96000" data-lang-key="samplerate_96000">96000 Hz</option>
-	        <option value="176400" data-lang-key="samplerate_176400">176400 Hz</option>
-	        <option value="192000" data-lang-key="samplerate_192000">192000 Hz</option>
-	        <option value="352800" data-lang-key="samplerate_352800">352800 Hz</option>
-	        <option value="384000" data-lang-key="samplerate_384000">384000 Hz</option>
-	    </select>
-	    <span id="htunedrate-default">(Default: 48000)</span>
-	</div>
-		
-	<div id="h_output_channelsContainer" class="section visible">
-	    <label data-lang-key="h_output_channels">Output Channels:</label>
-	    <select id="h_output_channels">
-	        <option value="1">1</option>
-	        <option value="2">2</option>
-	        <option value="4">4</option>
-	        <option value="7">7</option>
-	        <option value="8">8</option>
-	        <option value="12">12</option>
-	        <option value="14">14</option>
-	    </select>
-	    <span id="h_output_channels-default">(Default: 2)</span>
-	</div>
+		</details>
+		<details id="htunedrateContainer" class="section visible">
+			<summary>
+			<h3 data-lang-key="experimental">Experimental</h3>
+			</summary>
+			<div id="htunedrate" class="select-container">
+		    <label data-lang-key="htunedrate">Tuned Sample Rate:</label>
+		    <select id="htunedrate">
+		        <option value="44100" data-lang-key="samplerate_44100">44100 Hz</option>
+		        <option value="48000" data-lang-key="samplerate_48000">48000 Hz</option>
+		        <option value="88200" data-lang-key="samplerate_88200">88200 Hz</option>
+		        <option value="96000" data-lang-key="samplerate_96000">96000 Hz</option>
+		        <option value="176400" data-lang-key="samplerate_176400">176400 Hz</option>
+		        <option value="192000" data-lang-key="samplerate_192000">192000 Hz</option>
+		        <option value="352800" data-lang-key="samplerate_352800">352800 Hz</option>
+		        <option value="384000" data-lang-key="samplerate_384000">384000 Hz</option>
+		    </select>
+		    <span id="htunedrate-default" class="default-value">(Default: 48000)</span>
+		    </div>
+		    <div id="h_output_channel" class="select-container">
+		    <label data-lang-key="h_output_channels">Output Channels:</label>
+		    <select id="h_output_channels">
+		        <option value="1">1</option>
+		        <option value="2">2</option>
+		        <option value="4">4</option>
+		        <option value="7">7</option>
+		        <option value="8">8</option>
+		        <option value="12">12</option>
+		        <option value="14">14</option>
+		    </select>
+		    <span id="h_output_channels-default" class="default-value">(Default: 2)</span>
+	    	</div>
+		</details>
 	</div>
 	<div id="speaker-group" class="tuning-group">
 		<!-- Speaker Tuning -->
@@ -630,8 +715,10 @@
 		</div>
 
 		<!-- Intelligent EQ -->
-		<div id="sieq-section" class="section visible">
+		<details id="sieq-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="intelligent_eq">Intelligent EQ</h3>
+			</summary>
 			<div id="sieqContainer" class="select-container">
 				<label for="sieq" data-lang-key="preset">Preset:</label>
 				<select id="sieq">
@@ -648,32 +735,186 @@
 				<span id="sieqstr-value" class="slider-value">6</span>
 				<span id="sieqstr-default" class="default-value">(Default: 6)</span>
 			</div>
+		</details>
+	<details id="equalizer-section" class="section visible">
+		<summary>
+		<h3 data-lang-key="speaker_equalizer">Speaker Equalizer</h3>
+		</summary>
+		<div class="equalizer-container">
+			<div class="select-container">
+				<label for="seqpreset">Preset:</label>
+				<select id="seqpreset" data-lang-key="preset" style="visibility: visible !important; display:block !important;">
+					<option value="flat" data-lang-key="flat">Flat</option>
+					<option value="bass_emphasis" data-lang-key="bass_emphasis">Bass Emphasis</option>
+					<option value="treble_emphasis" data-lang-key="treble_emphasis">Treble Emphasis</option>
+					<option value="vocal_clarity" data-lang-key="vocal_clarity">Vocal Clarity</option>
+					<option value="pop_rock" data-lang-key="pop_rock">Pop/Rock</option>
+					<option value="electro_dance" data-lang-key="electro_dance">Electro/Dance</option>
+					<option value="edm" data-lang-key="edm">EDM</option>
+					<option value="drum_bass" data-lang-key="drum_bass">Drum & Bass</option>
+					<option value="classical_acoustic" data-lang-key="classical_acoustic">Classical/Acoustic</option>
+					<option value="metal" data-lang-key="metal">Metal</option>
+					<option value="reggae" data-lang-key="reggae">Drum & Bass</option>
+					<option value="loudness" data-lang-key="loudness">Loudness</option>
+					<option value="custom" data-lang-key="custom">Custom</option>
+				</select>
+				<span id="seqpreset-default" class="default-value"></span>
+			</div>
+			<div class="sticky-action-bar">
+			    <button id="slidershrinkseq" data-lang-key="shrink_sliders">Shrink sliders</button>
+			    <button id="sliderexpandseq" data-lang-key="expand_sliders">Expand sliders</button>
+			    <button id="resetCustomEqseq" data-lang-key="reset_custom_eq">Reset Custom Equalizer</button>
+			</div>
+			<div class="eq-sliders" id="seqCustomEqContainer">
+				<div class="slider-container">
+					<span class="slider-value" id="seq47-value">0 dB</span>
+					<span id="seq47-default"></span>
+					<input type="range" orient="vertical" id="seq47" name="SEQ_47" min="-12" max="12" value="0" step="0.5">
+					<label>47 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq141-value">0 dB</span>
+					<span id="seq141-default"></span>
+					<input type="range" orient="vertical" id="seq141" name="SEQ_141" min="-12" max="12" value="0" step="0.5">
+					<label>141 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq234-value">0 dB</span>
+					<span id="seq234-default"></span>
+					<input type="range" orient="vertical" id="seq234" name="SEQ_234" min="-12" max="12" value="0" step="0.5">
+					<label>234 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq328-value">0 dB</span>
+					<span id="seq328-default"></span>
+					<input type="range" orient="vertical" id="seq328" name="SEQ_328" min="-12" max="12" value="0" step="0.5">
+					<label>328 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq469-value">0 dB</span>
+					<span id="seq469-default"></span>
+					<input type="range" orient="vertical" id="seq469" name="SEQ_469" min="-12" max="12" value="0" step="0.5">
+					<label>469 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq656-value">0 dB</span>
+					<span id="seq656-default"></span>
+					<input type="range" orient="vertical" id="seq656" name="SEQ_656" min="-12" max="12" value="0" step="0.5">
+					<label>656 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq844-value">0 dB</span>
+					<span id="seq844-default"></span>
+					<input type="range" orient="vertical" id="seq844" name="SEQ_844" min="-12" max="12" value="0" step="0.5">
+					<label>844 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq1031-value">0 dB</span>
+					<span id="seq1031-default"></span>
+					<input type="range" orient="vertical" id="seq1031" name="SEQ_1031" min="-12" max="12" value="0" step="0.5">
+					<label>1031 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq1313-value">0 dB</span>
+					<span id="seq1313-default"></span>
+					<input type="range" orient="vertical" id="seq1313" name="SEQ_1313" min="-12" max="12" value="0" step="0.5">
+					<label>1313 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq1688-value">0 dB</span>
+					<span id="seq1688-default"></span>
+					<input type="range" orient="vertical" id="seq1688" name="SEQ_1688" min="-12" max="12" value="0" step="0.5">
+					<label>1688 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq2250-value">0 dB</span>
+					<span id="seq2250-default"></span>
+					<input type="range" orient="vertical" id="seq2250" name="SEQ_2250" min="-12" max="12" value="0" step="0.5">
+					<label>2250 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq3000-value">0 dB</span>
+					<span id="seq3000-default"></span>
+					<input type="range" orient="vertical" id="seq3000" name="SEQ_3000" min="-12" max="12" value="0" step="0.5">
+					<label>3000 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq3750-value">0 dB</span>
+					<span id="seq3750-default"></span>
+					<input type="range" orient="vertical" id="seq3750" name="SEQ_3750" min="-12" max="12" value="0" step="0.5">
+					<label>3750 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq4688-value">0 dB</span>
+					<span id="seq4688-default"></span>
+					<input type="range" orient="vertical" id="seq4688" name="SEQ_4688" min="-12" max="12" value="0" step="0.5">
+					<label>4688 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq5813-value">0 dB</span>
+					<span id="seq5813-default"></span>
+					<input type="range" orient="vertical" id="seq5813" name="SEQ_5813" min="-12" max="12" value="0" step="0.5">
+					<label>5813 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq7125-value">0 dB</span>
+					<span id="seq7125-default"></span>
+					<input type="range" orient="vertical" id="seq7125" name="SEQ_7125" min="-12" max="12" value="0" step="0.5">
+					<label>7125 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq9000-value">0 dB</span>
+					<span id="seq9000-default"></span>
+					<input type="range" orient="vertical" id="seq9000" name="SEQ_9000" min="-12" max="12" value="0" step="0.5">
+					<label>9000 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq11250-value">0 dB</span>
+					<span id="seq11250-default"></span>
+					<input type="range" orient="vertical" id="seq11250" name="SEQ_11250" min="-12" max="12" value="0" step="0.5">
+					<label>11250 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq13875-value">0 dB</span>
+					<span id="seq13875-default"></span>
+					<input type="range" orient="vertical" id="seq13875" name="SEQ_13875" min="-12" max="12" value="0" step="0.5">
+					<label>13875 Hz</label>
+				</div>
+				<div class="slider-container">
+					<span class="slider-value" id="seq19688-value">0 dB</span>
+					<span id="seq19688-default"></span>
+					<input type="range" orient="vertical" id="seq19688" name="SEQ_19688" min="-12" max="12" value="0" step="0.5">
+					<label>19688 Hz</label>
+				</div>
+			</div>
 		</div>
-
+	</details>
 		<!-- Bass Enhancer -->
-		<div id="sbass-boost-section" class="section visible">
+		<details id="sbass-boost-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="bass_boost">Bass Boost</h3>
+			</summary>
 			<div id="srenderbassContainer" class="toggle-container">
 				<h4 data-lang-key="bass_toggle">Bass Enhancer <-> Virtual Bass Toggle:</h4>
-				<button id="srenderbass" class="toggle-btn" data-state="false">VB</button>
+				<button id="srenderbass" class="button" data-state="false">VB</button>
 				<span id="srenderbass-default" class="default-value">(Default: VB)</span>
 				<span id="vb-warning-speaker"></span>
 			</div>
 			<div id="sbassboostContainer" class="slider-container">
-				<label for="sbassboost" data-lang-key="bass_enhancer_strength">Bass Enhancer Strength:</label>
+				<label for="sbassboost" data-lang-key="bass_enhancer_boost">Bass Enhancer Strength:</label>
 				<input type="range" id="sbassboost" min="0" max="15" value="6">
 				<span id="sbassboost-value" class="slider-value">6</span>
 				<span id="sbassboost-default" class="default-value">(Default: 6)</span>
 			</div>
 		<!-- Bass Harmonics -->
-			<div id="sbassharmtypeContainer" class="select-container expert-only">
+			<div id="sbassharmtextContainer" class="expert-only">
+				<h3 data-lang-key="virtual_bass">Virtual Bass</h3>
+			</div>
+			<div id="sbassharmtypeContainer" class="slider-container expert-only">
 				<label for="sbassharmtype" data-lang-key="harmonics_type">Harmonics Type:</label>
-				<select id="sbassharmtype">
-					<option value="1" data-lang-key="first_harmonic">First Harmonic</option>
-					<option value="2" data-lang-key="more_harmonics">More Harmonics</option>
-					<option value="3" data-lang-key="extra_harmonics">Extra Harmonics</option>
-				</select>
-				<span id="sbassharmtype-default" class="default-value">(Default: Extra Harmonics)</span>
+				<input type="range" id="sbassharmtype" min="0" max="3" value="3">
+				<span id="sbassharmtype-value" class="slider-value">3</span>
+				<span id="sbassharmtype-default" class="default-value">(Default: 3)</span>
 			</div>
 			<div id="sbassharmboostContainer" class="slider-container expert-only">
 				<label for="sbassharmboost" data-lang-key="harmonics_boost">Harmonics Boost:</label>
@@ -687,22 +928,32 @@
 				<span id="sbasslingain-value" class="slider-value">6</span>
 				<span id="sbasslingain-default" class="default-value">(Default: 6)</span>
 			</div>
-		</div>
+			<div id="sbasscompstrengthContainer" class="slider-container expert-only">
+				<label for="sbasscompstrength" data-lang-key="bass_compressor_strength">Bass Compressor Strength:</label>
+				<input type="range" id="sbasscompstrength" min="0" max="10" value="0">
+				<span id="sbasscompstrength-value" class="slider-value">0</span>
+				<span id="sbasscompstrength-default" class="default-value">(Default: 0)</span>
+			</div>
+		</details>
 
 		<!-- Speaker Volume Booster -->
-		<div id="svolboost-section" class="section visible">
+		<details id="svolboost-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="speaker_volume_booster">Speaker Volume Booster</h3>
+			</summary>
 			<div id="svolboostContainer" class="slider-container">
 				<label for="svolboost" data-lang-key="boost_in_db">Boost in dB:</label>
 				<input type="range" id="svolboost" min="-15" max="15" value="0">
 				<span id="svolboost-value" class="slider-value">0</span>
 				<span id="svolboost-default" class="default-value">(Default: 0)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Dialog Enhancer -->
-		<div id="sde-section" class="section visible">
+		<details id="sde-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="dialog_enhancer">Dialog Enhancer</h3>
+			</summary>
 			<div id="sdeContainer" class="select-container">
 				<label for="sde" data-lang-key="enabled">Enabled:</label>
 				<select id="sde">
@@ -715,20 +966,22 @@
 			<div id="sdeaContainer" class="slider-container">
 				<label for="sdea" data-lang-key="strength">Strength:</label>
 				<input type="range" id="sdea" min="1" max="10" value="6">
-				<span id="sdea-value" class="slider-value">6</span>
+				<span id="sdea-value" class="slider-value" class="slider-value">6</span>
 				<span id="sdea-default" class="default-value">(Default: 6)</span>
 			</div>
 			<div id="sdedContainer" class="slider-container">
 				<label for="sded" data-lang-key="ducking">Ducking:</label>
 				<input type="range" id="sded" min="0" max="10" value="0">
-				<span id="sded-value" class="slider-value">0</span>
+				<span id="sded-value" class="slider-value" class="slider-value">0</span>
 				<span id="sded-default" class="default-value">(Default: 0)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Virtualizer -->
-		<div id="svirtualizer-section" class="section visible">
+		<details id="svirtualizer-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="virtualizer">Virtualizer</h3>
+			</summary>
 			<div id="svirtualizerContainer" class="select-container">
 				<label for="svirtualizer" data-lang-key="virtualizer">Virtualizer:</label>
 				<select id="svirtualizer">
@@ -762,109 +1015,419 @@
 					<option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
 					<option value="200,32568,15164,8090,1,2,2,1" data-lang-key="ShadoV_favorite_1">ShadoV Favorite 1</option>
 					<option value="200,32568,15164,8090,1,2,3,1" data-lang-key="ShadoV_favorite_2">ShadoV Favorite 2</option>
-					<option value="160,85000,42000,12000,0,1,1,1" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
+					<option value="360,65535,12288,8192,0,2,3,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
 					<option value="custom" data-lang-key="custom">Custom</option>
 				</select>
 				<span id="sadvirtrend-values"></span>
-				<div id="scustomInput">
-					<input type="number" id="sval1" svalue="160" min="0" max="512">
-					<input type="number" id="sval2" svalue="55000" min="0" max="65535">
-					<input type="number" id="sval3" svalue="24000" min="0" max="65535">
-					<input type="number" id="sval4" svalue="10000" min="0" max="65535">
-					<input type="number" id="sval5" svalue="0" min="0" max="3">
-					<input type="number" id="sval6" svalue="1" min="0" max="3">
-					<input type="number" id="sval7" svalue="1" min="0" max="3">
-					<input type="number" id="sval8" svalue="3" min="0" max="3">
+				<div id="scustomInput" class="input-group">
+					<input type="number" id="sval1" value="103">
+					<input type="number" id="sval2" value="32568">
+					<input type="number" id="sval3" value="11164">
+					<input type="number" id="sval4" value="5090">
+					<input type="number" id="sval5" value="0" min="0" max="3">
+					<input type="number" id="sval6" value="3" min="0" max="3">
+					<input type="number" id="sval7" value="3" min="0" max="3">
+					<input type="number" id="sval8" value="3" min="0" max="3">
 					<div id="serrorMessage"></div>
 				</div>
-				<span id="sadvirtrend-default" class="default-value">(Default: 103,32568,11164,5090,0,3,3,3)</span>
+				<span id="sadvirtrend-default" class="default-value">(Default: Stock)</span>
 			</div>
-		</div>
+		</details>
 
 		<!-- Volume Leveler -->
-		<div id="sleveler-section" class="section visible">
+		<details id="sleveler-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="volume_leveler">Volume Leveler</h3>
+			</summary>
 			<div id="slevelerContainer" class="toggle-container">
 				<label for="sleveler" data-lang-key="enabled">Enabled:</label>
 				<button id="sleveler" class="toggle-btn" data-state="false">OFF</button>
 				<span id="sleveler-default" class="default-value">(Default: OFF)</span>
 			</div>
 			<div id="slevstrContainer" class="slider-container expert-only">
-				<label for="slevstr" data-lang-key="strength">Strength:</label>
+				<label for="slevstr" data-lang-key="volmax_boost">Volume Max Boost:</label>
 				<input type="range" id="slevstr" min="0" max="10" value="3">
 				<span id="slevstr-value" class="slider-value">3</span>
 				<span id="slevstr-default" class="default-value">(Default: 3)</span>
 			</div>
 			<div id="slevamountContainer" class="slider-container expert-only">
-				<label for="slevamount" data-lang-key="reaction_speed">Reaction Speed:</label>
+				<label for="slevamount" data-lang-key="leveler_responsiveness">Leveler Responsiveness:</label>
 				<input type="range" id="slevamount" min="0" max="10" value="0">
 				<span id="slevamount-value" class="slider-value">0</span>
 				<span id="slevamount-default" class="default-value">(Default: 0)</span>
 			</div>
 			<div id="slevtargetinContainer" class="slider-container expert-only">
-				<label for="slevtargetin" data-lang-key="peak_attenuation">Peak Attenuation:</label>
-				<input type="range" id="slevtargetin" min="1" max="10" value="6">
+				<label for="slevtargetin" data-lang-key="leveler_target_in">Leveler Target-in:</label>
+				<input type="range" id="slevtargetin" min="1" max="15" value="6">
 				<span id="slevtargetin-value" class="slider-value">6</span>
 				<span id="slevtargetin-default" class="default-value">(Default: 6)</span>
 			</div>
 			<div id="slevtargetoutContainer" class="slider-container expert-only">
-				<label for="slevtargetout" data-lang-key="signal_mod">Signal Mod:</label>
-				<input type="range" id="slevtargetout" min="1" max="10" value="6">
+				<label for="slevtargetout" data-lang-key="leveler_target_out">Leveler Target-out:</label>
+				<input type="range" id="slevtargetout" min="1" max="15" value="6">
 				<span id="slevtargetout-value" class="slider-value">6</span>
 				<span id="slevtargetout-default" class="default-value">(Default: 6)</span>
 			</div>
-		</div>
-
+		</details>
 		<!-- Regulator -->
-		<div id="stimbre-section" class="section visible">
+		<details id="stimbre-section" class="section visible">
+			<summary>
 			<h3 data-lang-key="regulator">Regulator</h3>
-			<div id="stimbreContainer" class="select-container">
+			</summary>
+			<div id="stimbreContainer" class="slider-container">
 				<label for="stimbre" data-lang-key="timbre_preservation">Timbre Preservation:</label>
-				<select id="stimbre">
-					<option value="1" data-lang-key="level_1">1</option>
-					<option value="2" data-lang-key="level_2">2</option>
-					<option value="3" data-lang-key="level_3">3</option>
-					<option value="4" data-lang-key="level_4">4</option>
-				</select>
-				<span id="stimbre-default" class="default-value">(Default: 2)</span>
+				<input type="range" id="stimbre" min="0" max="10" value="3">
+				<span id="stimbre-value" class="slider-value">3</span>
+				<span id="stimbre-default" class="default-value">(Default: 3)</span>
 			</div>
-		</div>
+		</details>
 		
-	<div id="stunedrateContainer" class="section visible">
-	    <label data-lang-key="stunedrate">Tuned Sample Rate:</label>
-	    <select id="stunedrate">
-	        <option value="44100" data-lang-key="samplerate_44100">44100 Hz</option>
-	        <option value="48000" data-lang-key="samplerate_48000">48000 Hz</option>
-	        <option value="88200" data-lang-key="samplerate_88200">88200 Hz</option>
-	        <option value="96000" data-lang-key="samplerate_96000">96000 Hz</option>
-	        <option value="176400" data-lang-key="samplerate_176400">176400 Hz</option>
-	        <option value="192000" data-lang-key="samplerate_192000">192000 Hz</option>
-	        <option value="352800" data-lang-key="samplerate_352800">352800 Hz</option>
-	        <option value="384000" data-lang-key="samplerate_384000">384000 Hz</option>
-	    </select>
-	    <span id="stunedrate-default">(Default: 48000)</span>
-	</div>
-		
-	<div id="s_output_channelsContainer" class="section visible">
-	    <label data-lang-key="s_output_channels">Output Channels:</label>
-	    <select id="s_output_channels">
-	        <option value="1">1</option>
-	        <option value="2">2</option>
-	        <option value="4">4</option>
-	        <option value="7">7</option>
-	        <option value="8">8</option>
-	        <option value="12">12</option>
-	        <option value="14">14</option>
-	    </select>
-	    <span id="s_output_channels-default">(Default: 2)</span>
-	</div>
+		<details id="stunedrateContainer" class="section visible">
+			<summary>
+			<h3 data-lang-key="experimental">Experimental</h3>
+			</summary>
+			<div id="stunedrate" class="select-container">
+		    <label data-lang-key="stunedrate">Tuned Sample Rate:</label>
+		    <select id="stunedrate">
+		        <option value="44100" data-lang-key="samplerate_44100">44100 Hz</option>
+		        <option value="48000" data-lang-key="samplerate_48000">48000 Hz</option>
+		        <option value="88200" data-lang-key="samplerate_88200">88200 Hz</option>
+		        <option value="96000" data-lang-key="samplerate_96000">96000 Hz</option>
+		        <option value="176400" data-lang-key="samplerate_176400">176400 Hz</option>
+		        <option value="192000" data-lang-key="samplerate_192000">192000 Hz</option>
+		        <option value="352800" data-lang-key="samplerate_352800">352800 Hz</option>
+		        <option value="384000" data-lang-key="samplerate_384000">384000 Hz</option>
+		    </select>
+		    <span id="stunedrate-default" class="default-value">(Default: 48000)</span>
+		    </div>
+		    <div id="s_output_channel" class="select-container">
+		    <label data-lang-key="s_output_channels">Output Channels:</label>
+		    <select id="s_output_channels">
+		        <option value="1">1</option>
+		        <option value="2">2</option>
+		        <option value="4">4</option>
+		        <option value="7">7</option>
+		        <option value="8">8</option>
+		        <option value="12">12</option>
+		        <option value="14">14</option>
+		    </select>
+		    <span id="s_output_channels-default" class="default-value">(Default: 2)</span>
+	    	</div>
+		</details>
 	</div>
 
-	<div class="section visible" id="output-section">
+	<details class="section visible" id="output-section">
+		<summary>
 		<h3 data-lang-key="output">Output</h3>
+		</summary>
 		<textarea id="output" readonly></textarea>
+	</details>
+	
+	<div id="sticky-footer-nav">
+		<button id="headphone-toggle" class="nav-tab active">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+				<path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+			</svg>
+			<span style="margin-top: 4px;">HEADPHONES</span>
+		</button>
+		<button id="speaker-toggle" class="nav-tab">
+			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+				<circle cx="12" cy="14" r="4"></circle>
+				<line x1="12" y1="6" x2="12.01" y2="6"></line>
+			</svg>
+			<span style="margin-top: 4px;">SPEAKERS</span>
+		</button>
 	</div>
 
-	<script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
+
+	<script>
+		const themeVariables = [
+			{ id: 'c_bg_app', cssVar: '--bg-app', default: '#121212' },
+			{ id: 'c_bg_card', cssVar: '--bg-card', default: '#1E1E1E' },
+			{ id: 'c_bg_nav', cssVar: '--bg-nav', default: '#121212' },
+			{ id: 'c_input_bg', cssVar: '--input-bg', default: '#2C2C2C' },
+			{ id: 'c_log_bg', cssVar: '--log-bg', default: '#000000' },
+			{ id: 'c_text_main', cssVar: '--text-main', default: '#E0E0E0' },
+			{ id: 'c_text_muted', cssVar: '--text-muted', default: '#A0A0A0' },
+			{ id: 'c_border', cssVar: '--border', default: '#333333' },
+			{ id: 'c_danger', cssVar: '--danger', default: '#FF5555' },
+			{ id: 'c_log_text', cssVar: '--log-text', default: '#00FF00' },
+			{ id: 'c_log_border', cssVar: '--log-border', default: '#00E5FF' },
+			{ id: 'c_accent', cssVar: '--accent', default: '#00E5FF' },
+			{ id: 'c_accent_glow', cssVar: '--accent-glow', default: 'rgba(0, 229, 255, 0.4)' },
+			{ id: 'c_accent_dim', cssVar: '--accent-dim', default: 'rgba(0, 229, 255, 0.05)' },
+			{ id: 'c_btn_bg', cssVar: '--button-background', default: '#2C2C2C' },
+			{ id: 'c_btn_act_bg', cssVar: '--button-active-background', default: '#00E5FF' },
+			{ id: 'c_btn_text', cssVar: '--button-text', default: '#E0E0E0' },
+			{ id: 'c_btn_act_text', cssVar: '--button-active-text', default: '#000000' },
+			{ id: 'c_slider_track', cssVar: '--slider-track', default: '#333333' },
+			{ id: 'c_slider_thumb', cssVar: '--slider-thumb', default: '#E0E0E0' },
+			{ id: 'c_slider_thumb_border', cssVar: '--slider-thumb-border', default: '#00E5FF' }
+		];
+	
+		function initThemeSelector() {
+			const themeSelect = document.getElementById('themeSelect');
+			if (!themeSelect) return; // Guard clause if themeSelect is missing
+	
+			const savedTheme = localStorage.getItem('appTheme') || 'default';
+			const foundThemes = new Set();
+			
+			for (let sheet of document.styleSheets) {
+				try {
+					for (let rule of sheet.cssRules) {
+						if (rule.selectorText && rule.selectorText.includes('[data-theme=')) {
+							const match = rule.selectorText.match(/\[data-theme=["']?([^"']+)["']?\]/);
+							if (match && match[1]) {
+								foundThemes.add(match[1]);
+							}
+						}
+					}
+				} catch (e) {
+					console.warn("Cannot read CSS rules (possible CORS or WebView restriction).", e);
+				}
+			}
+	
+			foundThemes.forEach(themeId => {
+				if (!themeSelect.querySelector(`option[value="${themeId}"]`)) {
+					const themeName = themeId.split('-')
+						.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+						.join(' ');
+	
+					const option = document.createElement('option');
+					option.value = themeId;
+					option.textContent = themeName;
+					themeSelect.appendChild(option);
+				}
+			});
+			
+			if (!themeSelect.querySelector('option[value="custom"]')) {
+				const customOption = document.createElement('option');
+				customOption.value = 'custom';
+				customOption.textContent = 'Custom DIY Theme';
+				themeSelect.appendChild(customOption);
+			}
+			
+			if (themeSelect.querySelector(`option[value="${savedTheme}"]`)) {
+				themeSelect.value = savedTheme;
+			}
+			
+			changeTheme(savedTheme);
+		}
+		
+		function loadCustomColors() {
+			themeVariables.forEach(item => {
+				const savedValue = localStorage.getItem(`customTheme_${item.cssVar}`) || item.default;
+				const inputElement = document.getElementById(item.id);
+				if (inputElement) {
+					inputElement.value = savedValue;
+					document.documentElement.style.setProperty(item.cssVar, savedValue);
+				}
+			});
+		}
+		
+		function removeCustomColors() {
+			themeVariables.forEach(item => {
+				document.documentElement.style.removeProperty(item.cssVar);
+			});
+		}
+		
+		function changeTheme(themeName) {
+			const customThemePanel = document.getElementById('customThemePanel');
+			
+			document.documentElement.setAttribute('data-theme', themeName);
+			localStorage.setItem('appTheme', themeName);
+			
+			if (themeName === 'custom') {
+				if (customThemePanel) customThemePanel.style.display = 'block';
+				loadCustomColors();
+			} else {
+				if (customThemePanel) customThemePanel.style.display = 'none';
+				removeCustomColors();
+			}
+		}
+		
+		let recentColors = [];
+		try {
+			recentColors = JSON.parse(localStorage.getItem('recentColors')) || [];
+		} catch (e) {
+			console.warn("Could not parse recent colors from localStorage.");
+		}
+		
+		const maxRecentColors = 8;
+		let activeColorInput = null;
+		
+		function renderRecentColors() {
+			const list = document.getElementById('recentColorsList');
+			if (!list) return;
+			
+			list.innerHTML = '';
+			
+			recentColors.forEach(colorHex => {
+				const swatch = document.createElement('div');
+				swatch.className = 'color-swatch';
+				swatch.style.backgroundColor = colorHex;
+				swatch.title = `Apply ${colorHex}`;
+				
+				swatch.addEventListener('click', () => {
+					if (activeColorInput && activeColorInput.type === 'color') {
+						activeColorInput.value = colorHex;
+						activeColorInput.dispatchEvent(new Event('input'));
+					}
+				});
+				
+				list.appendChild(swatch);
+			});
+		}
+		
+		function saveRecentColor(hex) {
+			if (!hex.startsWith('#')) return;
+			
+			recentColors = recentColors.filter(c => c !== hex);
+			recentColors.unshift(hex);
+			
+			if (recentColors.length > maxRecentColors) {
+				recentColors.pop();
+			}
+			
+			localStorage.setItem('recentColors', JSON.stringify(recentColors));
+			renderRecentColors();
+		}
+		
+		function setActiveInput(inputEl, containerEl) {
+			activeColorInput = inputEl;
+			
+			document.querySelectorAll('.toggle-container').forEach(el => el.classList.remove('active-target'));
+			
+			if (containerEl) {
+				containerEl.classList.add('active-target');
+			}
+		}
+		
+		document.addEventListener('DOMContentLoaded', () => {
+			// Initialize themes
+			initThemeSelector();
+			renderRecentColors();
+			
+			// Setup theme color inputs
+			themeVariables.forEach(item => {
+				const inputElement = document.getElementById(item.id);
+				if (!inputElement) return;
+	
+				const container = inputElement.closest('.toggle-container');
+	
+				// Update CSS globally in real-time
+				inputElement.addEventListener('input', (e) => {
+					const newValue = e.target.value;
+					document.documentElement.style.setProperty(item.cssVar, newValue);
+					localStorage.setItem(`customTheme_${item.cssVar}`, newValue);
+				});
+	
+				// UX Improvement: 1st tap selects, 2nd tap opens picker
+				inputElement.addEventListener('click', (e) => {
+					if (activeColorInput !== inputElement) {
+						// Block the native picker on the first tap
+						e.preventDefault();
+						setActiveInput(inputElement, container);
+					}
+				});
+	
+				// Allow tapping the text/empty space to select without opening picker
+				if (container) {
+					container.addEventListener('click', (e) => {
+						// If they didn't click the input directly
+						if (e.target.tagName !== 'INPUT') {
+							setActiveInput(inputElement, container);
+						}
+					});
+				}
+	
+				// Save to history only when user finishes picking the color
+				inputElement.addEventListener('change', (e) => {
+					saveRecentColor(e.target.value);
+				});
+			});
+	
+			// Find all range inputs on the page
+		const allSliders = document.querySelectorAll('input[type="range"]');
+
+		// Loop through each slider and attach the logic
+		allSliders.forEach(slider => {
+			// Find the corresponding span using the ID naming convention
+			const valueSpan = document.getElementById(`${slider.id}-value`);
+
+			// Only proceed if both the slider and its value span exist
+			if (slider && valueSpan) {
+				// Update the span when the slider is dragged
+				slider.addEventListener('input', () => {
+					valueSpan.textContent = slider.value;
+				});
+
+				// Handle click on the value span to convert it to an input field
+				valueSpan.addEventListener('click', () => {
+					const currentValue = valueSpan.textContent;
+					
+					// Create a dynamic input field
+					const inputField = document.createElement('input');
+					inputField.type = 'number';
+					inputField.value = currentValue;
+					
+					// Apply min/max if they exist on the slider
+					if (slider.min) inputField.min = slider.min;
+					if (slider.max) inputField.max = slider.max;
+					
+					// Style the input field to fit nicely in the layout
+					inputField.style.width = '60px';
+					inputField.style.textAlign = 'center';
+					
+					// Replace the span with the new input field
+					valueSpan.replaceWith(inputField);
+					inputField.focus();
+					inputField.select(); // Highlight the text for quick replacing
+
+					// Handle saving the new value
+					const saveValue = () => {
+						let newValue = parseFloat(inputField.value);
+						
+						// Validate the input
+						if (isNaN(newValue)) {
+							newValue = currentValue; // Revert to old value if input is invalid
+						} else {
+							// Respect min and max boundaries if they are defined
+							const min = slider.min ? parseFloat(slider.min) : -Infinity;
+							const max = slider.max ? parseFloat(slider.max) : Infinity;
+							
+							if (newValue < min) newValue = min;
+							if (newValue > max) newValue = max;
+						}
+						
+						// Update the slider and the span
+						slider.value = newValue;
+						valueSpan.textContent = newValue;
+						
+						// Restore the span in the DOM
+						inputField.replaceWith(valueSpan);
+						
+						// Manually trigger the events so other scripts know the value changed
+						slider.dispatchEvent(new Event('input'));
+						slider.dispatchEvent(new Event('change'));
+					};
+
+					// Save the value when the user clicks outside the input
+					inputField.addEventListener('blur', saveValue);
+					
+					// Save the value when the user presses Enter
+					inputField.addEventListener('keypress', (e) => {
+						if (e.key === 'Enter') {
+							saveValue();
+						}
+					});
+				});
+			}
+		});
+	});
+	</script>
 </body>
 </html>

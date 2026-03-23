@@ -31,7 +31,7 @@ HEADPHONETUNING=YES
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, C - Custom, N - no IEQ)
+# (values B - balanced, D - detailed, W - Warm, C - Custom (new ieq profile), CB - Custom (Balanced profile override), N - no IEQ)
 # (default and stock: B)
 
 HIEQ=B
@@ -197,11 +197,30 @@ HBASSLINGAIN=7
 
 -----------------------------------
 
+# This parameter work ONLY with Virtual Bass
+# Here you can set strength of bass compressor
+# Values [0-10] (default: 0)
+
+HBASSCOMPSTRENGTH=0
+
+-----------------------------------
+
 # Headphone Digital Volume booster
 # How much in dB volume should be boosted?
 # values [-15 to 15] (default and stock:0)
 
 HVOLBOOST=0
+
+-----------------------------------
+
+# Headphone Digital Volume balance
+# How much in dB volume should be balanced?
+# -- -15 to -1 means less to right channel (left boost) --
+# -- 0 means balanced volume between channels --
+# -- 1 to 15 means less to left channel (right boost) --
+# values [-15 to 15] (default and stock:0)
+
+HVOLBALANCE=0
 
 -----------------------------------
 
@@ -287,10 +306,10 @@ HVIRTMOD=2
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
+# 360,65535,12288,2048,0,2,3,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
-HADVIRTREND=160,85000,42000,12000,0,1,1,1
+HADVIRTREND=103,32568,11164,5090,0,3,3,3
 
 -----------------------------------
 
@@ -361,9 +380,9 @@ HREGOVERDRIVE=0
 -----------------------------------
 
 # How hard regulator should try to preserve timbre?
-# values [1-4] (default and stock: 2)
+# values [1-10] (default and stock: 3)
 
-HTIMBRE=2
+HTIMBRE=3
 
 -----------------------------------
 
@@ -449,6 +468,14 @@ SBASSLINGAIN=5
 
 -----------------------------------
 
+# This parameter work ONLY with Virtual Bass
+# Here you can set strength of bass compressor
+# Values [0-10] (default: 0)
+
+SBASSCOMPSTRENGTH=0
+
+-----------------------------------
+
 # Speaker Digital Volume booster
 # How much in dB volume should be boosted?
 # values [-15 to 15] (default and stock:0)
@@ -522,7 +549,7 @@ SVIRTMOD=2
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 160,85000,42000,12000,0,1,1,1 (one of my favorite and currently used)
+# 360,65535,12288,2048,0,2,3,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=103,32568,11164,5090,0,3,3,3
@@ -569,9 +596,9 @@ SLEVTARGETOUT=6
 -----------------------------------
 
 # How hard regulator should try to preserve timbre?
-# values [1-4] (default and stock: 2)
+# values [1-10] (default and stock: 3)
 
-STIMBRE=2
+STIMBRE=3
 
 -----------------------------------
 

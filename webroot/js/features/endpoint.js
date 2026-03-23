@@ -1,6 +1,5 @@
 import { state } from '../shared/state.js';
 import { updateOutput } from '../view/renderer.js';
-import { actionLog } from '../shared/utils.js';
 
 export const initEndpointSettings = () => {
     const endpointSelects = [

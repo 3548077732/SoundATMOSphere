@@ -24,7 +24,7 @@ export const initDialogEnhancer = () => {
         });
     }
 
-    // Sliders (hdea, hded, sdea, sded)
+    // Sliders
     const sliders = ['hdea', 'hded', 'sdea', 'sded'];
     sliders.forEach(id => {
         const slider = getDomElement(id);

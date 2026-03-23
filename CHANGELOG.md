@@ -235,8 +235,14 @@
 - WebUI will hide not supported features
 - Banner added (if root solution is supporting it)
 
-## v1.55 (beta)
+## v1.55
 - Complete refactor of sh and WebUI scripts
 - Dolby Media Intelligence Expand
 - Added 20 band GEQ
 - Numerous small improvements
+
+## v1.60
+- Redesign of WebUI
+- Added possibility to customize colors of WebUI
+- Virtual bass improvements
+- Bug fixes

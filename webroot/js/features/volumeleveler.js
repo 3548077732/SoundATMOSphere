@@ -31,7 +31,7 @@ export const initVolumeLeveler = () => {
         });
     }
 
-    // Sliders (strength, reaction speed, peak attenuation, signal mod)
+    // Sliders
     const sliders = ['hlevstr', 'hlevamount', 'hlevtargetin', 'hlevtargetout', 'slevstr', 'slevamount', 'slevtargetin', 'slevtargetout'];
     sliders.forEach(id => {
         const slider = getDomElement(id);

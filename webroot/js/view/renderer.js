@@ -29,7 +29,6 @@ export const toggleVisibility = (section, toggleId, featureKey = null) => {
         }
         return; 
     }
-    const lang = state.domCache.languageSelect ? state.domCache.languageSelect.value : 'en';
     const isSimpleMode = document.body.classList.contains('simple-mode');
     const isSimple = isSimpleMode ? false : toggle.getAttribute('data-state') === 'false';
     
@@ -37,7 +36,7 @@ export const toggleVisibility = (section, toggleId, featureKey = null) => {
         const container = state.domCache[id];
         if (container) {
             const isExpertOnly = container.classList.contains('expert-only');
-            const shouldShow = showWhen.length === 1 ? showWhen(isSimpleMode) : showWhen(isSimple, state.supportedFeatures);
+            const shouldShow = showWhen(isSimpleMode, isSimple, state.supportedFeatures);
             const displayValue = shouldShow && (!isSimpleMode || !isExpertOnly) ? 'block' : 'none';
             container.style.display = displayValue;
             container.style.removeProperty('display');
@@ -71,7 +70,6 @@ export const toggleVisibility = (section, toggleId, featureKey = null) => {
 };
 
 export const updateOutput = () => {
-    const lang = state.domCache.languageSelect?.value || 'en';
     const configString = generateConfigString();
     const outputElement = state.domCache['output'];
     if (outputElement) {
@@ -143,8 +141,6 @@ export const updateDefaultValuesDisplay = () => {
             }
         } else if (['headphonetuning', 'speakertuning', 'hleveler', 'sleveler', 'hregulator', 'dolbymi'].includes(key.toLowerCase())) {
             translatedValue = state.translations[lang][defaultValue.toLowerCase()] || defaultValue;
-        } else if (['hbassharmtype', 'sbassharmtype'].includes(key.toLowerCase())) {
-            translatedValue = state.translations[lang][translationMaps.bassHarmType[defaultValue]] || defaultValue;
         } else if (['hvirtmod', 'svirtmod'].includes(key.toLowerCase())) {
             translatedValue = state.translations[lang][translationMaps.virtMod[defaultValue]] || defaultValue;
         } else if (['hde', 'sde', 'hvirtualizer', 'svirtualizer'].includes(key.toLowerCase())) {

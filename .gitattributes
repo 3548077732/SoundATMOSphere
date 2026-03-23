@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Ustaw domyślne zachowanie na "auto"
+* text=auto eol=lf
+
+# Wymuś LF dla plików shellowych i konfiguracyjnych
+*.sh text eol=lf
+*.rc text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

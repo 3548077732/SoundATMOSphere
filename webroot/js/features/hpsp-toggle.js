@@ -24,7 +24,7 @@ export const initHpSpToggle = () => {
     if (hpToggle) {
         hpToggle.addEventListener('click', () => {
             const isOn = hpToggle.getAttribute('data-state') === 'true';
-            const newState = !isOn; // Zapisujemy nowy stan (true lub false)
+            const newState = !isOn;
 
             hpToggle.setAttribute('data-state', newState);
             hpToggle.textContent = newState ? state.translations[lang]['yes'] : state.translations[lang]['no'];
@@ -44,7 +44,7 @@ export const initHpSpToggle = () => {
     if (spToggle) {
         spToggle.addEventListener('click', () => {
             const isOn = spToggle.getAttribute('data-state') === 'true';
-            const newState = !isOn; // Zapisujemy nowy stan (true lub false)
+            const newState = !isOn;
 
             spToggle.setAttribute('data-state', newState);
             spToggle.textContent = newState ? state.translations[lang]['yes'] : state.translations[lang]['no'];

@@ -1,48 +1,43 @@
 #!/bin/sh
-if [ ! $MODPATH ]; then
+if [ ! "$MODPATH" ]; then
 MODPATH=${0%/*}
 fi
 
 mount -o rw,remount /data
-mount -o rw,remount $MODPATH 2>/dev/null
-if [ ! -d $MODPATH/debug ]; then
-	mkdir $MODPATH/debug
+mount -o rw,remount "$MODPATH" 2>/dev/null
+if [ ! -d "$MODPATH/debug" ]; then
+    mkdir "$MODPATH/debug"
 fi
-exec 2>$MODPATH/debug/action_debug.txt
+exec 2>"$MODPATH/debug/action_debug.txt"
 set -x
 
-#location variable
-SVDLB=$(find /data/adb/modules/sv_sndasphere -path "*/dolby/*" -not -path "/data/adb/modules/sv_sndasphere/original/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))
+# Specify tuningDIY.txt location
+DIY="$MODPATH/tuningDIY.txt"
 
-#DIY path
-DIY="/storage/emulated/0/tuningDIY.txt"
-if [ ! -f $DIY ]; then
-	DIY="$MODPATH/tuningDIY.txt"
-fi
+# Specify temporary location
+TMPDIR="$MODPATH/temp"
 
-#remove temp (if something went wrong and it's still exist) and create fresh temp 
+# Remove dolby database
 rm -f /data/vendor/dolby/*
 
-rm -rf $MODPATH/temp/*
-rmdir $MODPATH/temp
-mkdir -p $MODPATH/temp
-chmod 0755 $MODPATH/temp
+trap 'rm -rf "$TMPDIR"' EXIT
+
+rm -rf "$TMPDIR"
+mkdir -p "$TMPDIR"
+chmod 0755 "$TMPDIR"
 sleep 0.5
 
-OFILES=$(find $MODPATH/original -type f -name "*.xml")
+# Copying original file to temporary folder for edit
+OFILES=$(find "$MODPATH/original" -type f -name "*.xml")
 FILE_COUNTER=1
 printf "%b\n" "$OFILES" | while IFS= read -r FILE; do
-	#copying original XML to temp with full path
-	mkdir -p "$(echo "$(dirname "$FILE")" | sed "s|$MODPATH/original|$MODPATH/temp|")"
-	cp "$FILE" "$(echo "$FILE" | sed "s|$MODPATH/original|$MODPATH/temp|")"
+    mkdir -p "$(dirname "$FILE" | sed "s|$MODPATH/original|$MODPATH/temp|")"
+    cp "$FILE" "$(echo "$FILE" | sed "s|$MODPATH/original|$MODPATH/temp|")"
 done
 
-#launch config variables (needed later)
-cp -f $DIY $MODPATH
+cp -f "$DIY" "$MODPATH"
 
-
-#finding files to patch and counting how many of them need to be patched
-FILES=$(find $MODPATH/temp -type f -name "*.xml")
+FILES=$(find "$MODPATH/temp" -type f -name "*.xml")
 FILES_TOTAL="$(echo "$OFILES" | wc -w)"
 FILE_COUNTER=1
 
@@ -51,67 +46,118 @@ echo "-- Files to patch: $FILES_TOTAL --"
 echo "-- Proceed --"
 sleep 1
 
-#setting proper target file(s)
-printf "%b\n" "$FILES" | while IFS= read -r i; do
-	TARGET="$(echo "$i" | sed "s|$MODPATH/temp|$MODPATH|")"
-	echo " "
-	echo " -- Applying tuning to file number: $FILE_COUNTER -- "
-	echo " "
+printf "%b\n" "$FILES" > "$MODPATH/temp/temp_file_list"
+while IFS= read -r i; do
+    REL_PATH="${i#"$MODPATH/temp"}"
+    REL_PATH="${REL_PATH#/}"
+    REL_PATH="${REL_PATH#system/}"
 
-	#tuning
-	. $MODPATH/tuning/main_tuning.sh
-	
-	#copying changed file from temp to proper place in module
-	if [ -s "$i" ]; then
-		cat "$i" > "$TARGET"
-		#Verification of success
-		if [ ! -s "$TARGET" ]; then
-			echo "ERROR: $TARGET is empty, trying second method" >&2
-			echo "$(cat "$i")">"$(echo "$i" | sed "s|$MODPATH/temp|$MODPATH|")"
-			if [ ! -s "$TARGET" ]; then
-				echo "ERROR: $TARGET is still empty" >&2
-				exit 1
-			fi
-		fi
-	else
-		echo "ERROR: $TEMP is empty or does not exist" >&2
-		exit 1
-	fi
-	#increase counter (for multi file patching purpose)
-	FILE_COUNTER=$(($FILE_COUNTER+1))
-done
+    TOP_DIR=$(echo "$REL_PATH" | cut -d/ -f1)
+    
+    if [ -L "$MODPATH/system/$TOP_DIR" ]; then
+        TARGET="$MODPATH/$REL_PATH"
+    else
+        TARGET="$MODPATH/system/$REL_PATH"
+    fi
+    
+    mkdir -p "$(dirname "$TARGET")"
 
-#mount bind fresh modified files from module to proper place
-printf "%b\n" "$DLB" | while IFS= read -r DLB; do
-	mount -o bind "$DLB" "$(echo "$DLB" | sed "s|$MODPATH||")"
-	sleep 1
-done
+    echo " "
+    echo " -- Applying tuning to file number: $FILE_COUNTER -- "
+    echo " "
+    # Applying tuning
+    . "$MODPATH/tuning/main_tuning.sh"
+    
+    if [ -s "$i" ]; then
+        cat "$i" > "$TARGET"
+        if [ ! -s "$TARGET" ]; then
+            echo " -- Failed to copy to $TARGET (file empty) --"
+            cp -f "$i" "$TARGET"
+            
+            if [ -L "$MODPATH/system/$TOP_DIR" ]; then
+                ORIG_CON="/$REL_PATH"
+            else
+                ORIG_CON="/system/$REL_PATH"
+            fi
 
-#remove temp
-rm -rf $MODPATH/temp/*
-rmdir $MODPATH/temp
+            if [ -e "$ORIG_CON" ]; then
+                chcon --reference="$ORIG_CON" "$TARGET"
+            fi
+            if [ ! -s "$TARGET" ]; then
+                 echo " -- $TARGET is still empty after fallback copy --"
+                 exit 1
+            fi
+        fi
+    else
+        echo " -- Temporary file $i is empty or missing! --"
+        exit 1
+    fi
+    
+    FILE_COUNTER=$((FILE_COUNTER + 1))
+done < "$MODPATH/temp/temp_file_list"
 
-#locate dolby service(s)
-DLBSERV=$(find /*/bin/hw -type f -name *dolby*)
-if [ ! -z "$DLBSERV" ]; then
-	printf "%b\n" "$DLBSERV" | while IFS= read -r SERV; do
-		if [ -s "$SERV" ]; then
-			echo " "
-			echo " -- restarting service: "
-			echo " $SERV "
-			PID=$(pidof "$(basename $SERV)")
-			if [ -n "$PID" ];then
-				for p in ${PID};do
-					echo "PID: $p"
-					su -c "kill "$p""
-					sleep 0.5
-				done
-			fi
-			sleep 0.5
-		fi
-		sleep 1
-	done
+[ -z "$IS_FLASHING" ] && IS_FLASHING=false
+
+if [ "$IS_FLASHING" = "false" ]; then
+    SVDLB="$(find "$MODPATH" -path "*/dolby/*" -not -path "$MODPATH/original/*" -not -path "$MODPATH/temp/*" -type f \( -name "*dax*.xml" -o -name "*dap*.xml" \))"
+
+    # In case of different inode detection, new file must be mounted
+    if [ -n "$SVDLB" ]; then
+        printf "%b\n" "$SVDLB" | while IFS= read -r BINDFILE; do
+            case "$BINDFILE" in
+                "$MODPATH/system/"*)
+                    TARGET="${BINDFILE#"$MODPATH"/system}"
+                    ;;
+                *)
+                    TARGET="${BINDFILE#"$MODPATH"}"
+                    ;;
+            esac
+
+            if [ -f "$TARGET" ]; then
+                INODE_SOURCE=$(stat -c %i "$BINDFILE")
+                INODE_TARGET=$(stat -c %i "$TARGET")
+
+                if [ "$INODE_SOURCE" -ne "$INODE_TARGET" ]; then
+                    echo " -- Different inode detected, forcing umount & mount for $TARGET -- "
+                    umount -l "$TARGET" 2>/dev/null
+                    mount -o bind "$BINDFILE" "$TARGET"
+                fi
+            else
+                echo " -- Warning: Target $TARGET not found, skipping mount -- "
+            fi
+            
+        done
+    fi
+
+    # Restart Dolby Service
+    DLBSERV=$(find /*/bin/hw -type f -name '*dolby*')
+    if [ -n "$DLBSERV" ]; then
+        printf "%b\n" "$DLBSERV" | while IFS= read -r SERV; do
+            if [ -s "$SERV" ]; then
+                echo " "
+                echo " -- restarting service: "
+                echo " $SERV "
+                PID=$(pidof "$(basename "$SERV")")
+                if [ -n "$PID" ];then
+                    for p in ${PID};do
+                        echo "PID: $p"
+                        su -c "kill $p"
+                        sleep 0.5
+                    done
+                fi
+                sleep 0.5
+            fi
+            sleep 1
+        done
+    fi
+
+    echo " "
+    echo " -- DONE! -- "
 fi
 
-echo " "
-echo " -- DONE! -- "
+# Cleaning
+rm -rf "$MODPATH/temp"/*
+rmdir "$MODPATH/temp"
+if [ "$IS_FLASHING" = "false" ]; then
+    exit 0
+fi

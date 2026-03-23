@@ -1,0 +1,2 @@
+# Ignore SC3043 (local is undefined in POSIX sh) globally
+disable=SC3043

@@ -5,139 +5,154 @@ import { actionLog } from '../shared/utils.js';
 import { equalizerPresets } from '../config/configmodel.js';
 import { updateOutput } from '../view/renderer.js';
 
+export const FREQUENCIES = [
+	'47', '141', '234', '328', '469', '656', '844', '1031',
+	'1313', '1688', '2250', '3000', '3750', '4688', '5813',
+	'7125', '9000', '11250', '13875', '19688'
+];
 
-export const updateEqualizerSliders = (preset) => {
-    const lang = state.domCache.languageSelect?.value || 'en';
-    const sliders = ['heq47', 'heq141', 'heq234', 'heq328', 'heq469', 'heq656', 'heq844', 'heq1031',
-                     'heq1313', 'heq1688', 'heq2250', 'heq3000', 'heq3750', 'heq4688', 'heq5813',
-                     'heq7125', 'heq9000', 'heq11250', 'heq13875', 'heq19688'];
-    
-    let values;
-    if (preset === 'custom') { 
-        const customValueString = state.heqCustomValues || sliders.map(() => '0').join(',');
-        values = customValueString.split(',');
-        actionLog(state.translations[lang]['custom_eq_loaded']);
-    } else {
-        // configmodel.js loading config logic
-        const presetValuesString = equalizerPresets[preset];
-        if (presetValuesString) {
-            values = presetValuesString.split(',');
-            state.heqCustomValues = presetValuesString; 
-        } else {
-            console.error(`Preset ${preset} not found in equalizerPresets`);
-            values = sliders.map(() => '0'); 
-        }
-    }
-    sliders.forEach((id, index) => {
-        const slider = getDomElement(id);
-        const value = values[index] || '0'; 
-        if (slider) {
-            slider.value = value;
-            const valueDisplay = getDomElement(`${id}-value`);
-            if (valueDisplay) {
-                valueDisplay.textContent = convertToLanguageNumerals(value, lang) + ' dB';
-            }
-        }
-    });
+const getSliderIds = (prefix) => FREQUENCIES.map(freq => `${prefix}${freq}`);
+
+export const updateEqualizerSliders = (preset, prefix = 'heq') => {
+	const lang = state.domCache.languageSelect?.value || 'en';
+	const sliders = getSliderIds(prefix);
+	const stateKey = `${prefix}CustomValues`;
+
+	let values;
+	if (preset === 'custom') { 
+		const customValueString = state[stateKey] || sliders.map(() => '0').join(',');
+		values = customValueString.split(',');
+		actionLog(state.translations[lang]['custom_eq_loaded']);
+	} else {
+		const presetValuesString = equalizerPresets[preset];
+		if (presetValuesString) {
+			values = presetValuesString.split(',');
+			state[stateKey] = presetValuesString; 
+		} else {
+			console.error(`Preset ${preset} not found in equalizerPresets`);
+			values = sliders.map(() => '0'); 
+		}
+	}
+
+	sliders.forEach((id, index) => {
+		// Use native document.getElementById to ensure dynamically loaded sliders are found
+		const slider = document.getElementById(id);
+		const value = values[index] || '0'; 
+		
+		if (slider) {
+			slider.value = value;
+			
+			// Update the text display for the slider value
+			const valueDisplay = document.getElementById(`${id}-value`);
+			if (valueDisplay) {
+				valueDisplay.textContent = convertToLanguageNumerals(value, lang) + ' dB';
+			}
+		}
+	});
+};
+
+const initEqualizerInstance = (prefix) => {
+	const lang = state.domCache.languageSelect?.value || 'en';
+	const sliders = getSliderIds(prefix);
+	const stateKey = `${prefix}CustomValues`;
+	
+	const presetSelect = document.getElementById(`${prefix}preset`);
+	const customContainerId = `${prefix}CustomEqContainer`;
+	const customContainer = document.getElementById(customContainerId);
+
+	if (presetSelect) {
+		presetSelect.addEventListener('change', () => {
+			const selectedPreset = presetSelect.value;
+			
+			if (customContainer) {
+				customContainer.classList.toggle('visible', selectedPreset === 'custom');
+			}
+			
+			updateEqualizerSliders(selectedPreset, prefix);
+			updateOutput();
+		});
+		
+		if (customContainer) {
+			customContainer.classList.toggle('visible', presetSelect.value === 'custom');
+		}
+	}
+
+	// Attach input event listeners for real-time slider value updates
+	sliders.forEach(id => {
+		const slider = document.getElementById(id);
+		if (slider) {
+			slider.step = '0.5';
+			slider.addEventListener('input', () => {
+				const valueDisplay = document.getElementById(`${id}-value`);
+				if (valueDisplay) {
+					valueDisplay.textContent = convertToLanguageNumerals(slider.value, lang) + ' dB';
+				}
+				
+				if (presetSelect && presetSelect.value !== 'custom') {
+					presetSelect.value = 'custom';
+					if (customContainer) {
+						customContainer.classList.add('visible');
+					}
+				}
+				
+				const currentValues = sliders.map(sliderId => {
+					const currentSlider = document.getElementById(sliderId);
+					return currentSlider ? currentSlider.value : '0';
+				});
+				
+				state[stateKey] = currentValues.join(',');
+				updateOutput();
+			});
+		} 
+	});
+
+	const resizeEqualizerSliders = (delta) => {
+		sliders.forEach(id => {
+			const slider = document.getElementById(id);
+			if (slider) {
+				const styleHeight = slider.style.height;
+				const currentRem = styleHeight && styleHeight.endsWith('rem') 
+								 ? parseFloat(styleHeight) 
+								 : 15; 
+								 
+				const newHeight = Math.max(1, Math.min(20, currentRem + delta)); 
+				slider.style.height = `${newHeight}rem`;
+			}
+		});
+	};
+
+	// Event delegation to handle dynamically rendered buttons
+	document.addEventListener('click', (event) => {
+		const targetId = event.target.id;
+		
+		if (targetId === `slidershrink${prefix}`) {
+			resizeEqualizerSliders(-5);
+		} else if (targetId === `sliderexpand${prefix}`) {
+			resizeEqualizerSliders(5);
+		} else if (targetId === `resetCustomEq${prefix}`) {
+			actionLog(state.translations[lang]['resetting_custom_eq']);
+			
+			if (presetSelect) {
+				presetSelect.value = 'custom';
+			}
+			
+			if (customContainer) {
+				customContainer.classList.add('visible');
+			}
+			
+			const zeroValuesString = sliders.map(() => '0').join(',');
+			state[stateKey] = zeroValuesString;
+			
+			// Update the UI
+			updateEqualizerSliders('custom', prefix);
+			updateOutput();
+		}
+	});
+	
+	updateEqualizerSliders(presetSelect?.value || 'flat', prefix);
 };
 
 export const initEqualizer = () => {
-    const lang = state.domCache.languageSelect?.value || 'en';
-    const sliders = ['heq47', 'heq141', 'heq234', 'heq328', 'heq469', 'heq656', 'heq844', 'heq1031',
-                     'heq1313', 'heq1688', 'heq2250', 'heq3000', 'heq3750', 'heq4688', 'heq5813',
-                     'heq7125', 'heq9000', 'heq11250', 'heq13875', 'heq19688'];
-  const presetSelect = getDomElement('heqpreset');
-    if (presetSelect) {
-        
-        presetSelect.addEventListener('change', () => {
-            const selectedPreset = presetSelect.value;
-            
-            const customContainer = getDomElement('customEqContainer');
-            if (customContainer) {
-                customContainer.classList.toggle('visible', selectedPreset === 'custom');
-            }
-            
-            updateEqualizerSliders(selectedPreset);
-            updateOutput();
-        });
-        
-        const customContainer = getDomElement('customEqContainer');
-        if (customContainer) {
-            customContainer.classList.toggle('visible', presetSelect.value === 'custom');
-        }
-    }
-    
-	const resetBtn = getDomElement('resetCustomEq');
-	if (resetBtn) {
-	    resetBtn.addEventListener('click', () => {
-	        const presetSelect = getDomElement('heqpreset');
-	        actionLog(state.translations[lang]['resetting_custom_eq']);
-	        
-	        if (presetSelect) {
-	            presetSelect.value = 'custom';
-	        }
-	        
-	        const customContainer = getDomElement('customEqContainer');
-	        if (customContainer) {
-	            customContainer.classList.add('visible');
-	        }
-	        
-	        const zeroValuesString = sliders.map(() => '0').join(',');
-	        state.heqCustomValues = zeroValuesString;
-	        updateEqualizerSliders('custom');
-	        updateOutput();
-	    });
-	}
-    
-    sliders.forEach(id => {
-        const slider = getDomElement(id);
-        if (slider) {
-            slider.step = '0.5';
-			slider.addEventListener('input', () => {
-			    const valueDisplay = getDomElement(`${id}-value`);
-			    if (valueDisplay) {
-			        valueDisplay.textContent = convertToLanguageNumerals(slider.value, lang) + ' dB';
-			    }
-			    if (presetSelect && presetSelect.value !== 'custom') {
-			        presetSelect.value = 'custom';
-			        const customContainer = getDomElement('customEqContainer');
-			        if (customContainer) {
-			            customContainer.classList.add('visible');
-			        }
-			    }
-			    const currentValues = sliders.map(sliderId => {
-			        const currentSlider = getDomElement(sliderId);
-			        return currentSlider ? currentSlider.value : '0';
-			    });
-			    state.heqCustomValues = currentValues.join(',');
-			    updateOutput();
-			});
-        } 
-    });
-    
-    const resizeEqualizerSliders = (delta, currentLang) => {
-        sliders.forEach(id => {
-            const slider = getDomElement(id);
-            if (slider) {
-                const styleHeight = slider.style.height;
-                const currentRem = styleHeight && styleHeight.endsWith('rem') 
-                                 ? parseFloat(styleHeight) 
-                                 : 1;
-                                 
-                const newHeight = Math.max(1, Math.min(20, currentRem + (delta))); 
-                slider.style.height = `${newHeight}rem`;
-            }
-        });
-    };
-    
-    const shrinkBtn = getDomElement('slidershrink');
-    if (shrinkBtn) {
-        shrinkBtn.addEventListener('click', () => resizeEqualizerSliders(-5, lang)); 
-    }
-    const expandBtn = getDomElement('sliderexpand');
-    if (expandBtn) {
-        expandBtn.addEventListener('click', () => resizeEqualizerSliders(5, lang)); 
-    }
-    
-    updateEqualizerSliders(presetSelect?.value || 'flat');
+	initEqualizerInstance('heq');
+	initEqualizerInstance('seq');
 };

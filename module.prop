@@ -1,7 +1,7 @@
 id=sv_sndasphere
 name=SoundATMOSphere
-version=v1.55-beta
-versionCode=100
+version=v1.6-beta
+versionCode=160
 author=ShadoV90
 description=Do It Yourself Edition. This module is modifying dolby xml config tuning, to give user better audio experience.
 banner=./webroot/soundatmosphere.png

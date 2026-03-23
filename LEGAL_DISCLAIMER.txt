@@ -13,7 +13,7 @@ By downloading, using, modifying, or distributing this Module, you agree to the 
 - It does not perform or enable reverse engineering, license circumvention, DRM bypassing, or unauthorized activation of any software or firmware components.
 - All modifications apply only to exposed and user-editable configuration values already available on devices with officially licensed and preinstalled audio frameworks.
 
-3. Transparency and Inspection
+3. TRANSPARENCY AND INSPECTION
 - All scripts and files used in this Module are provided in clear, readable form and may be fully inspected by the end user.
 - There is no obfuscation, hidden code, remote access behavior, or data collection functionality embedded in the Module.
 
@@ -29,12 +29,16 @@ By downloading, using, modifying, or distributing this Module, you agree to the 
 - This Module is provided “AS IS”, with no guarantees of safety, compatibility, or function.
 - The author assumes no liability for any damage, malfunction, data loss, legal consequences, or loss of warranty.
 
-7.Compliance with Applicable Law
+7. COMPLIANCE WITH APPLICABLE LAW
 - You are solely responsible for ensuring that your use of this Module complies with all applicable local, national, and international laws, device EULAs, license agreements, and intellectual property rights.
 - If you do not have a valid license for the technologies or systems referenced by this Module, you must not use it in any way.
 
-8. Termination
+8. TERMINATION
 - Any breach of the terms outlined herein will result in immediate revocation of all rights to use the Module.
 - Unauthorized use or redistribution may subject you to legal liability.
+9. TRADEMARK ACKNOWLEDGMENT
+- "Dolby", "Dolby Atmos", and related trademarks are registered trademarks of Dolby Laboratories.
+- "SoundATMOSphere" is an independent, community-driven project. It is in no way affiliated with, authorized, maintained, sponsored, or endorsed by Dolby Laboratories or any of its affiliates.
+- The use of the term "ATMOS" within the project name is strictly for descriptive purposes to indicate the target configuration environment.
 
 BY USING THIS MODULE, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREED TO THESE TERMS. IF YOU DO NOT AGREE, IMMEDIATELY DISCONTINUE ALL USE.

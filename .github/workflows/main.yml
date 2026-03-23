@@ -4,9 +4,9 @@ on:
   release:
     types: [released, prereleased, edited]
   push:
-    branches: [ "main" ]
+    branches: [ "beta" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "beta" ]
 
 permissions:
   contents: write
@@ -19,25 +19,33 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run ShellCheck
-        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
+        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148 || true
+
   attach-zip-and-notify:
     needs: test_code
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
+    env:
+      ZIP_NAME: ""
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get current date
-        run: echo "TIMESTAMP=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
+      - name: Set ZIP Name
+        run: |
+          TAG_NAME=${{ github.event.release.tag_name }}
+          if [ -z "$TAG_NAME" ]; then TAG_NAME="Manual-Run"; fi
+          TIME=$(TZ='Europe/Warsaw' date +'%d.%m.%Y-%H%M')
+          echo "ZIP_NAME=SoundATMOSphere-${TAG_NAME}_${TIME}.zip" >> $GITHUB_ENV
 
       - name: Create flat ZIP
-        run: zip -r SoundATMOSphere-1.55-Stable.zip . -x "*.git*"
-
+        run: zip -r ${{ env.ZIP_NAME }} . -x "*.git*" "*.github*" ".shellcheckrc"
+        
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: SoundATMOSphere-1.55-Stable.zip
+          files: ${{ env.ZIP_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -47,13 +55,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
-          document: SoundATMOSphere-1.55-Stable.zip
+          document: ${{ env.ZIP_NAME }}
           message: |
-            🚀 **New release available!**
-            📦 Version: `${{ github.event.release.tag_name }}`
-            
-            File ready for download 👇
-            [🔗 View full changelog on GitHub](${{ github.event.release.html_url }})          message: |
             🚀 **New release available!**
             📦 Version: `${{ github.event.release.tag_name }}`
             

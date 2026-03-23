@@ -1,12 +1,11 @@
-import { CONFIG_PATH, BACKUP_CONFIG_PATH, ACTION_PATH, ACTION_LOG, FEATURE_PATH } from '../shared/constants.js';
+import { CONFIG_PATH, ACTION_PATH, ACTION_LOG, FEATURE_PATH } from '../shared/constants.js';
 import { execCommand, actionLog, sleep } from '../shared/utils.js';
 import { state } from '../shared/state.js';
-import { defaultValues, configMap, visibilityMap, equalizerPresets, translationMaps } from './configmodel.js';
-import { getDomElement } from '../shared/dom.js';
-import { switchLanguage, convertToLanguageNumerals } from '../shared/language.js';
-import { toggleVisibility, updateOutput, updateDefaultValuesDisplay } from '../view/renderer.js';
+import { defaultValues, configMap, visibilityMap, equalizerPresets } from './configmodel.js';
+import { convertToLanguageNumerals } from '../shared/language.js';
+import { updateOutput, updateDefaultValuesDisplay } from '../view/renderer.js';
 import { bassVisibility } from '../features/bass.js';
-import { updateEqualizerSliders } from '../features/equalizer.js';
+import { FREQUENCIES, updateEqualizerSliders } from '../features/equalizer.js';
 import { loadVirtualizerState } from '../features/virtualizer.js';
 
 const parseConfigContent = (content) => {
@@ -177,18 +176,28 @@ const parseConfigLine = (line, lang) => {
             state.heqCustomValues = state.heqCustomValues || defaultValues.heqCustomValues;
         }
         updateEqualizerSliders(element.value, lang);
-    } else if (key.startsWith('HEQ_')) {
-        const sliders = ['heq47', 'heq141', 'heq234', 'heq328', 'heq469', 'heq656', 'heq844', 'heq1031', 'heq1313', 'heq1688', 'heq2250', 'heq3000', 'heq3750', 'heq4688', 'heq5813', 'heq7125', 'heq9000', 'heq11250', 'heq13875', 'heq19688'];
+
+    } else if (key.startsWith('HEQ_') || key.startsWith('SEQ_')) {
+        const isHeq = key.startsWith('HEQ_');
+        const prefix = isHeq ? 'heq' : 'seq';
+        
+        const sliders = FREQUENCIES.map(freq => `${prefix}${freq}`);
+        
         const index = sliders.indexOf(config.id);
+        
         if (index !== -1) {
             let parsedValue = parseFloat(value);
             if (isNaN(parsedValue) || parsedValue < -12 || parsedValue > 12) {
                 parsedValue = 0;
             }
-            state.heqCustomValues = state.heqCustomValues || defaultValues.heqCustomValues;
-            const values = state.heqCustomValues.split(',');
+
+            const stateKey = `${prefix}CustomValues`;
+            state[stateKey] = state[stateKey] || defaultValues[stateKey] || sliders.map(() => '0').join(',');
+            
+            const values = state[stateKey].split(',');
             values[index] = parsedValue.toString();
-            state.heqCustomValues = values.join(',');
+            state[stateKey] = values.join(',');
+
             element.value = parsedValue;
             const valueDisplay = state.domCache[`${config.id}-value`];
             if (valueDisplay) {
@@ -305,7 +314,7 @@ export const checkFeatureSupport = async () => {
             harm: false, 
             angle: false, 
             distance: false, 
-            advancedvirt: false, 
+            hadvancedvirt: false, 
             sadvancedvirt: false,
             hvirtmode: false,
             svirtmode: false
@@ -315,7 +324,7 @@ export const checkFeatureSupport = async () => {
             if (trimmedLine === 'harm=true') newFeatures.harm = true;
             else if (trimmedLine === 'angle=true') newFeatures.angle = true;
             else if (trimmedLine === 'distance=true') newFeatures.distance = true;
-            else if (trimmedLine === 'advancedvirt=true') newFeatures.advancedvirt = true;
+            else if (trimmedLine === 'hadvancedvirt=true') newFeatures.hadvancedvirt = true;
             else if (trimmedLine === 'sadvancedvirt=true') newFeatures.sadvancedvirt = true;
             else if (trimmedLine === 'hvirtmode=true') newFeatures.hvirtmode = true;
             else if (trimmedLine === 'svirtmode=true') newFeatures.svirtmode = true;
@@ -327,7 +336,7 @@ export const checkFeatureSupport = async () => {
             hvirtmode: 'Headphones Virtualizer Mode',
             distance: 'Headphones Source Distance',
             angle: 'Headphones Left-Right Angle',
-            advancedvirt: 'Headphones Advanced Soundstage Renderer',
+            hadvancedvirt: 'Headphones Advanced Soundstage Renderer',
             svirtmode: 'Speaker Virtualizer Mode',
             sadvancedvirt: 'Speaker Advanced Soundstage Renderer'
         };

@@ -2,7 +2,7 @@ import { state } from '../shared/state.js';
 import { getDomElement } from '../shared/dom.js';
 import { actionLog } from '../shared/utils.js';
 import { saveConfig, applyTuning, setSimpleModeDefaults } from '../config/configservice.js';
-import { resetToDefault, toggleVisibility, updateOutput, updateDefaultValuesDisplay } from '../view/renderer.js';
+import { resetToDefault, updateOutput, updateDefaultValuesDisplay } from '../view/renderer.js';
 import { bassVisibility } from '../features/bass.js';
 
 // Setup common events (load/save/apply/reset)
@@ -26,9 +26,8 @@ export const setupCommonEvents = () => {
     if (expertMode) expertMode.addEventListener('click', () => applyUIMode(false));
 };
 
-// Apply UI mode (simple/expert, from original ui.js)
 export const applyUIMode = async (isSimple) => {
-    const lang = state.domCache.languageSelect?.value || 'en'; // Dodaj lang
+    const lang = state.domCache.languageSelect?.value || 'en';
     state.isSimpleMode = isSimple;
     localStorage.setItem('uiMode', isSimple ? 'simple' : 'expert');
     
