@@ -35,11 +35,8 @@ fi
 
 set +x
 
-# Source module.prop to inject its values as variables (especially name and author)
-. "$MODPATH/module.prop"
-
-# If everything is okay, then proceed with tuning process, if not, abort flashing process
-if [ "$author" = "ShadoV90" ] && [ "$name" = "SoundATMOSphere" ]; then
+# If everything is okay, then proceed with tuning process
+if grep -q "^author=ShadoV90$" "$MODPATH/module.prop" && grep -q "^name=SoundATMOSphere$" "$MODPATH/module.prop"; then
 	set -x
 	if [ -f "$MODPATH/tuning/main.sh" ]; then
 		. "$MODPATH/tuning/main.sh"
