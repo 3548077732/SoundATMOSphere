@@ -243,7 +243,8 @@ apply_tuning_settings() {
 			set_speaker_profile_value "$file" "speaker" "bass-enhancer-enable" "true"
 			set_speaker_profile_value "$file" "speaker" "bass-enhancer-boost" "$sbassboost"
 		else
-			set_speaker_profile_value "$file" "speaker" "bass-enhancer-enable" "false"
+			set_speaker_profile_value "$file" "speaker" "bass-enhancer-enable" "true"
+			set_speaker_profile_value "$file" "speaker" "bass-enhancer-boost" "$sbassboost"
 			if detect_feature "$file" "virtual-bass-harmgains"; then
 				apply_virtual_bass "s" "$file"
 			fi
@@ -424,7 +425,7 @@ apply_virtual_bass() {
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"96\" harmonic_3=\"64\" harmonic_4=\"48\"/>|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmmixfreqmax\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"hbasslingain\"|g" "$file"
+		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency value=\"[^\"]*\"|virtual-bass-mix-frequency value=\"$hbassharmmixfreqmin,$hbassharmmixfreqmax\"|g" "$file"
 
 		if [ "$hbasscompstrength" -eq 0 ]; then
