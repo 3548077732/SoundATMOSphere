@@ -35,7 +35,9 @@ printf "%b\n" "$OFILES" | while IFS= read -r FILE; do
     cp "$FILE" "$(echo "$FILE" | sed "s|$MODPATH/original|$MODPATH/temp|")"
 done
 
-[ "$IS_FLASHING" = "true" ] && cp -f "$DIY" -t "$MODPATH"
+if [ "$IS_FLASHING" = "true" ] && [ -f "$DIY" ]; then
+    cp -f "$DIY" -t "$MODPATH"
+fi
 
 FILES=$(find "$MODPATH/temp" -type f -name "*.xml")
 FILES_TOTAL="$(echo "$OFILES" | wc -w)"
