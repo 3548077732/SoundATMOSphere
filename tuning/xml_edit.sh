@@ -606,73 +606,78 @@ apply_volume_boosts() {
 	echo " "
 	echo " -- Applying Digital Volume Gains and EQ -- "
 	{
-	if detect_feature "$file" 'id="default"'; then
-		if [ "$speakertuning" = "true" ] && [ "$svolboost" -ne 0 ]; then
-			 echo "/<endpoint_type id=\"speaker\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$((svolboost))\"|g"
-		fi
-		if [ "$headphonetuning" = "true" ] && [ "$hvolboost" -ne 0 ]; then
-			 local final_gain=$((hvolboost + hvolbalance))
-			 echo "/<endpoint_type id=\"headphone\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
-			 echo "/<endpoint_type id=\"bluetooth\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
-			 echo "/<endpoint_type id=\"usb\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
-			 echo "/<endpoint_type id=\"default\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
-		fi
+		if detect_feature "$file" 'id="default"'; then
+			if [ "$speakertuning" = "true" ] && [ "$svolboost" -ne 0 ]; then
+				echo "/<endpoint_type id=\"speaker\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$((svolboost))\"|g"
+			fi
+			if [ "$headphonetuning" = "true" ] && [ "$hvolboost" -ne 0 ]; then
+				local final_gain=$((hvolboost + hvolbalance))
+				echo "/<endpoint_type id=\"headphone\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
+				echo "/<endpoint_type id=\"bluetooth\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
+				echo "/<endpoint_type id=\"usb\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
+				echo "/<endpoint_type id=\"default\">/,/<\/endpoint_type>/ s|system-gain value=\"[^\"]*\"|system-gain value=\"$final_gain\"|g"
+			fi
+		else
+			if [ "$speakertuning" = "true" ]; then
+				echo "/<tuning .*endpoint_type=\"speaker.*\"/,/<\/tuning>/ {"
 
-	else
-		if [ "$speakertuning" = "true" ]; then
-			frequencies=$(sed -E -n '/<tuning .*endpoint_type="speaker.*"/,/<\/tuning>/p' "$file" | sed -E -n 's/.*frequency="([0-9]*)".*/\1/p' | sort -nu)
-
-			for freq in $frequencies; do
-				eval "spk_hph_eq_val=\$seq_${freq}"
-				[ -z "$spk_hph_eq_val" ] && spk_hph_eq_val=0
-				final_spk_gain=$((svolboost + spk_hph_eq_val))
-
-				if [ "$final_spk_gain" -ne 0 ]; then
-					awk -v freq="$freq" -v final_gain="$final_spk_gain" -F'"' '
-					/<tuning .*endpoint_type="speaker.*"/, /<\/tuning>/ {
-						if ($0 ~ "<band_optimizer .*frequency=\"" freq "\"") {
-							gl = ""; gr = "";
-							for(i=1; i<=NF; i++) {
-								if ($i ~ /gain_left=$/) gl = $(i+1)
-								if ($i ~ /gain_right=$/) gr = $(i+1)
-							}
-							if (gl != "" && gr != "") {
-								printf "/<tuning .*endpoint_type=\"speaker.*\"/,/\\/<\\/tuning>/ s|frequency=\"%s\" gain_left=\"%s\" gain_right=\"%s\"|frequency=\"%s\" gain_left=\"%d\" gain_right=\"%d\"|g\n", freq, gl, gr, freq, gl + final_gain, gr + final_gain
-							}
+				awk -F'"' '/<tuning .*endpoint_type="speaker.*"/, /<\/tuning>/ {
+					if ($0 ~ "<band_optimizer .*frequency=") {
+						f = ""; gl = ""; gr = "";
+						for(i=1; i<=NF; i++) {
+							if ($i ~ /frequency=$/) f = $(i+1)
+							if ($i ~ /gain_left=$/) gl = $(i+1)
+							if ($i ~ /gain_right=$/) gr = $(i+1)
 						}
-					}' "$file"
-				fi
-			done
-		fi
+						if (f != "" && gl != "" && gr != "") {
+							print f, gl, gr
+						}
+					}
+				}' "$file" | while read -r freq gl gr; do
+					eval "spk_hph_eq_val=\$seq_${freq}"
+					[ -z "$spk_hph_eq_val" ] && spk_hph_eq_val=0
+					
+					final_spk_gain=$((svolboost + spk_hph_eq_val))
 
-		if [ "$headphonetuning" = "true" ]; then
-			frequencies=$(sed -E -n '/<tuning .*endpoint_type="headphone"/,/<\/tuning>/p' "$file" | sed -E -n 's/.*frequency="([0-9]*)".*/\1/p' | sort -nu)
-
-			for ep_type in "headphone" "bluetooth"; do
-				echo "/<tuning .*endpoint_type=\"$ep_type\"/,/<\/tuning>/ {"
-
-				for freq in $frequencies; do
-					eval "hph_eq_val=\$heq_${freq}"
-					[ -z "$hph_eq_val" ] && hph_eq_val=0
-					final_hph_gain=$((hvolboost + hph_eq_val))
-
-					if [ "$hvolbalance" -gt 0 ]; then
-						hvolleft_gain=$(( -1 * hvolbalance ))
-						hvolright_gain=0
-					elif [ "$hvolbalance" -lt 0 ]; then
-						hvolleft_gain=0
-						hvolright_gain=$(( 1 * hvolbalance ))
-					else
-						hvolleft_gain=0
-						hvolright_gain=0
+					if [ "$final_spk_gain" -ne 0 ]; then
+						new_gl=$((gl + final_spk_gain))
+						new_gr=$((gr + final_spk_gain))
+						
+						echo "s|frequency=\"$freq\" gain_left=\"$gl\" gain_right=\"$gr\"|frequency=\"$freq\" gain_left=\"$new_gl\" gain_right=\"$new_gr\"|g"
 					fi
-
-					echo "s|frequency=\"$freq\" gain_left=\"[^\"]*\" gain_right=\"[^\"]*\"|frequency=\"$freq\" gain_left=\"$((final_hph_gain + hvolleft_gain))\" gain_right=\"$((final_hph_gain + hvolright_gain))\"|g"
 				done
+
 				echo "}"
-			done
+			fi
+
+			if [ "$headphonetuning" = "true" ]; then
+				frequencies=$(sed -E -n '/<tuning .*endpoint_type="headphone"/,/<\/tuning>/p' "$file" | sed -E -n 's/.*frequency="([0-9]*)".*/\1/p' | sort -nu)
+
+				for ep_type in "headphone" "bluetooth"; do
+					echo "/<tuning .*endpoint_type=\"$ep_type\"/,/<\/tuning>/ {"
+
+					for freq in $frequencies; do
+						eval "hph_eq_val=\$heq_${freq}"
+						[ -z "$hph_eq_val" ] && hph_eq_val=0
+						final_hph_gain=$((hvolboost + hph_eq_val))
+
+						if [ "$hvolbalance" -gt 0 ]; then
+							hvolleft_gain=$(( -1 * hvolbalance ))
+							hvolright_gain=0
+						elif [ "$hvolbalance" -lt 0 ]; then
+							hvolleft_gain=0
+							hvolright_gain=$(( 1 * hvolbalance ))
+						else
+							hvolleft_gain=0
+							hvolright_gain=0
+						fi
+
+						echo "s|frequency=\"$freq\" gain_left=\"[^\"]*\" gain_right=\"[^\"]*\"|frequency=\"$freq\" gain_left=\"$((final_hph_gain + hvolleft_gain))\" gain_right=\"$((final_hph_gain + hvolright_gain))\"|g"
+					done
+					echo "}"
+				done
+			fi
 		fi
-	fi
 	} >> "$sed_script_file"
 
 	if [ -s "$sed_script_file" ]; then
