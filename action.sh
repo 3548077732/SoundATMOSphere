@@ -12,7 +12,7 @@ exec 2>"$MODPATH/debug/action_debug.txt"
 set -x
 
 # Specify tuningDIY.txt location
-DIY="$MODPATH/tuningDIY.txt"
+DIY="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
 
 # Specify temporary location
 TMPDIR="$MODPATH/temp"
@@ -35,7 +35,7 @@ printf "%b\n" "$OFILES" | while IFS= read -r FILE; do
     cp "$FILE" "$(echo "$FILE" | sed "s|$MODPATH/original|$MODPATH/temp|")"
 done
 
-cp -f "$DIY" "$MODPATH"
+[ "$IS_FLASHING" = "true" ] && cp -f "$DIY" -t "$MODPATH"
 
 FILES=$(find "$MODPATH/temp" -type f -name "*.xml")
 FILES_TOTAL="$(echo "$OFILES" | wc -w)"
