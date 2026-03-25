@@ -17,24 +17,33 @@ set_perm_recursive "$MODPATH" 0 0 0755 0644
 find "$MODPATH" -type f -name "*.sh" -exec chmod 0755 {} \;
 
 # Assigning variable with path to tuningDIY.txt
-DIY="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
+DIY="$MODPATH/tuningDIY.txt"
+DIY_PREV="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
+DIY_STOR="/storage/emulated/0/tuningDIY.txt"
 
-export IS_FLASHING=true
+# If module is reflashed, previous tuning file can be copied to update
+if [ -f "$DIY_PREV" ] && [ -f "$DIY_STOR" ]; then
+	[ "$DIY_PREV" -nt "$DIY_STOR" ] && cp "$DIY_PREV" "$DIY" || cp "$DIY_STOR" "$DIY"
+elif [ -f "$DIY_PREV" ]; then
+	cp "$DIY_PREV" "$DIY"
+elif [ -f "$DIY_STOR" ]; then
+	cp "$DIY_STOR" "$DIY"
+fi
 
 # Checking DIY existence
-# If there's no DIY file, copy it to internal storage
+# If there's no DIY file, copy it to module folder
 if [ ! -f "$DIY" ]; then
 	unzip -qjo "$ZIPFILE" 'tuningDIY.txt' -d "$MODPATH" >&2
-	echo " *** PLEASE READ *** "
+	ui_print " *** PLEASE READ *** "
 	sleep 1
-	echo " -- Config file (tuningDIY.txt) is copied to module directory -- "
-	echo " "
-	echo " -- NOW MODULE WILL PROCEED WITH DEFAULT VALUES -- "
+	ui_print " -- No backup of tuningDIY.txt found -- "
+	ui_print " -- Default config file (tuningDIY.txt) is copied to module directory -- "
+	ui_print " "
+	ui_print " -- NOW MODULE WILL PROCEED WITH DEFAULT VALUES -- "
 	sleep 5
-else
-	cp "$DIY" "$MODPATH/$(basename "$DIY")"
-	sleep 1
 fi
+
+export IS_FLASHING=true
 
 set +x
 

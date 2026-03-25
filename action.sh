@@ -12,7 +12,7 @@ exec 2>"$MODPATH/debug/action_debug.txt"
 set -x
 
 # Specify tuningDIY.txt location
-DIY="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
+DIY="$MODPATH/tuningDIY.txt"
 
 # Specify temporary location
 TMPDIR="$MODPATH/temp"
