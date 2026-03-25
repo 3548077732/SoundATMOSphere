@@ -7,7 +7,7 @@ SKIPUNZIP=1
 unzip -qjo "$ZIPFILE" 'sv_sndasphere_rmv.sh' -d /data/adb/service.d >&2
 unzip -qo "$ZIPFILE" -x 'LICENSE.txt' 'LEGAL_DISCLAIMER.txt' 'customize.sh' 'sv_sndasphere_rmv.sh' 'META-INF/*' -d "$MODPATH" >&2
 
-# Set permissions for service.d script explicitly so Magisk can execute it
+# Set permissions for service.d script
 chmod 0755 /data/adb/service.d/sv_sndasphere_rmv.sh
 
 # Setting permissions recursively
@@ -16,7 +16,7 @@ set_perm_recursive "$MODPATH" 0 0 0755 0644
 # Make all shell scripts in module directory and subdirectories executable
 find "$MODPATH" -type f -name "*.sh" -exec chmod 0755 {} \;
 
-# Assigning variable with path to tuningDIY.txt
+# Assigning variables with possible paths to tuningDIY.txt
 DIY="$MODPATH/tuningDIY.txt"
 DIY_PREV="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
 DIY_STOR="/storage/emulated/0/tuningDIY.txt"
@@ -53,10 +53,8 @@ if grep -q "^author=ShadoV90$" "$MODPATH/module.prop" && grep -q "^name=SoundATM
 	if [ -f "$MODPATH/tuning/main.sh" ]; then
 		. "$MODPATH/tuning/main.sh"
 	else
-		echo "Error: main.sh not found in $MODPATH"
-		exit 1
+		abort "Error: main.sh not found in $MODPATH"
 	fi
 else
-	echo "Error: Verification failed. Custom module.prop detected."
-	exit 1
+	abort "Error: Verification failed. Custom module.prop detected."
 fi
