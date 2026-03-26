@@ -94,7 +94,6 @@ fi
 if [ -f "$MODPATH/.emergency" ];then
 . "$MODPATH/tuning/main.sh"
 fi
-#!/system/bin/sh
 
 MOD_ID="sv_sndasphere"
 MOD_PATH="/data/adb/modules/$MOD_ID"
