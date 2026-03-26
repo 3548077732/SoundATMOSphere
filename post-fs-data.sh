@@ -94,3 +94,73 @@ fi
 if [ -f "$MODPATH/.emergency" ];then
 . "$MODPATH/tuning/main.sh"
 fi
+#!/system/bin/sh
+
+MOD_ID="sv_sndasphere"
+MOD_PATH="/data/adb/modules/$MOD_ID"
+MOD_DIR="$MOD_PATH/system"
+METAMODULE_SYMLINK="/data/adb/metamodule"
+
+# Initialize log and clear old data
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting bind mount script for $MOD_ID"
+
+# Function to log messages with a timestamp
+log_message() {
+	echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+# Yield to metamodules
+if [ -L "$METAMODULE_SYMLINK" ] || [ -e "$METAMODULE_SYMLINK" ]; then
+	log_message "Metamodule detected. Exiting to avoid conflicts."
+	exit 0
+fi
+
+# Check if module system directory exists
+[ ! -d "$MOD_DIR" ] && { log_message "ERROR: $MOD_DIR not found."; exit 1; }
+
+# Function to resolve the real system path, following symlinks
+resolve_target_path() {
+	local base="/system/$1"
+	
+	# Extract first directory using parameter expansion (faster than cut)
+	case "${1%%/*}" in
+		odm|product|vendor|system_ext|oem)
+			[ -d "/${1%%/*}" ] && base="/$1"
+			;;
+	esac
+	
+	# Resolve symlinks if possible, otherwise return base path
+	realpath "$base" 2>/dev/null || echo "$base"
+}
+
+# Main bind mount loop
+for mod_subdir in "$MOD_DIR"/*; do
+	[ -d "$mod_subdir" ] || continue
+	
+	# Extract base name using parameter expansion (faster than basename)
+	logical_base="${mod_subdir##*/}"
+	
+	# Resolve KernelSU Next physical directory location
+	actual_dir="$(realpath "$mod_subdir" 2>/dev/null || echo "$mod_subdir")"
+	
+	log_message "Scanning $logical_base -> $actual_dir"
+	
+	# Find and mount files
+	find "$actual_dir/" -type f 2>/dev/null | while read -r mod_file; do
+		# Extract internal path and reconstruct logical path
+		internal_path="${mod_file#"$actual_dir"/}"
+		sys_file="$(resolve_target_path "$logical_base/$internal_path")"
+		
+		if [ -f "$sys_file" ]; then
+			if error_msg=$(mount --bind "$mod_file" "$sys_file" 2>&1); then
+				log_message "SUCCESS: $sys_file"
+			else
+				log_message "ERROR: $sys_file ($error_msg)"
+			fi
+		else
+			log_message "WARN: Target file $sys_file does not exist in system."
+		fi
+	done
+done
+
+log_message "Mount script finished."

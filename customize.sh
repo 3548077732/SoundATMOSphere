@@ -23,7 +23,13 @@ DIY_STOR="/storage/emulated/0/tuningDIY.txt"
 
 # If module is reflashed, previous tuning file can be copied to update
 if [ -f "$DIY_PREV" ] && [ -f "$DIY_STOR" ]; then
-	[ "$DIY_PREV" -nt "$DIY_STOR" ] && cp "$DIY_PREV" "$DIY" || cp "$DIY_STOR" "$DIY"
+	if [ "$DIY_PREV" -nt "$DIY_STOR" ]; then
+		cp "$DIY_PREV" "$DIY"
+	else
+		cp "$DIY_STOR" "$DIY"
+	fi
+elif [ -f "$DIY_STOR" ]; then
+	 cp "$DIY_STOR" "$DIY"
 elif [ -f "$DIY_PREV" ]; then
 	cp "$DIY_PREV" "$DIY"
 elif [ -f "$DIY_STOR" ]; then
