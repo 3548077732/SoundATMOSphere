@@ -89,7 +89,7 @@ export const switchLanguage = (lang) => {
     });
 
     const selectsToTranslate = [
-        'hieq', 'heqpreset', 'hbassharmtype', 'hde', 'htimbre', 'hvirtualizer', 'hvirtmod',
+        'hieq', 'hieqCustomBase', 'heqpreset', 'hbassharmtype', 'hde', 'htimbre', 'hvirtualizer', 'hvirtmod',
         'hheightfilter', 'hadvirtrend', 'htunedrate', 'h_output_channels',
         'sieq', 'sbassharmtype', 'sde', 'stimbre', 'svirtualizer', 'svirtmod', 'sadvirtrend',
         'stunedrate', 's_output_channels'
