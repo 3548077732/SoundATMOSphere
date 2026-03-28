@@ -5,7 +5,7 @@ SKIPUNZIP=1
 
 # Extracting files into the module directory and service.d
 unzip -qjo "$ZIPFILE" 'sv_sndasphere_rmv.sh' -d /data/adb/service.d >&2
-unzip -qo "$ZIPFILE" -x 'LICENSE.txt' 'LEGAL_DISCLAIMER.txt' 'customize.sh' 'sv_sndasphere_rmv.sh' 'META-INF/*' -d "$MODPATH" >&2
+unzip -qo "$ZIPFILE" -x 'LICENSE.txt' 'LEGAL_DISCLAIMER.txt' 'customize.sh' 'sv_sndasphere_rmv.sh' 'META-INF/*' '.shellcheckrc' -d "$MODPATH" >&2
 
 # Set permissions for service.d script
 chmod 0755 /data/adb/service.d/sv_sndasphere_rmv.sh
