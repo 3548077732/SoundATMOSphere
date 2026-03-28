@@ -422,7 +422,7 @@ apply_virtual_bass() {
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-96\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"-8\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"2\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"96\" harmonic_3=\"64\" harmonic_4=\"48\"/>|g" "$file"
+		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"-96\" harmonic_3=\"-48\" harmonic_4=\"-64\"/>|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmmixfreqmax\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g" "$file"
@@ -447,10 +447,10 @@ apply_virtual_bass() {
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((neghbasslingain*0)),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*15)-(hbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*0)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 2 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((neghbasslingain*0)),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*30)-(hbasslingain*2))),$(((hbassharmboost*30)-(hbasslingain*2)))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((neghbasslingain*0)),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*25)-(hbasslingain*2))),$(((hbassharmboost*40)-(hbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*0)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15)),$((neghbasslingain*15))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*30)-(hbasslingain*2))),$(((hbassharmboost*30)-(hbasslingain*2)))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((neghbasslingain*0)),$(((hbassharmboost*15)-(hbasslingain*2))),$(((hbassharmboost*25)-(hbasslingain*2))),$(((hbassharmboost*40)-(hbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*0)),$((neghbasslingain*0)),$((neghbasslingain*0)),$((neghbasslingain*0)),$((neghbasslingain*0)),$((neghbasslingain*0))\"/>|g" "$file"
 		fi
 	else
@@ -474,10 +474,10 @@ apply_virtual_bass() {
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*15)-(sbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15))\"/>|g" "$file"
 		elif [ "$sbassharmtype" -eq 2 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*30)-(sbasslingain*2))),$(((sbassharmboost*30)-(sbasslingain*2)))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*25)-(sbasslingain*2))),$(((sbassharmboost*40)-(sbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15))\"/>|g" "$file"
 		elif [ "$sbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*30)-(sbasslingain*2))),$(((sbassharmboost*30)-(sbasslingain*2)))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$(((sbassharmboost*15)-(sbasslingain*2))),$(((sbassharmboost*25)-(sbasslingain*2))),$(((sbassharmboost*40)-(sbasslingain*2)))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0))\"/>|g" "$file"
 		fi
 	fi
