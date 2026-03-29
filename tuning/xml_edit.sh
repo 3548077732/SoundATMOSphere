@@ -474,10 +474,10 @@ apply_virtual_bass() {
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$((sbassharmboost*10)),$((sbassharmboost*15)),$((sbassharmboost*15))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15))\"/>|g" "$file"
 		elif [ "$sbassharmtype" -eq 2 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$((sbassharmboost*15)),$((sbassharmboost*20)),$((sbassharmboost*30))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$((sbassharmboost*15)),$((sbassharmboost*20)),$((sbassharmboost*20))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15)),$((negsbasslingain*15))\"/>|g" "$file"
 		elif [ "$sbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$((sbassharmboost*15)),$((sbassharmboost*20)),$((sbassharmboost*30))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((negsbasslingain*0)),$((sbassharmboost*15)),$((sbassharmboost*20)),$((sbassharmboost*20))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0)),$((negsbasslingain*0))\"/>|g" "$file"
 		fi
 	fi
