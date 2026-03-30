@@ -191,11 +191,11 @@ apply_tuning_settings() {
 			if [ "$freq" -lt 150 ]; then
 				low="-192"
 				high="0"
-				isolated="false"
+				isolated="true"
 			else
 				low="-192"
 				high="0"
-				isolated="false"
+				isolated="true"
 			fi
 
 			echo "/endpoint_type=\"headphone\"/,/<\/tuning>/ s|frequency=\"$freq\" threshold_low=\"[^\"]*\" threshold_high=\"[^\"]*\" isolated_band=\"[^\"]*\"|frequency=\"$freq\" threshold_low=\"$low\" threshold_high=\"$high\" isolated_band=\"$isolated\"|" >> "$sed_script_file"
