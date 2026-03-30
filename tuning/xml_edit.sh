@@ -410,8 +410,6 @@ apply_virtual_bass() {
 	local prefix="$1"
 	local file="$2"
 	local endpoint
-	local hbasslingain
-	local sbasslingain
 
 	[ "$prefix" = "h" ] && endpoint="headphone" || endpoint="speaker"
 	echo " -- Applying Virtual Bass for endpoint: $endpoint -- "
