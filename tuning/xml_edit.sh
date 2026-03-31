@@ -181,6 +181,9 @@ apply_tuning_settings() {
 		set_tuning_value "$file" "headphone" "regulator-distortion-slope" "32"
 		set_tuning_value "$file" "headphone" "audio-optimizer-enable" "true"
 		set_tuning_value "$file" "headphone" "height-filter-mode" "$hheightfilter"
+		set_tuning_value "$file" "headphone" "virtualizer-front-speaker-angle" "45"
+		set_tuning_value "$file" "headphone" "virtualizer-surround-speaker-angle" "120"
+		set_tuning_value "$file" "headphone" "virtualizer-height-speaker-angle" "30"
 		set_tuning_value "$file" "headphone" "regulator-enable" "$hregulator"
 		set_tuning_value "$file" "headphone" "regulator-overdrive" "$hregoverdrive"
 		set_tuning_value "$file" "headphone" "regulator-timbre-preservation" "$htimbre"
@@ -188,16 +191,9 @@ apply_tuning_settings() {
 		sed_script_file=$(mktemp "$TMPDIR/sed_tuning_commands.XXXXXX")
 
 		for freq in $frequencies; do
-			if [ "$freq" -lt 150 ]; then
 				low="-192"
 				high="0"
 				isolated="true"
-			else
-				low="-192"
-				high="0"
-				isolated="true"
-			fi
-
 			echo "/endpoint_type=\"headphone\"/,/<\/tuning>/ s|frequency=\"$freq\" threshold_low=\"[^\"]*\" threshold_high=\"[^\"]*\" isolated_band=\"[^\"]*\"|frequency=\"$freq\" threshold_low=\"$low\" threshold_high=\"$high\" isolated_band=\"$isolated\"|" >> "$sed_script_file"
 		done
 
@@ -344,7 +340,7 @@ apply_all_profiles() {
 			_generate_sed_headphone_value "peak-value" "512" "$hp_devices"
 			_generate_sed_headphone_value "hearing-protection-enable" "false" "$hp_devices"
 			_generate_sed_headphone_value "virtualizer-start-band" "0" "$hp_devices"
-			_generate_sed_profile_global_value "surround-decoder-diffuse-relocating-to-front-amount" "-5"
+			_generate_sed_profile_global_value "surround-decoder-diffuse-relocating-to-front-amount" "0"
 
 			if [ "$headphone_adv_virt_available" = "true" ]; then
 				_generate_sed_profile_global_value "advanced-headphone-virtualizer-rendering-config" "$hadvirtrend"
@@ -417,7 +413,7 @@ apply_virtual_bass() {
 	sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mode value=\"[^\"]*\"|virtual-bass-mode value=\"3\"|g" "$file"
 
 	if [ "$prefix" = "h" ]; then
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-96\"|g" "$file"
+		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-128\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"8\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"2\"|g" "$file"
 		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"96\" harmonic_3=\"64\" harmonic_4=\"20\"/>|g" "$file"
@@ -442,7 +438,7 @@ apply_virtual_bass() {
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*12)),$((hbassharmboost*16)),$((hbassharmboost*16))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*-5)),$((hbasslingain*-5)),$((hbasslingain*-5)),$((hbasslingain*-10)),$((hbasslingain*-15))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*12)),$((hbassharmboost*16)),$((hbassharmboost*16))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*12)),$((hbassharmboost*18)),$((hbassharmboost*18))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*-5)),$((hbasslingain*-10))\"/>|g" "$file"
 		fi
 	else
