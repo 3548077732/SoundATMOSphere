@@ -430,13 +430,13 @@ apply_virtual_bass() {
 		
 		if [ "$hbassharmtype" -eq 1 ]; then
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*0)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 2 ]; then
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*0)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 3 ]; then
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*20)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15)),$((neghbasslingain*-15))\"/>|g" "$file"
+			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15))\"/>|g" "$file"
 		elif [ "$hbassharmtype" -eq 4 ]; then
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
 			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g" "$file"
