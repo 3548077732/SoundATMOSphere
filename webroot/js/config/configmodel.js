@@ -570,10 +570,11 @@ HBASSWIDTH=${config.hbasswidth}
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render bass like in 1.16 (only first harmonic)
-# Value 2 will boost bass with more harmonics
-# Value 3 will also boost bass with even more harmonics
-# Values [1-3] (default: 2)
+# Value 1 will render only third and fourth harmonic
+# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
+# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
+# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Values [1-4] (default: 3)
 
 HBASSHARMTYPE=${config.hbassharmtype}
 
@@ -907,10 +908,11 @@ SBASSBOOST=${config.sbassboost}
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render bass like in 1.16 (only first harmonic)
-# Value 2 will boost bass with more harmonics
-# Value 3 will also boost bass with even more harmonics
-# Values [1-3] (default: 3)
+# Value 1 will render only third and fourth harmonic
+# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
+# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
+# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Values [1-4] (default: 3)
 
 SBASSHARMTYPE=${config.sbassharmtype}
 

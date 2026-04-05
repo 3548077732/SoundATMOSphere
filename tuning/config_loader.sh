@@ -253,10 +253,10 @@ set_bass() {
 		eval "export hbasswidth=$basswidth"
 	fi
 
-	bassharmtype=$(get_value "${key_prefix}BASSHARMTYPE" 2)
+	bassharmtype=$(get_value "${key_prefix}BASSHARMTYPE" 3)
 	case "$bassharmtype" in
-		0|1|3) eval "export ${prefix}bassharmtype=$bassharmtype" ;;
-		*) eval "export ${prefix}bassharmtype=2" ;;
+		1|2|4) eval "export ${prefix}bassharmtype=$bassharmtype" ;;
+		*) eval "export ${prefix}bassharmtype=3" ;;
 	esac
 	
 	bassharmboost=$(get_value "${key_prefix}BASSHARMBOOST" 6)
