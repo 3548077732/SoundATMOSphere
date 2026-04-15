@@ -4,73 +4,34 @@
 # Global flags
 samsung=false
 
-_add_hp_sed() {
-	local generator_func="$1"
-	local setting_name="$2"
-	local new_value="$3"
-	local devices_list="$4"
-	local command=""
+# --- SED COMMAND GENERATORS ---
 
-	# shellcheck disable=SC2086
-	command=$($generator_func "$setting_name" "$new_value" $devices_list)
-
-	echo "$command"
+_gen_endpoint_value() {
+	# $1 = endpoint_id, $2 = setting_name, $3 = new_value
+	echo "/<endpoint_type id=\"$1\">/,/<\/endpoint_type>/ s|$2 value=\"[^\"]*\"|$2 value=\"$3\"|g"
 }
 
-_generate_sed_headphone_value() {
-	local setting_name="$1"
-	local new_value="$2"
-	local devices_list="$3"
-	local endpoint_id
-
-	local commands=""
-	# shellcheck disable=SC2086
-	for endpoint_id in $devices_list; do
-		commands="${commands} /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|${setting_name} value=\"[^\"]*\"|${setting_name} value=\"${new_value}\"|g;"
-	done
-	echo "$commands"
+_gen_endpoint_no_value() {
+	# $1 = endpoint_id, $2 = setting_name, $3 = new_value
+	echo "/<endpoint_type id=\"$1\">/,/<\/endpoint_type>/ s|$2=\"[^\"]*\"|$2=\"$3\"|g"
 }
 
-_generate_sed_headphone_no_value() {
-	local setting_name="$1"
-	local new_value="$2"
-	local devices_list="$3"
-	local endpoint_id
-
-	local commands=""
-	# shellcheck disable=SC2086
-	for endpoint_id in $devices_list; do
-		commands="${commands} /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|${setting_name}=\"[^\"]*\"|${setting_name}=\"${new_value}\"|g;"
-	done
-	echo "$commands"
+_gen_profile_global_value() {
+	# $1 = profile_name, $2 = setting_name, $3 = new_value
+	echo "/name=\"$1\"/,/<\/profile>/ { /<data>/,/<\/data>/ s|$2 value=\"[^\"]*\"|$2 value=\"$3\"|g; }"
 }
 
-_generate_sed_speaker_value() {
-	local endpoint_id="$1"
-	local setting_name="$2"
-	local new_value="$3"
-	echo " /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|$setting_name value=\"[^\"]*\"|$setting_name value=\"$new_value\"|g;"
+_gen_tuning_value() {
+	# $1 = endpoint_type, $2 = setting_name, $3 = new_value
+	echo "/<tuning .*endpoint_type=\"$1\"/,/<\/tuning>/ s|$2 value=\"[^\"]*\"|$2 value=\"$3\"|g"
 }
 
-_generate_sed_speaker_no_value() {
-	local endpoint_id="$1"
-	local setting_name="$2"
-	local new_value="$3"
-	echo " /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|$setting_name=\"[^\"]*\"|$setting_name=\"$new_value\"|g;"
+_gen_tuning_rate_channels_matrix() {
+	# $1 = endpoint_type, $2 = setting_name, $3 = new_value
+	echo "/<tuning .*endpoint_type=\"$1\"/,/<\/tuning>/ s|$2=\"[^\"]*\"|$2=\"$3\"|g"
 }
 
-_generate_sed_profile_global_value() {
-	local setting_name="$1"
-	local new_value="$2"
-	echo " s|${setting_name} value=\"[^\"]*\"|${setting_name} value=\"${new_value}\"|g;"
-}
-
-_generate_sed_tuning_value() {
-	local endpoint_type="$1"
-	local setting_name="$2"
-	local new_value="$3"
-	echo "/<tuning .*endpoint_type=\"$endpoint_type\"/,/<\/tuning>/ s|${setting_name} value=\"[^\"]*\"|${setting_name} value=\"${new_value}\"|g;"
-}
+# --- DETECTION ---
 
 detect_feature() {
 	local file="$1"
@@ -93,69 +54,36 @@ detect_config(){
 	fi
 }
 
-set_headphone_profile_value() {
-	local file="$1"
-	local profile_name="$2"
-	local setting_name="$3"
-	local new_value="$4"
-	local endpoint_id
-	shift 4
-
-	for endpoint_id in "$@"; do
-		sed -E -i "/name=\"$profile_name\"/,/<\/profile>/ { /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|${setting_name} value=\"[^\"]*\"|${setting_name} value=\"${new_value}\"|g; }" "$file"
-	done
-}
-
-set_headphone_profile_no_value() {
-	local file="$1"
-	local profile_name="$2"
-	local setting_name="$3"
-	local new_value="$4"
-	local endpoint_id
-	shift 4
-
-	for endpoint_id in "$@"; do
-		sed -E -i "/name=\"$profile_name\"/,/<\/profile>/ { /<endpoint_type id=\"$endpoint_id\">/,/<\/endpoint_type>/ s|${setting_name}=\"[^\"]*\"|${setting_name}=\"${new_value}\"|g; }" "$file"
-	done
-}
-
-set_speaker_profile_value() {
-	sed -E -i "/name=\"$2\"/,/<\/profile>/ { /<endpoint_type id=\"$3\">/,/<\/endpoint_type>/ s|$4 value=\"[^\"]*\"|$4 value=\"$5\"|g; }" "$1"
-}
-
-set_speaker_profile_no_value() {
-	sed -E -i "/name=\"$2\"/,/<\/profile>/ { /<endpoint_type id=\"$3\">/,/<\/endpoint_type>/ s|$4=\"[^\"]*\"|$4=\"$5\"|g; }" "$1"
-}
-
-set_tuning_value() {
-	sed -E -i "/<tuning .*endpoint_type=\"$2\"/,/<\/tuning>/ s|$3 value=\"[^\"]*\"|$3 value=\"$4\"|g" "$1"
-}
-
-set_tuning_rate_channels_matrix() {
-	sed -E -i "/<tuning .*endpoint_type=\"$2\"/,/<\/tuning>/ s|$3=\"[^\"]*\"|$3=\"$4\"|g" "$1"
-}
-
-set_profile_global_value() {
-	sed -E -i "/<data>/,/<\/data>/ s|$3 value=\"[^\"]*\"|$3 value=\"$4\"|g" "$1"
-}
+# --- APPLICATION FUNCTIONS ---
 
 apply_global_media_intelligence_settings() {
 	local file="$1"
 	local profile
+	local sed_script_file
 
 	echo " "
-	echo " -- Applying media intelligence and global settings -- "
-	for profile in "Dynamic" "Movie" "Music"; do
-		if grep -q "name=\"$profile\"" "$file"; then
-			set_profile_global_value "$file" "$profile" "mi-dv-leveler-steering-enable" "$dolbymidvlev"
-			set_profile_global_value "$file" "$profile" "mi-ieq-steering-enable" "$dolbymiieq"
-			set_profile_global_value "$file" "$profile" "mi-surround-compressor-steering-enable" "$dolbymisurcomp"
-			set_profile_global_value "$file" "$profile" "mi-adaptive-virtualizer-steering-enable" "$dolbmiadaptvirt"
-			set_profile_global_value "$file" "$profile" "headphone-virtualizer-mode" "$hvirtmod"
-			set_profile_global_value "$file" "$profile" "mi-virtualizer-binaural-steering-enable" "$dolbymivirtbin"
-			set_profile_global_value "$file" "$profile" "mi-dialog-enhancer-steering-enable"  "$dolbymidialenh"
-		fi
-	done
+	echo " -- Applying global Media Intelligence settings -- "
+
+	sed_script_file=$(mktemp "$TMPDIR/sed_mi_commands.XXXXXX")
+
+	{
+		for profile in "Dynamic" "Movie" "Music"; do
+			if grep -q "name=\"$profile\"" "$file"; then
+				_gen_profile_global_value "$profile" "mi-dv-leveler-steering-enable" "$dolbymidvlev"
+				_gen_profile_global_value "$profile" "mi-ieq-steering-enable" "$dolbymiieq"
+				_gen_profile_global_value "$profile" "mi-surround-compressor-steering-enable" "$dolbymisurcomp"
+				_gen_profile_global_value "$profile" "mi-adaptive-virtualizer-steering-enable" "$dolbmiadaptvirt"
+				_gen_profile_global_value "$profile" "headphone-virtualizer-mode" "$hvirtmod"
+				_gen_profile_global_value "$profile" "mi-virtualizer-binaural-steering-enable" "$dolbymivirtbin"
+				_gen_profile_global_value "$profile" "mi-dialog-enhancer-steering-enable"  "$dolbymidialenh"
+			fi
+		done
+	} >> "$sed_script_file"
+
+	if [ -s "$sed_script_file" ]; then
+		sed -E -i -f "$sed_script_file" "$file"
+	fi
+	rm -f "$sed_script_file"
 }
 
 apply_tuning_settings() {
@@ -170,81 +98,79 @@ apply_tuning_settings() {
 	echo " "
 	echo " -- Applying endpoint tuning settings -- "
 
-	if [ "$headphonetuning" = "true" ]; then
-		set_tuning_value "$file" "headphone" "volume-leveler-compressor-enable" "true"
-		set_tuning_value "$file" "headphone" "bass-mbdrc-enable" "false"
-		set_tuning_value "$file" "headphone" "bass-extraction-enable" "true"
-		set_tuning_value "$file" "headphone" "bass-extraction-cutoff-frequency" "200"
-		set_tuning_value "$file" "headphone" "regulator-speaker-dist-enable" "true"
-		set_tuning_value "$file" "headphone" "regulator-sibilance-suppress-enable" "false"
-		set_tuning_value "$file" "headphone" "regulator-stress-amount" "96,96,96,96"
-		set_tuning_value "$file" "headphone" "regulator-distortion-slope" "32"
-		set_tuning_value "$file" "headphone" "audio-optimizer-enable" "true"
-		set_tuning_value "$file" "headphone" "height-filter-mode" "$hheightfilter"
-		set_tuning_value "$file" "headphone" "virtualizer-front-speaker-angle" "45"
-		set_tuning_value "$file" "headphone" "virtualizer-surround-speaker-angle" "120"
-		set_tuning_value "$file" "headphone" "virtualizer-height-speaker-angle" "30"
-		set_tuning_value "$file" "headphone" "regulator-enable" "$hregulator"
-		set_tuning_value "$file" "headphone" "regulator-overdrive" "$hregoverdrive"
-		set_tuning_value "$file" "headphone" "regulator-timbre-preservation" "$htimbre"
+	sed_script_file=$(mktemp "$TMPDIR/sed_tuning_commands.XXXXXX")
 
-		sed_script_file=$(mktemp "$TMPDIR/sed_tuning_commands.XXXXXX")
+	{
+		if [ "$headphonetuning" = "true" ]; then
+			_gen_tuning_value "headphone" "volume-leveler-compressor-enable" "true"
+			_gen_tuning_value "headphone" "bass-mbdrc-enable" "false"
+			_gen_tuning_value "headphone" "bass-extraction-enable" "true"
+			_gen_tuning_value "headphone" "bass-extraction-cutoff-frequency" "200"
+			_gen_tuning_value "headphone" "regulator-speaker-dist-enable" "true"
+			_gen_tuning_value "headphone" "regulator-sibilance-suppress-enable" "false"
+			_gen_tuning_value "headphone" "regulator-stress-amount" "96,96,96,96"
+			_gen_tuning_value "headphone" "regulator-distortion-slope" "32"
+			_gen_tuning_value "headphone" "audio-optimizer-enable" "true"
+			_gen_tuning_value "headphone" "height-filter-mode" "$hheightfilter"
+			_gen_tuning_value "headphone" "virtualizer-front-speaker-angle" "45"
+			_gen_tuning_value "headphone" "virtualizer-surround-speaker-angle" "120"
+			_gen_tuning_value "headphone" "virtualizer-height-speaker-angle" "30"
+			_gen_tuning_value "headphone" "regulator-enable" "$hregulator"
+			_gen_tuning_value "headphone" "regulator-overdrive" "$hregoverdrive"
+			_gen_tuning_value "headphone" "regulator-timbre-preservation" "$htimbre"
 
-		for freq in $frequencies; do
+			for freq in $frequencies; do
 				low="-192"
 				high="0"
 				isolated="true"
-			echo "/endpoint_type=\"headphone\"/,/<\/tuning>/ s|frequency=\"$freq\" threshold_low=\"[^\"]*\" threshold_high=\"[^\"]*\" isolated_band=\"[^\"]*\"|frequency=\"$freq\" threshold_low=\"$low\" threshold_high=\"$high\" isolated_band=\"$isolated\"|" >> "$sed_script_file"
-		done
+				echo "/endpoint_type=\"headphone\"/,/<\/tuning>/ s|frequency=\"$freq\" threshold_low=\"[^\"]*\" threshold_high=\"[^\"]*\" isolated_band=\"[^\"]*\"|frequency=\"$freq\" threshold_low=\"$low\" threshold_high=\"$high\" isolated_band=\"$isolated\"|"
+			done
 
-		if [ -s "$sed_script_file" ]; then
-			sed -i -E -f "$sed_script_file" "$file"
+			_gen_tuning_rate_channels_matrix "headphone" "tuned_rate" "$htunedrate"
+			_gen_tuning_rate_channels_matrix "headphone" "output_channels" "$h_output_channels"
+
+			_gen_tuning_value "headphone" "bass-enhancer-enable" "true"
+			_gen_tuning_value "headphone" "bass-enhancer-boost" "$hbassboost"
+			_gen_tuning_value "headphone" "bass-enhancer-cutoff-frequency" "$hbasscutoff"
+			_gen_tuning_value "headphone" "bass-enhancer-width" "$hbasswidth"
 		fi
-		rm -f "$sed_script_file"
 
-		set_tuning_rate_channels_matrix "$file" "headphone" "tuned_rate" "$htunedrate"
-		set_tuning_rate_channels_matrix "$file" "headphone" "output_channels" "$h_output_channels"
+		if [ "$speakertuning" = "true" ]; then
+			_gen_tuning_value "speaker" "volume-leveler-compressor-enable" "true"
+			_gen_tuning_value "speaker" "regulator-enable" "true"
+			_gen_tuning_value "speaker" "regulator-speaker-dist-enable" "true"
+			_gen_tuning_value "speaker" "regulator-sibilance-suppress-enable" "false"
+			_gen_tuning_value "speaker" "audio-optimizer-enable" "true"
+			_gen_tuning_value "speaker" "regulator-timbre-preservation" "$stimbre"
+			_gen_tuning_value "speaker" "speaker-virtualizer-mode" "$svirtmod"
+			_gen_tuning_rate_channels_matrix "speaker" "tuned_rate" "$stunedrate"
+			_gen_tuning_rate_channels_matrix "speaker" "output_channels" "$s_output_channels"
 
-		# Applied DRY Principle: Apply bass enhancer settings once
-		set_tuning_value "$file" "headphone" "bass-enhancer-enable" "true"
-		set_tuning_value "$file" "headphone" "bass-enhancer-boost" "$hbassboost"
-		set_tuning_value "$file" "headphone" "bass-enhancer-cutoff-frequency" "$hbasscutoff"
-		set_tuning_value "$file" "headphone" "bass-enhancer-width" "$hbasswidth"
-
-		# Apply virtual bass specifically if VB mode is selected and supported
-		if [ "$hrenderbass" = "VB" ]; then
-			if detect_feature "$file" "virtual-bass-harmgains"; then
-				apply_virtual_bass "h" "$file"
+			if detect_feature "$file" "advanced-speaker-virtualizer-rendering-config"; then
+				_gen_tuning_value "speaker" "advanced-speaker-virtualizer-rendering-config" "$sadvirtrend"
 			fi
+		fi
+	} >> "$sed_script_file"
+
+	# Apply tuning Virtual Bass commands directly into the script file
+	if [ "$headphonetuning" = "true" ] && [ "$hrenderbass" = "VB" ]; then
+		if detect_feature "$file" "virtual-bass-harmgains"; then
+			apply_virtual_bass "h" "$sed_script_file"
 		fi
 	fi
 
 	if [ "$speakertuning" = "true" ]; then
-		set_tuning_value "$file" "speaker" "volume-leveler-compressor-enable" "true"
-		set_tuning_value "$file" "speaker" "regulator-enable" "true"
-		set_tuning_value "$file" "speaker" "regulator-speaker-dist-enable" "true"
-		set_tuning_value "$file" "speaker" "regulator-sibilance-suppress-enable" "false"
-		set_tuning_value "$file" "speaker" "audio-optimizer-enable" "true"
-		set_tuning_value "$file" "speaker" "regulator-timbre-preservation" "$stimbre"
-		set_tuning_value "$file" "speaker" "speaker-virtualizer-mode" "$svirtmod"
-		set_tuning_rate_channels_matrix "$file" "speaker" "tuned_rate" "$stunedrate"
-		set_tuning_rate_channels_matrix "$file" "speaker" "output_channels" "$s_output_channels"
-
-		if detect_feature "$file" "advanced-speaker-virtualizer-rendering-config"; then
-			set_tuning_value "$file" "speaker" "advanced-speaker-virtualizer-rendering-config" "$sadvirtrend"
-		fi
-
-		if [ "$srenderbass" = "BE" ]; then
-			set_speaker_profile_value "$file" "speaker" "bass-enhancer-enable" "true"
-			set_speaker_profile_value "$file" "speaker" "bass-enhancer-boost" "$sbassboost"
-		else
-			set_speaker_profile_value "$file" "speaker" "bass-enhancer-enable" "true"
-			set_speaker_profile_value "$file" "speaker" "bass-enhancer-boost" "$sbassboost"
+		if [ "$srenderbass" = "VB" ]; then
 			if detect_feature "$file" "virtual-bass-harmgains"; then
-				apply_virtual_bass "s" "$file"
+				apply_virtual_bass "s" "$sed_script_file"
 			fi
 		fi
 	fi
+
+	if [ -s "$sed_script_file" ]; then
+		sed -E -i -f "$sed_script_file" "$file"
+	fi
+	rm -f "$sed_script_file"
 }
 
 apply_all_profiles() {
@@ -257,6 +183,7 @@ apply_all_profiles() {
 	local sdialog_setting
 	local svirtualizer_setting
 	local hp_devices="headphone bluetooth other usb remote_submix digital_aux default"
+	local endpoint_id
 
 	sed_script_file=$(mktemp "$TMPDIR/sed_profiles.XXXXXX")
 
@@ -297,171 +224,215 @@ apply_all_profiles() {
 
 	existing_profiles=$(grep -E -o 'name="(Dynamic|Movie|Music|Custom)"' "$file" | cut -d'"' -f2 | sort -u)
 
-	for profile in $existing_profiles; do
-		echo "/name=\"$profile\"/,/<\/profile>/ {"
+	{
+		for profile in $existing_profiles; do
+			echo "/name=\"$profile\"/,/<\/profile>/ {"
 
-		if [ "$headphonetuning" = "true" ]; then
-			hdialog_setting="$hdialog2"
-			hvirtualizer_setting="$hvirtualizer2"
+			if [ "$headphonetuning" = "true" ]; then
+				hdialog_setting="$hdialog2"
+				hvirtualizer_setting="$hvirtualizer2"
 
-			if [ "$profile" = "Movie" ]; then
-				hdialog_setting="$hdialog1"
-				hvirtualizer_setting="$hvirtualizer1"
+				if [ "$profile" = "Movie" ]; then
+					hdialog_setting="$hdialog1"
+					hvirtualizer_setting="$hvirtualizer1"
+				fi
+
+				for endpoint_id in $hp_devices; do
+					if [ "$hrenderbass" = "VB" ] && [ "$headphone_vbass_available" = "true" ]; then
+						_gen_endpoint_value "$endpoint_id" "virtual-bass-process-enable" "true"
+						_gen_endpoint_value "$endpoint_id" "bass-enhancer-enable" "true"
+					else
+						_gen_endpoint_value "$endpoint_id" "virtual-bass-process-enable" "false"
+						_gen_endpoint_value "$endpoint_id" "bass-enhancer-enable" "true"
+					fi
+
+					_gen_endpoint_value "$endpoint_id" "ieq-enable" "$hieq3"
+					if [ "$samsung" = "false" ]; then
+						_gen_endpoint_no_value "$endpoint_id" "include ieq_preset" "$hieq1"
+						_gen_endpoint_no_value "$endpoint_id" "include preset" "ieq_$hieq2"
+					else
+						_gen_endpoint_no_value "$endpoint_id" "include preset" "ieq_balanced"
+					fi
+
+					_gen_endpoint_value "$endpoint_id" "ieq-amount" "$hieqamount"
+					_gen_endpoint_value "$endpoint_id" "dialog-enhancer-enable" "$hdialog_setting"
+					_gen_endpoint_value "$endpoint_id" "dialog-enhancer-amount" "$hdeamount"
+					_gen_endpoint_value "$endpoint_id" "dialog-enhancer-ducking" "$hdeducking"
+					_gen_endpoint_value "$endpoint_id" "virtualizer-enable" "$hvirtualizer_setting"
+					_gen_endpoint_value "$endpoint_id" "surround-boost" "$hsurboost"
+					_gen_endpoint_value "$endpoint_id" "volmax-boost" "$hlevstr"
+					_gen_endpoint_value "$endpoint_id" "volume-leveler-enable" "$hleveler"
+					_gen_endpoint_value "$endpoint_id" "volume-leveler-amount" "$hlevamount"
+					_gen_endpoint_value "$endpoint_id" "volume-leveler-in-target" "$hlevtargetin"
+					_gen_endpoint_value "$endpoint_id" "volume-leveler-out-target" "$hlevtargetout"
+					_gen_endpoint_value "$endpoint_id" "peak-value" "512"
+					_gen_endpoint_value "$endpoint_id" "hearing-protection-enable" "false"
+					_gen_endpoint_value "$endpoint_id" "virtualizer-start-band" "0"
+				done
+
+				echo " /<data>/,/<\/data>/ s|surround-decoder-diffuse-relocating-to-front-amount value=\"[^\"]*\"|surround-decoder-diffuse-relocating-to-front-amount value=\"0\"|g;"
+
+				if [ "$headphone_adv_virt_available" = "true" ]; then
+					echo " /<data>/,/<\/data>/ s|advanced-headphone-virtualizer-rendering-config value=\"[^\"]*\"|advanced-headphone-virtualizer-rendering-config value=\"$hadvirtrend\"|g;"
+				fi
+				if [ "$headphone_virt_dist_available" = "true" ]; then
+					echo " /<data>/,/<\/data>/ s|headphone-virtualizer-steerer-source-distance value=\"[^\"]*\"|headphone-virtualizer-steerer-source-distance value=\"$hvirtdist\"|g;"
+				fi
+				if [ "$headphone_virt_lr_angle_available" = "true" ]; then
+					echo " /<data>/,/<\/data>/ s|advanced-headphone-virtualizer-lr-angle value=\"[^\"]*\"|advanced-headphone-virtualizer-lr-angle value=\"$hadvirtangle\"|g;"
+				fi
 			fi
 
-			if [ "$hrenderbass" = "VB" ] && [ "$headphone_vbass_available" = "true" ]; then
-				_generate_sed_headphone_value "virtual-bass-process-enable" "true" "$hp_devices"
-				_generate_sed_headphone_value "bass-enhancer-enable" "true" "$hp_devices"
-			else
-				_generate_sed_headphone_value "virtual-bass-process-enable" "false" "$hp_devices"
-				_generate_sed_headphone_value "bass-enhancer-enable" "true" "$hp_devices"
+			if [ "$speakertuning" = "true" ]; then
+				sdialog_setting="$sdialog2"
+				svirtualizer_setting="$svirtualizer2"
+				if [ "$profile" = "Movie" ]; then
+					sdialog_setting="$sdialog1"
+					svirtualizer_setting="$svirtualizer1"
+				fi
+
+				if [ "$srenderbass" = "VB" ] && [ "$speaker_vbass_available" = "true" ]; then
+					_gen_endpoint_value "speaker" "virtual-bass-process-enable" "true"
+					_gen_endpoint_value "speaker" "bass-enhancer-enable" "false"
+				else
+					_gen_endpoint_value "speaker" "virtual-bass-process-enable" "false"
+					_gen_endpoint_value "speaker" "bass-enhancer-enable" "true"
+				fi
+
+				_gen_endpoint_value "speaker" "ieq-enable" "$sieq3"
+				_gen_endpoint_no_value "speaker" "include ieq_preset" "$sieq1"
+				_gen_endpoint_value "speaker" "ieq-amount" "$sieqamount"
+				_gen_endpoint_value "speaker" "dialog-enhancer-enable" "$sdialog_setting"
+				_gen_endpoint_value "speaker" "dialog-enhancer-amount" "$sdeamount"
+				_gen_endpoint_value "speaker" "dialog-enhancer-ducking" "$sdeducking"
+				_gen_endpoint_value "speaker" "virtualizer-enable" "$svirtualizer_setting"
+				_gen_endpoint_value "speaker" "surround-boost" "$ssurboost"
+				_gen_endpoint_value "speaker" "volmax-boost" "$slevstr"
+				_gen_endpoint_value "speaker" "volume-leveler-enable" "$sleveler"
+				_gen_endpoint_value "speaker" "volume-leveler-amount" "$slevamount"
+				_gen_endpoint_value "speaker" "volume-leveler-in-target" "$slevtargetin"
+				_gen_endpoint_value "speaker" "volume-leveler-out-target" "$slevtargetout"
+				_gen_endpoint_value "speaker" "peak-value" "512"
+				_gen_endpoint_value "speaker" "hearing-protection-enable" "false"
+
+				if [ "$speaker_adv_virt_available" = "true" ]; then
+					echo " /<data>/,/<\/data>/ s|advanced-speaker-virtualizer-rendering-config value=\"[^\"]*\"|advanced-speaker-virtualizer-rendering-config value=\"$sadvirtrend\"|g;"
+				fi
 			fi
 
-			_generate_sed_headphone_value "ieq-enable" "$hieq3" "$hp_devices"
-			if [ "$samsung" = "false" ]; then
-				_generate_sed_headphone_no_value "include ieq_preset" "$hieq1" "$hp_devices"
-				_generate_sed_headphone_no_value "include preset" "ieq_$hieq2" "$hp_devices"
-			else
-				_generate_sed_headphone_no_value "include preset" "ieq_balanced" "$hp_devices"
-			fi
-
-			_generate_sed_headphone_value "ieq-amount" "$hieqamount" "$hp_devices"
-			_generate_sed_headphone_value "dialog-enhancer-enable" "$hdialog_setting" "$hp_devices"
-			_generate_sed_headphone_value "dialog-enhancer-amount" "$hdeamount" "$hp_devices"
-			_generate_sed_headphone_value "dialog-enhancer-ducking" "$hdeducking" "$hp_devices"
-			_generate_sed_headphone_value "virtualizer-enable" "$hvirtualizer_setting" "$hp_devices"
-			_generate_sed_headphone_value "surround-boost" "$hsurboost" "$hp_devices"
-			_generate_sed_headphone_value "volmax-boost" "$hlevstr" "$hp_devices"
-			_generate_sed_headphone_value "volume-leveler-enable" "$hleveler" "$hp_devices"
-			_generate_sed_headphone_value "volume-leveler-amount" "$hlevamount" "$hp_devices"
-			_generate_sed_headphone_value "volume-leveler-in-target" "$hlevtargetin" "$hp_devices"
-			_generate_sed_headphone_value "volume-leveler-out-target" "$hlevtargetout" "$hp_devices"
-			_generate_sed_headphone_value "peak-value" "512" "$hp_devices"
-			_generate_sed_headphone_value "hearing-protection-enable" "false" "$hp_devices"
-			_generate_sed_headphone_value "virtualizer-start-band" "0" "$hp_devices"
-			_generate_sed_profile_global_value "surround-decoder-diffuse-relocating-to-front-amount" "0"
-
-			if [ "$headphone_adv_virt_available" = "true" ]; then
-				_generate_sed_profile_global_value "advanced-headphone-virtualizer-rendering-config" "$hadvirtrend"
-			fi
-			if [ "$headphone_virt_dist_available" = "true" ]; then
-				_generate_sed_profile_global_value "headphone-virtualizer-steerer-source-distance" "$hvirtdist"
-			fi
-			if [ "$headphone_virt_lr_angle_available" = "true" ]; then
-				_generate_sed_profile_global_value "advanced-headphone-virtualizer-lr-angle" "$hadvirtangle"
-			fi
-		fi
-
-		if [ "$speakertuning" = "true" ]; then
-			sdialog_setting="$sdialog2"
-			svirtualizer_setting="$svirtualizer2"
-			if [ "$profile" = "Movie" ]; then
-				sdialog_setting="$sdialog1"
-				svirtualizer_setting="$svirtualizer1"
-			fi
-
-			if [ "$srenderbass" = "VB" ] && [ "$speaker_vbass_available" = "true" ]; then
-				_generate_sed_speaker_value "speaker" "virtual-bass-process-enable" "true"
-				_generate_sed_speaker_value "speaker" "bass-enhancer-enable" "false"
-			else
-				_generate_sed_speaker_value "speaker" "virtual-bass-process-enable" "false"
-				_generate_sed_speaker_value "speaker" "bass-enhancer-enable" "true"
-			fi
-
-			_generate_sed_speaker_value "speaker" "ieq-enable" "$sieq3"
-			_generate_sed_speaker_no_value "speaker" "include ieq_preset" "$sieq1"
-			_generate_sed_speaker_value "speaker" "ieq-amount" "$sieqamount"
-			_generate_sed_speaker_value "speaker" "dialog-enhancer-enable" "$sdialog_setting"
-			_generate_sed_speaker_value "speaker" "dialog-enhancer-amount" "$sdeamount"
-			_generate_sed_speaker_value "speaker" "dialog-enhancer-ducking" "$sdeducking"
-			_generate_sed_speaker_value "speaker" "virtualizer-enable" "$svirtualizer_setting"
-			_generate_sed_speaker_value "speaker" "surround-boost" "$ssurboost"
-			_generate_sed_speaker_value "speaker" "volmax-boost" "$slevstr"
-			_generate_sed_speaker_value "speaker" "volume-leveler-enable" "$sleveler"
-			_generate_sed_speaker_value "speaker" "volume-leveler-amount" "$slevamount"
-			_generate_sed_speaker_value "speaker" "volume-leveler-in-target" "$slevtargetin"
-			_generate_sed_speaker_value "speaker" "volume-leveler-out-target" "$slevtargetout"
-			_generate_sed_speaker_value "speaker" "peak-value" "512"
-			_generate_sed_speaker_value "speaker" "hearing-protection-enable" "false"
-
-			if [ "$speaker_adv_virt_available" = "true" ]; then
-				_generate_sed_profile_global_value "advanced-speaker-virtualizer-rendering-config" "$sadvirtrend"
-			fi
-		fi
-
-		echo "}"
-	done >> "$sed_script_file"
+			echo "}"
+		done
+	} >> "$sed_script_file"
 
 	if [ -s "$sed_script_file" ]; then
-		 sed -E -i -f "$sed_script_file" "$file"
-		 echo " -- Profile settings applied successfully -- "
+		sed -E -i -f "$sed_script_file" "$file"
+		echo " -- Profile settings applied successfully -- "
 	else
-		 echo " -- No profile settings to apply -- "
+		echo " -- No profile settings to apply -- "
 	fi
 	rm -f "$sed_script_file"
 }
 
 apply_virtual_bass() {
 	local prefix="$1"
-	local file="$2"
+	local out_sed_file="$2"
 	local endpoint
 
 	[ "$prefix" = "h" ] && endpoint="headphone" || endpoint="speaker"
 	echo " -- Applying Virtual Bass for endpoint: $endpoint -- "
 
-	sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mode value=\"[^\"]*\"|virtual-bass-mode value=\"3\"|g" "$file"
+	{
+		echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mode value=\"[^\"]*\"|virtual-bass-mode value=\"3\"|g"
 
-	if [ "$prefix" = "h" ]; then
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-128\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"8\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"2\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"96\" harmonic_3=\"64\" harmonic_4=\"20\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmmixfreqmax\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency value=\"[^\"]*\"|virtual-bass-mix-frequency value=\"$hbassharmmixfreqmin,$hbassharmmixfreqmax\"|g" "$file"
+		if [ "$prefix" = "h" ]; then
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-128\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"0\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"0\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"-64\" harmonic_3=\"-16\" harmonic_4=\"-96\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmmixfreqmax\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency value=\"[^\"]*\"|virtual-bass-mix-frequency value=\"$hbassharmmixfreqmin,$hbassharmmixfreqmax\"|g"
 
-		if [ "$hbasscompstrength" -eq 0 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"0,0,0,0,0,0,0\"|g" "$file"
+			if [ "$hbasscompstrength" -eq 0 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"0,0,0,0,0,0,0\"|g"
+			else
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"1,$((hbasscompstrength*36)),-96,96,32,25,50\"|g"
+			fi
+			
+			# Calculating formula for virtual bass
+			# Multiplying by 0 is intentional for testing purposes
+			hpvirtualbassmath_neglingain(){
+			if [ "$hbassharmtype" -eq 1 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*0)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+			elif [ "$hbassharmtype" -eq 2 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*10)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+			elif [ "$hbassharmtype" -eq 3 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*15)),$((hbassharmboost*20)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+			elif [ "$hbassharmtype" -eq 4 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+			fi
+			}
+			
+			hpvirtualbassmath_poslingain(){
+			if [ "$hbassharmtype" -eq 1 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*0)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
+			elif [ "$hbassharmtype" -eq 2 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*12)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
+			elif [ "$hbassharmtype" -eq 3 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*24)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
+			elif [ "$hbassharmtype" -eq 4 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*0)),$((neghbasslingain*10)),$((neghbasslingain*5)),$((neghbasslingain*5)),$((neghbasslingain*5)),$((neghbasslingain*0))\"/>|g"
+			fi
+			}
+
+			if [ "$hbasslingain" -lt 0 ]; then
+			poshbasslingain=$((hbasslingain*-1))
+			hpvirtualbassmath_neglingain
+			else
+			neghbasslingain=$((hbasslingain*-1))
+			hpvirtualbassmath_poslingain
+			fi
+
 		else
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"1,$((hbasscompstrength*36)),-96,50,25,20,50\"|g" "$file"
-		fi
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs .*|virtual-bass-mix-freqs frequency_low=\"289\" frequency_high=\"498\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs .*|virtual-bass-src-freqs frequency_low=\"80\" frequency_high=\"150\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-164\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"0\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"0\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"-16\" harmonic_3=\"-144\" harmonic_4=\"-192\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain .*|virtual-bass-blend-linear-gain value=\"$sbasslingain\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency .*|virtual-bass-mix-frequency value=\"100,600\"/>|g"
+			
+			if [ "$sbasscompstrength" -eq 0 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"0,0,0,0,0,0,0\"|g"
+			else
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"1,$((sbasscompstrength*36)),-96,96,32,25,50\"|g"
+			fi
 
-		if [ "$hbassharmtype" -eq 1 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*0)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15))\"/>|g" "$file"
-		elif [ "$hbassharmtype" -eq 2 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*0)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g" "$file"
-		elif [ "$hbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*15)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15)),$((hbasslingain*-15))\"/>|g" "$file"
-		elif [ "$hbassharmtype" -eq 4 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*7)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g" "$file"
+			if [ "$sbassharmtype" -eq 1 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*0)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
+			elif [ "$sbassharmtype" -eq 2 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*10)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
+			elif [ "$sbassharmtype" -eq 3 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*20)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
+			elif [ "$sbassharmtype" -eq 4 ]; then
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*30)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
+			fi
 		fi
-	else
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs .*|virtual-bass-mix-freqs frequency_low=\"289\" frequency_high=\"498\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs .*|virtual-bass-src-freqs frequency_low=\"80\" frequency_high=\"150\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"-48\" harmonic_3=\"-48\" harmonic_4=\"-48\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain .*|virtual-bass-blend-linear-gain value=\"$sbasslingain\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency .*|virtual-bass-mix-frequency value=\"100,600\"/>|g" "$file"
-		sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning .*|virtual-bass-compressor-tuning value=\"1,$sbasscompstrength,-16,96,32,25,50\"/>|g" "$file"
-
-		if [ "$sbassharmtype" -eq 1 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((sbasslingain*5)),$((hbassharmboost*0)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15))\"/>|g" "$file"
-		elif [ "$sbassharmtype" -eq 2 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((sbasslingain*0)),$((hbassharmboost*0)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g" "$file"
-		elif [ "$sbassharmtype" -eq 3 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((sbasslingain*5)),$((hbassharmboost*15)),$((hbassharmboost*20)),$((hbassharmboost*20))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15)),$((sbasslingain*-15))\"/>|g" "$file"
-		elif [ "$sbassharmtype" -eq 4 ]; then
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((sbasslingain*0)),$((hbassharmboost*7)),$((hbassharmboost*15)),$((hbassharmboost*15))\"/>|g" "$file"
-			sed -E -i "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g" "$file"
-		fi
-	fi
+	} >> "$out_sed_file"
 }
 
 apply_ieq_settings() {
@@ -528,11 +499,13 @@ apply_ieq_settings() {
 		case "$HIEQ" in
 		[Cc]|[Cc][Bb])
 			echo " -- Applying Headphones Custom IEQ to '$working_preset' -- "
-			for freq in $frequencies; do
-				eval "target_val=\$hiet_${freq}"
-				echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|" >> "$sed_script_file"
-				echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|" >> "$sed_script_file"
-			done
+			{
+				for freq in $frequencies; do
+					eval "target_val=\$hiet_${freq}"
+					echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+					echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+				done
+			} >> "$sed_script_file"
 			;;
 		esac
 
@@ -550,14 +523,16 @@ apply_ieq_settings() {
 
 				remaining_targets="$all_targets"
 
-				for freq in $frequencies; do
-					target_val="${remaining_targets%% *}"
-					if [ -z "$target_val" ]; then break; fi
-					remaining_targets="${remaining_targets#* }"
+				{
+					for freq in $frequencies; do
+						target_val="${remaining_targets%% *}"
+						if [ -z "$target_val" ]; then break; fi
+						remaining_targets="${remaining_targets#* }"
 
-					echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|" >> "$sed_script_file"
-					echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|" >> "$sed_script_file"
-				done
+						echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+						echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+					done
+				} >> "$sed_script_file"
 				;;
 			esac
 		fi
@@ -580,8 +555,8 @@ apply_volume_boosts() {
 	local hvolleft_gain
 	local hvolright_gain
 	local ep_type
-
 	local sed_script_file
+
 	sed_script_file=$(mktemp "$TMPDIR/sed_boosts_commands.XXXXXX")
 
 	echo " "

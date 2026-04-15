@@ -192,7 +192,18 @@ export const initBass = () => {
 	sliders.forEach(id => {
 		const slider = getDomElement(id);
 		if (slider) {
-			slider.addEventListener('input',() => {
+			// Track previous value for each slider independently
+			let prevValue = slider.value;
+
+			slider.addEventListener('input', () => {
+				// Skip zero value for specific sliders, this case is bass linear gain, as 0 is disabling harmonics completely
+				if ((id === 'hbasslingain' || id === 'sbasslingain') && slider.value == 0) {
+					slider.value = prevValue > 0 ? -1 : 1;
+				}
+				
+				// Update previous value for the next input event
+				prevValue = slider.value;
+
 				const valueDisplay = getDomElement(`${id}-value`);
 				if (valueDisplay) {
 					valueDisplay.textContent = convertToLanguageNumerals(slider.value, lang);
