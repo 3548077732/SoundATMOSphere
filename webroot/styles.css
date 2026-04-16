@@ -28,10 +28,10 @@
 }
 
 /* Black & White Theme */
-[data-theme="black-and-white"] {
+[data-theme="black-&-white"] {
   --bg-app: #ffffff;
   --bg-card: #ffffff;
-  --bg-nav: rgba(50, 50, 50, 0.98);
+  --bg-nav: rgba(0, 0, 0, 0.98);
   --input-bg: #ddd;
   
   --accent: #ddd;
@@ -39,7 +39,7 @@
   --accent-dim: rgba(255, 255, 255, 0.1);
   
   --text-main: #999999;
-  --text-muted: #333333;
+  --text-muted: #666666;
   --border: #000000;
   --danger: #ff4d4d;
   
