@@ -27,6 +27,36 @@
 	--log-border: #00E5FF;
 }
 
+/* Black & White Theme */
+[data-theme="black-and-white"] {
+  --bg-app: #ffffff;
+  --bg-card: #ffffff;
+  --bg-nav: rgba(50, 50, 50, 0.98);
+  --input-bg: #ddd;
+  
+  --accent: #ddd;
+  --accent-glow: rgba(0, 0, 0, 0.4);
+  --accent-dim: rgba(255, 255, 255, 0.1);
+  
+  --text-main: #999999;
+  --text-muted: #333333;
+  --border: #000000;
+  --danger: #ff4d4d;
+  
+  --button-background: #dddddd;
+  --button-active-background: #000000;
+  --button-text: #000000;
+  --button-active-text: #ffffff;
+  
+  --slider-track: #999999;
+  --slider-thumb: #ffffff;
+  --slider-thumb-border: #000000;
+  
+  --log-bg: #ffffff;
+  --log-border: #000000;
+  --log-text: #000000;
+}
+
 /* D Access Theme */
 [data-theme="d-access-theme"] {
   --bg-app: linear-gradient(to bottom, #0E6583, #5D3569);
@@ -488,7 +518,7 @@ button:hover {
 
 .toggle-btn.active, .toggle-btn[data-state="true"] {
 	background: var(--accent) !important;
-	border-color: var(--accent) !important;
+	border-color: var(--border) !important;
 	box-shadow: 0 0 0.625rem rgba(0, 229, 255, 0.2);
 }
 
