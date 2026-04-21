@@ -62,7 +62,7 @@ export const bassVisibility = (section, toggleId, featureKey = null) => {
 	
 	if (warning) {
 		const beKeys = ['bassboostContainer', 'basscutoffContainer', 'basswidthContainer'];
-		const vbKeys = ['bassharmtypeContainer', 'bassharmmixfreqminContainer', 'bassharmmixfreqmaxContainer', 'bassharmsrcfreqminContainer', 'bassharmsrcfreqmaxContainer', 'bassharmboostContainer', 'basslingainContainer', 'basscompstrengthContainer'];
+		const vbKeys = ['bassharmtypeContainer', 'bassharmmixfreqminContainer', 'bassharmmixfreqmaxContainer', 'bassharmsrcfreqminContainer', 'bassharmsrcfreqmaxContainer', 'hbassharmgenfreqmaxContainer','bassharmboostContainer', 'basslingainContainer', 'basscompstrengthContainer'];
 
 		// Helper function to toggle elements visibility safely with !important
 		const setGroupVisibility = (keys, show) => {
@@ -186,7 +186,7 @@ export const initBass = () => {
 		}
 	}
 	
-	const sliders = ['hbassboost', 'hbasscutoff', 'hbassharmtype', 'hbasswidth', 'hbassharmmixfreqmin', 'hbassharmmixfreqmax', 
+	const sliders = ['hbassboost', 'hbasscutoff', 'hbassharmtype', 'hbasswidth', 'hbassharmmixfreqmin', 'hbassharmmixfreqmax', 'hbassharmgenfreqmax',
 					'hbassharmsrcfreqmin', 'hbassharmsrcfreqmax', 'hbassharmboost', 'hbasslingain', 'hbasscompstrength', 
 					'sbassboost', 'sbassharmboost', 'sbasslingain', 'sbasscompstrength'];
 	sliders.forEach(id => {

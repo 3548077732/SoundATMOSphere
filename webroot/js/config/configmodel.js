@@ -64,10 +64,11 @@ export const defaultValues = {
     hbasscutoff: '90',
     hbasswidth: '16',
     hbassharmtype: '3',
-    hbassharmmixfreqmin: '10',
-    hbassharmmixfreqmax: '90',
     hbassharmsrcfreqmin: '10',
     hbassharmsrcfreqmax: '90',
+    hbassharmmixfreqmin: '10',
+    hbassharmmixfreqmax: '90',
+    hbassharmgenfreqmax: '240',
     hbassharmboost: '6',
     hbasslingain: '7',
     hbasscompstrength: '0',
@@ -94,6 +95,26 @@ export const defaultValues = {
 	h_output_channels: '2',
     speakertuning: 'YES',
     sieq: 'B',
+    siet_47: '150',
+    siet_141: '142',
+    siet_234: '188',
+    siet_328: '216',
+    siet_469: '189',
+    siet_656: '195',
+    siet_844: '202',
+    siet_1031: '199',
+    siet_1313: '210',
+    siet_1688: '225',
+    siet_2250: '230',
+    siet_3000: '236',
+    siet_3750: '235',
+    siet_4688: '235',
+    siet_5813: '214',
+    siet_7125: '165',
+    siet_9000: '112',
+    siet_11250: '49',
+    siet_13875: '-24',
+    siet_19688: '-217',
     sieqstr: '6',
 	seq_47: '0',
     seq_141: '0',
@@ -119,8 +140,8 @@ export const defaultValues = {
     srenderbass: 'VB',
     sbassboost: '6',
     sbassharmtype: '3',
-    sbassharmboost: '2',
-    sbasslingain: '6',
+    sbassharmboost: '5',
+    sbasslingain: '5',
     sbasscompstrength: '0',
     svolboost: '0',
     sde: '0',
@@ -169,25 +190,25 @@ export const configMap = {
     HIEQSTR: { id: 'hieqstr', type: 'range', default: '6' },
 	HEQPRESET: { id: 'heqpreset', type: 'select', default: 'flat', transform: (el) => el ? el.value : 'flat' },
     HIET_1: { id: 'hiet47', type: 'range', default: '150', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_47'] : getCustomVal(state.hieqCustomValues, 0, 150) },
-    HIET_2: { id: 'hiet141', type: 'range', default: '142', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_141'] : getCustomVal(state.hieqCustomValues, 1, 142) },
-    HIET_3: { id: 'hiet234', type: 'range', default: '188', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_234'] : getCustomVal(state.hieqCustomValues, 2, 188) },
-    HIET_4: { id: 'hiet328', type: 'range', default: '216', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_328'] : getCustomVal(state.hieqCustomValues, 3, 216) },
-    HIET_5: { id: 'hiet469', type: 'range', default: '189', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_469'] : getCustomVal(state.hieqCustomValues, 4, 189) },
-    HIET_6: { id: 'hiet656', type: 'range', default: '195', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_656'] : getCustomVal(state.hieqCustomValues, 5, 195) },
-    HIET_7: { id: 'hiet844', type: 'range', default: '202', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_844'] : getCustomVal(state.hieqCustomValues, 6, 202) },
-    HIET_8: { id: 'hiet1031', type: 'range', default: '199', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1031'] : getCustomVal(state.hieqCustomValues, 7, 199) },
-    HIET_9: { id: 'hiet1313', type: 'range', default: '210', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1313'] : getCustomVal(state.hieqCustomValues, 8, 210) },
-    HIET_10: { id: 'hiet1688', type: 'range', default: '225', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1688'] : getCustomVal(state.hieqCustomValues, 9, 225) },
-    HIET_11: { id: 'hiet2250', type: 'range', default: '230', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_2250'] : getCustomVal(state.hieqCustomValues, 10, 230) },
-    HIET_12: { id: 'hiet3000', type: 'range', default: '236', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3000'] : getCustomVal(state.hieqCustomValues, 11, 236) },
-    HIET_13: { id: 'hiet3750', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3750'] : getCustomVal(state.hieqCustomValues, 12, 235) },
-    HIET_14: { id: 'hiet4688', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_4688'] : getCustomVal(state.hieqCustomValues, 13, 235) },
-    HIET_15: { id: 'hiet5813', type: 'range', default: '214', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_5813'] : getCustomVal(state.hieqCustomValues, 14, 214) },
-    HIET_16: { id: 'hiet7125', type: 'range', default: '165', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_7125'] : getCustomVal(state.hieqCustomValues, 15, 165) },
-    HIET_17: { id: 'hiet9000', type: 'range', default: '112', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_9000'] : getCustomVal(state.hieqCustomValues, 16, 112) },
-    HIET_18: { id: 'hiet11250', type: 'range', default: '49', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_11250'] : getCustomVal(state.hieqCustomValues, 17, 49) },
-    HIET_19: { id: 'hiet13875', type: 'range', default: '-24', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_13875'] : getCustomVal(state.hieqCustomValues, 18, -24) },
-    HIET_20: { id: 'hiet19688', type: 'range', default: '-217', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_19688'] : getCustomVal(state.hieqCustomValues, 19, -217) },
+	HIET_2: { id: 'hiet141', type: 'range', default: '142', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_141'] : getCustomVal(state.hieqCustomValues, 1, 142) },
+	HIET_3: { id: 'hiet234', type: 'range', default: '188', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_234'] : getCustomVal(state.hieqCustomValues, 2, 188) },
+	HIET_4: { id: 'hiet328', type: 'range', default: '216', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_328'] : getCustomVal(state.hieqCustomValues, 3, 216) },
+	HIET_5: { id: 'hiet469', type: 'range', default: '189', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_469'] : getCustomVal(state.hieqCustomValues, 4, 189) },
+	HIET_6: { id: 'hiet656', type: 'range', default: '195', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_656'] : getCustomVal(state.hieqCustomValues, 5, 195) },
+	HIET_7: { id: 'hiet844', type: 'range', default: '202', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_844'] : getCustomVal(state.hieqCustomValues, 6, 202) },
+	HIET_8: { id: 'hiet1031', type: 'range', default: '199', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1031'] : getCustomVal(state.hieqCustomValues, 7, 199) },
+	HIET_9: { id: 'hiet1313', type: 'range', default: '210', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1313'] : getCustomVal(state.hieqCustomValues, 8, 210) },
+	HIET_10: { id: 'hiet1688', type: 'range', default: '225', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_1688'] : getCustomVal(state.hieqCustomValues, 9, 225) },
+	HIET_11: { id: 'hiet2250', type: 'range', default: '230', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_2250'] : getCustomVal(state.hieqCustomValues, 10, 230) },
+	HIET_12: { id: 'hiet3000', type: 'range', default: '236', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3000'] : getCustomVal(state.hieqCustomValues, 11, 236) },
+	HIET_13: { id: 'hiet3750', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_3750'] : getCustomVal(state.hieqCustomValues, 12, 235) },
+	HIET_14: { id: 'hiet4688', type: 'range', default: '235', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_4688'] : getCustomVal(state.hieqCustomValues, 13, 235) },
+	HIET_15: { id: 'hiet5813', type: 'range', default: '214', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_5813'] : getCustomVal(state.hieqCustomValues, 14, 214) },
+	HIET_16: { id: 'hiet7125', type: 'range', default: '165', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_7125'] : getCustomVal(state.hieqCustomValues, 15, 165) },
+	HIET_17: { id: 'hiet9000', type: 'range', default: '112', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_9000'] : getCustomVal(state.hieqCustomValues, 16, 112) },
+	HIET_18: { id: 'hiet11250', type: 'range', default: '49', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_11250'] : getCustomVal(state.hieqCustomValues, 17, 49) },
+	HIET_19: { id: 'hiet13875', type: 'range', default: '-24', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_13875'] : getCustomVal(state.hieqCustomValues, 18, -24) },
+	HIET_20: { id: 'hiet19688', type: 'range', default: '-217', transform: (el) => (state.domCache.hieq?.value !== 'C' && state.domCache.hieq?.value !== 'CB') ? defaultValues['hiet_19688'] : getCustomVal(state.hieqCustomValues, 19, -217) },
 	HEQ_1: { id: 'heq47', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[0] : (parseFloat(state.heqCustomValues.split(',')[0] || '0')) },
 	HEQ_2: { id: 'heq141', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[1] : (parseFloat(state.heqCustomValues.split(',')[1] || '0')) },
 	HEQ_3: { id: 'heq234', type: 'range', default: '0', transform: (el) => state.domCache.heqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.heqpreset?.value || 'flat'].split(',')[2] : (parseFloat(state.heqCustomValues.split(',')[2] || '0')) },
@@ -213,10 +234,11 @@ export const configMap = {
     HBASSCUTOFF: { id: 'hbasscutoff', type: 'range', default: '90' },
     HBASSWIDTH: { id: 'hbasswidth', type: 'range', default: '16' },
     HBASSHARMTYPE: { id: 'hbassharmtype', type: 'range', default: '3' },
-    HBASSHARMMIXFREQMIN: { id: 'hbassharmmixfreqmin', type: 'range', default: '10' },
-    HBASSHARMMIXFREQMAX: { id: 'hbassharmmixfreqmax', type: 'range', default: '90' },
     HBASSHARMSRCFREQMIN: { id: 'hbassharmsrcfreqmin', type: 'range', default: '10' },
     HBASSHARMSRCFREQMAX: { id: 'hbassharmsrcfreqmax', type: 'range', default: '90' },
+    HBASSHARMMIXFREQMIN: { id: 'hbassharmmixfreqmin', type: 'range', default: '10' },
+    HBASSHARMMIXFREQMAX: { id: 'hbassharmmixfreqmax', type: 'range', default: '90' },
+    HBASSHARMGENFREQMAX: { id: 'hbassharmgenfreqmax', type: 'range', default: '240' },
     HBASSHARMBOOST: { id: 'hbassharmboost', type: 'range', default: '6' },
     HBASSLINGAIN: { id: 'hbasslingain', type: 'range', default: '7' },
     HBASSCOMPSTRENGTH: { id: 'hbasscompstrength', type: 'range', default: '0' },
@@ -244,6 +266,26 @@ export const configMap = {
 	H_OUTPUT_CHANNELS: { id: 'h_output_channels', type: 'select', default: '2' },
     SPEAKERTUNING: { id: 'speakertuning', type: 'toggle', default: 'YES', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'YES' : 'NO' },
     SIEQ: { id: 'sieq', type: 'select', default: 'B' },
+    SIET_1: { id: 'siet47', type: 'range', default: '150', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_47'] : getCustomVal(state.sieqCustomValues, 0, 150) },
+	SIET_2: { id: 'siet141', type: 'range', default: '142', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_141'] : getCustomVal(state.sieqCustomValues, 1, 142) },
+	SIET_3: { id: 'siet234', type: 'range', default: '188', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_234'] : getCustomVal(state.sieqCustomValues, 2, 188) },
+	SIET_4: { id: 'siet328', type: 'range', default: '216', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_328'] : getCustomVal(state.sieqCustomValues, 3, 216) },
+	SIET_5: { id: 'siet469', type: 'range', default: '189', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_469'] : getCustomVal(state.sieqCustomValues, 4, 189) },
+	SIET_6: { id: 'siet656', type: 'range', default: '195', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_656'] : getCustomVal(state.sieqCustomValues, 5, 195) },
+	SIET_7: { id: 'siet844', type: 'range', default: '202', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_844'] : getCustomVal(state.sieqCustomValues, 6, 202) },
+	SIET_8: { id: 'siet1031', type: 'range', default: '199', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_1031'] : getCustomVal(state.sieqCustomValues, 7, 199) },
+	SIET_9: { id: 'siet1313', type: 'range', default: '210', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_1313'] : getCustomVal(state.sieqCustomValues, 8, 210) },
+	SIET_10: { id: 'siet1688', type: 'range', default: '225', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_1688'] : getCustomVal(state.sieqCustomValues, 9, 225) },
+	SIET_11: { id: 'siet2250', type: 'range', default: '230', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_2250'] : getCustomVal(state.sieqCustomValues, 10, 230) },
+	SIET_12: { id: 'siet3000', type: 'range', default: '236', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_3000'] : getCustomVal(state.sieqCustomValues, 11, 236) },
+	SIET_13: { id: 'siet3750', type: 'range', default: '235', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_3750'] : getCustomVal(state.sieqCustomValues, 12, 235) },
+	SIET_14: { id: 'siet4688', type: 'range', default: '235', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_4688'] : getCustomVal(state.sieqCustomValues, 13, 235) },
+	SIET_15: { id: 'siet5813', type: 'range', default: '214', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_5813'] : getCustomVal(state.sieqCustomValues, 14, 214) },
+	SIET_16: { id: 'siet7125', type: 'range', default: '165', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_7125'] : getCustomVal(state.sieqCustomValues, 15, 165) },
+	SIET_17: { id: 'siet9000', type: 'range', default: '112', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_9000'] : getCustomVal(state.sieqCustomValues, 16, 112) },
+	SIET_18: { id: 'siet11250', type: 'range', default: '49', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_11250'] : getCustomVal(state.sieqCustomValues, 17, 49) },
+	SIET_19: { id: 'siet13875', type: 'range', default: '-24', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_13875'] : getCustomVal(state.sieqCustomValues, 18, -24) },
+	SIET_20: { id: 'siet19688', type: 'range', default: '-217', transform: (el) => (state.domCache.sieq?.value !== 'C' && state.domCache.sieq?.value !== 'CD') ? defaultValues['siet_19688'] : getCustomVal(state.sieqCustomValues, 19, -217) },
     SIEQSTR: { id: 'sieqstr', type: 'range', default: '6' },
 	SEQPRESET: { id: 'seqpreset', type: 'select', default: 'flat', transform: (el) => el ? el.value : 'flat' },
     SEQ_1: { id: 'seq47', type: 'range', default: '0', transform: (el) => state.domCache.seqpreset?.value !== 'custom' ? equalizerPresets[state.domCache.seqpreset?.value || 'flat'].split(',')[0] : (parseFloat(state.seqCustomValues.split(',')[0] || '0')) },
@@ -269,8 +311,8 @@ export const configMap = {
     SRENDERBASS: { id: 'srenderbass', type: 'toggle', default: 'VB', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'BE' : 'VB' },
     SBASSBOOST: { id: 'sbassboost', type: 'range', default: '6' },
     SBASSHARMTYPE: { id: 'sbassharmtype', type: 'range', default: '3' },
-    SBASSHARMBOOST: { id: 'sbassharmboost', type: 'range', default: '2' },
-    SBASSLINGAIN: { id: 'sbasslingain', type: 'range', default: '6' },
+    SBASSHARMBOOST: { id: 'sbassharmboost', type: 'range', default: '5' },
+    SBASSLINGAIN: { id: 'sbasslingain', type: 'range', default: '5' },
     SBASSCOMPSTRENGTH: { id: 'sbasscompstrength', type: 'range', default: '0' },
     SVOLBOOST: { id: 'svolboost', type: 'range', default: '0' },
     SDE: { id: 'sde', type: 'select', default: '0' },
@@ -298,10 +340,11 @@ export const visibilityMap = {
         basswidthContainer: { id: 'hbasswidthContainer', showWhen: (_, isVB) => !isVB },
         bassharmtextContainer: { id: 'hbassharmtextContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         bassharmtypeContainer: { id: 'hbassharmtypeContainer', showWhen: (_, isVB, features) => isVB && features.harm },
-        bassharmmixfreqminContainer: { id: 'hbassharmmixfreqminContainer', showWhen: (_, isVB, features) => isVB && features.harm },
-        bassharmmixfreqmaxContainer: { id: 'hbassharmmixfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         bassharmsrcfreqminContainer: { id: 'hbassharmsrcfreqminContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         bassharmsrcfreqmaxContainer: { id: 'hbassharmsrcfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmmixfreqminContainer: { id: 'hbassharmmixfreqminContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmmixfreqmaxContainer: { id: 'hbassharmmixfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
+        bassharmgenfreqmaxContainer: { id: 'hbassharmgenfreqmaxContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         bassharmboostContainer: { id: 'hbassharmboostContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         basslingainContainer: { id: 'hbasslingainContainer', showWhen: (_, isVB, features) => isVB && features.harm },
         basscompstrengthContainer: { id: 'hbasscompstrengthContainer', showWhen: (_, isVB, features) => isVB && features.harm },
@@ -328,6 +371,7 @@ export const visibilityMap = {
 		output_channelsContainer: { id: 'h_output_channelsContainer', showWhen: (isSimpleMode) => !isSimpleMode }
     },
     speaker: {
+		ieqCustomInput: { id: 'sieqCustomInput', showWhen: () => state.domCache.sieq?.value === 'C' || state.domCache.sieq?.value === 'CD'},
         bassboostContainer: { id: 'sbassboostContainer', showWhen: (_, isVB) => !isVB },
         basscutoffContainer: { id: 'sbasscutoffContainer', showWhen: (_, isVB) => !isVB },
         basswidthContainer: { id: 'sbasswidthContainer', showWhen: (_, isVB) => !isVB },
@@ -358,7 +402,7 @@ export const translationMaps = {
     bassHarmType: { '1': 'first_harmonic', '2': 'more_harmonics', '3': 'extra_harmonics' },
     virtMod: { '1': 'center_oriented', '2': 'expanded' },
     dialogEnhancer: { '0': 'off', '1': 'movie_profile_only', '2': 'all_profiles' },
-    ieq: { 'B': 'balanced', 'D': 'detailed', 'W': 'warm', 'N': 'no_ieq' },
+    ieq: { 'B': 'balanced', 'D': 'detailed', 'W': 'warm', 'C': 'custom', 'N': 'no_ieq' },
     heightFilter: { '0': 'off', '1': 'slightly_elevated', '2': 'more_elevated' },
     advVirtRend: {
         '103,32568,11164,5090,0,3,3,3': 'stock',
@@ -386,11 +430,22 @@ const hietDefaultKeys = [
     'hiet_13875', 'hiet_19688'
 ];
 
+const sietDefaultKeys = [
+    'siet_47', 'siet_141', 'siet_234', 'siet_328', 'siet_469', 'siet_656', 
+    'siet_844', 'siet_1031', 'siet_1313', 'siet_1688', 'siet_2250', 'siet_3000', 
+    'siet_3750', 'siet_4688', 'siet_5813', 'siet_7125', 'siet_9000', 'siet_11250', 
+    'siet_13875', 'siet_19688'
+];
+4
 defaultValues.heqCustomValues = heqDefaultKeys
     .map(key => defaultValues[key])
     .join(',');
 
 defaultValues.hieqCustomValues = hietDefaultKeys
+    .map(key => defaultValues[key])
+    .join(',');
+
+defaultValues.sieqCustomValues = sietDefaultKeys
     .map(key => defaultValues[key])
     .join(',');
 
@@ -428,7 +483,7 @@ export const generateConfigString = () => {
     config[key.toLowerCase()] = value.toString();
     }
     return `
-V=55
+V=60
 ### Dolby tuning DIY
 #Blank or wrong filled variable will cause setting default value
 
@@ -460,7 +515,9 @@ HEADPHONETUNING=${config.headphonetuning}
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, C - Custom (new ieq profile), CB - Custom (Balanced profile override), N - no IEQ)
+# (values B - Balanced, D - Detailed, W - Warm, N - Disabled IEQ)
+# You can also create your own profile with targets specified below
+# (C - Custom new ieq profile, CB - Custom new ieq profile (Override Balanced))
 # (default and stock: B)
 
 HIEQ=${config.hieq}
@@ -581,22 +638,6 @@ HBASSHARMTYPE=${config.hbassharmtype}
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Minimum frequency on which Virtual Bass will operate
-# values [10-200] (default: 10)
-
-HBASSHARMMIXFREQMIN=${config.hbassharmmixfreqmin}
-
------------------------------------
-
-# This parameter work ONLY with Virtual Bass
-# Maximum frequency on which Virtual Bass will operate
-# values [10-500] (default: 90)
-
-HBASSHARMMIXFREQMAX=${config.hbassharmmixfreqmax}
-
------------------------------------
-
-# This parameter work ONLY with Virtual Bass
 # Minimum source frequency for Virtual Bass harmonics
 # values [10-200] (default: 10)
 
@@ -609,6 +650,30 @@ HBASSHARMSRCFREQMIN=${config.hbassharmsrcfreqmin}
 # values [10-500] (default: 90)
 
 HBASSHARMSRCFREQMAX=${config.hbassharmsrcfreqmax}
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Minimum frequency on which Linear Gain will operate
+# values [10-200] (default: 10)
+
+HBASSHARMMIXFREQMIN=${config.hbassharmmixfreqmin}
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum frequency on which Linear Gain will operate
+# values [10-500] (default: 90)
+
+HBASSHARMMIXFREQMAX=${config.hbassharmmixfreqmax}
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum frequency on which Harmonics will be generated (based on SRC frequencies)
+# values [60-500] (default: 240)
+
+HBASSHARMGENFREQMAX=${config.hbassharmgenfreqmax}
 
 -----------------------------------
 
@@ -844,10 +909,37 @@ SPEAKERTUNING=${config.speakertuning}
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, N - no IEQ)
+# (values B - Balanced, D - Detailed, W - Warm, N - Disabled IEQ)
+# You can also create your own profile with targets specified below
+# (C - Custom new ieq profile, CD - Custom new ieq profile (Override Detailed))
 # (default and stock: B)
 
 SIEQ=${config.sieq}
+
+#INTELLIGENT EQUALIZER
+# Values [-500 to 500]
+# SIEQ must be set to "C" or "CD" to freely change values
+
+SIET_1=${parseFloat(config.siet_1)}
+SIET_2=${parseFloat(config.siet_2)}
+SIET_3=${parseFloat(config.siet_3)}
+SIET_4=${parseFloat(config.siet_4)}
+SIET_5=${parseFloat(config.siet_5)}
+SIET_6=${parseFloat(config.siet_6)}
+SIET_7=${parseFloat(config.siet_7)}
+SIET_8=${parseFloat(config.siet_8)}
+SIET_9=${parseFloat(config.siet_9)}
+SIET_10=${parseFloat(config.siet_10)}
+SIET_11=${parseFloat(config.siet_11)}
+SIET_12=${parseFloat(config.siet_12)}
+SIET_13=${parseFloat(config.siet_13)}
+SIET_14=${parseFloat(config.siet_14)}
+SIET_15=${parseFloat(config.siet_15)}
+SIET_16=${parseFloat(config.siet_16)}
+SIET_17=${parseFloat(config.siet_17)}
+SIET_18=${parseFloat(config.siet_18)}
+SIET_19=${parseFloat(config.siet_19)}
+SIET_20=${parseFloat(config.siet_20)}
 
 -----------------------------------
 
@@ -920,7 +1012,7 @@ SBASSHARMTYPE=${config.sbassharmtype}
 
 # This parameter work ONLY with Virtual Bass
 # How strong Bass Harmonics boost you want?
-# values [0-15] (default: 3)
+# values [0-15] (default: 5)
 
 SBASSHARMBOOST=${config.sbassharmboost}
 
@@ -928,7 +1020,7 @@ SBASSHARMBOOST=${config.sbassharmboost}
 
 # This parameter work ONLY with Virtual Bass
 # Here you can set linear bass gain
-# Values [0-20] (default: 5)
+# Values [0-15] (default: 5)
 
 SBASSLINGAIN=${config.sbasslingain}
 

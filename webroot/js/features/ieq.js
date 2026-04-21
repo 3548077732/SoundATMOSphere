@@ -2,11 +2,9 @@ import { state } from '../shared/state.js';
 import { updateOutput } from '../view/renderer.js';
 
 export const initIeq = () => {
-	const hietInputs = [
-		'hiet47', 'hiet141', 'hiet234', 'hiet328', 'hiet469', 
-		'hiet656', 'hiet844', 'hiet1031', 'hiet1313', 'hiet1688', 
-		'hiet2250', 'hiet3000', 'hiet3750', 'hiet4688', 'hiet5813', 
-		'hiet7125', 'hiet9000', 'hiet11250', 'hiet13875', 'hiet19688'
+	const frequencies = [
+		47, 141, 234, 328, 469, 656, 844, 1031, 1313, 1688, 
+		2250, 3000, 3750, 4688, 5813, 7125, 9000, 11250, 13875, 19688
 	];
 
 	const templateValues = {
@@ -19,243 +17,215 @@ export const initIeq = () => {
 		'balanced': 'B', 'detailed': 'D', 'warm': 'W',
 		'b': 'B', 'd': 'D', 'w': 'W'
 	};
-	
-	const STORAGE_KEY = 'ieq_custom_state';
 
 	const getEl = (id) => document.getElementById(id);
 
-	// Get select elements for both headphones and speakers
-	const hIeqSelect = getEl('hieq');
-	const sIeqSelect = getEl('sieq');
-	const customBaseSelect = getEl('hieqCustomBase');
-	const resetBaseBtn = getEl('resetCustomBase');
-
-	const getCurrentInputValues = () => hietInputs.map(id => {
-		const el = getEl(id);
-		if (!el) return 0;
-		if (el.value === '') return 0;
-		const parsed = parseInt(el.value, 10);
-		return isNaN(parsed) ? 0 : parsed;
-	});
-
-	const updateGlobalState = (valuesArray) => {
-		state.hieqCustomValues = valuesArray.join(',');
-		updateOutput();
+	const isSelectCustom = (selectEl) => {
+		return selectEl && (selectEl.value === 'C' || selectEl.value === 'CB' || selectEl.value === 'CD');
 	};
 
-	const updateSelectLabel = (baseKey, isModified) => {
-		if (!customBaseSelect) return;
-		try {
-			const option = customBaseSelect.querySelector(`option[value="${baseKey}"]`);
-			if (!option) return;
+	const setupIeq = (prefix) => {
+		const config = {
+			select: getEl(`${prefix}ieq`),
+			customBase: getEl(`${prefix}ieqCustomBase`),
+			resetBtn: getEl(`reset${prefix.toUpperCase()}CustomBase`), 
+			inputs: frequencies.map(f => `${prefix}iet${f}`),
+			customContainer: getEl(`${prefix}ieqCustomInput`),
+			customBaseContainer: getEl(`${prefix}ieqCustomBaseContainer`),
+			strInput: getEl(`${prefix}ieqstr`),
+			strVal: getEl(`${prefix}ieqstr-value`),
+			storageKey: `ieq_custom_state_${prefix}`, 
+			stateKey: `${prefix}ieqCustomValues` 
+		};
 
-			Array.from(customBaseSelect.options).forEach(opt => {
-				if (opt.value !== '' && opt.getAttribute('data-original-text')) {
-					opt.text = opt.getAttribute('data-original-text');
-				}
-			});
-
-			if (!option.getAttribute('data-original-text')) {
-				option.setAttribute('data-original-text', option.text);
-			}
-
-			const originalText = option.getAttribute('data-original-text');
-			option.text = isModified ? `${originalText} (modified)` : originalText;
-		} catch(e) { }
-	};
-
-	const autoDetectBase = () => {
-		if (!customBaseSelect) return;
-
-		const currentValues = getCurrentInputValues();
-		let closestMatch = null;
-		let minDifference = Infinity;
-
-		for (const [key, tplValues] of Object.entries(templateValues)) {
-			const diff = tplValues.reduce((sum, val, idx) => sum + Math.abs(val - currentValues[idx]), 0);
-			
-			if (diff < minDifference) {
-				minDifference = diff;
-				closestMatch = key;
-			}
+		const missingEls = [];
+		if (!config.select) missingEls.push(`${prefix}ieq`);
+		if (!config.customBase) missingEls.push(`${prefix}ieqCustomBase`);
+		if (!config.customContainer) missingEls.push(`${prefix}ieqCustomInput`);
+		if (!config.customBaseContainer) missingEls.push(`${prefix}ieqCustomBaseContainer`);
+		if (missingEls.length > 0) {
+			console.warn(`[IEQ Setup] Brakujące elementy HTML dla '${prefix}':`, missingEls.join(', '));
 		}
 
-		if (closestMatch && minDifference < 2000) {
-			customBaseSelect.value = closestMatch;
-			checkModification();
-		}
-	};
+		if (!config.select) return null;
 
-	const checkModification = () => {
-		if (!customBaseSelect) return;
-		try {
-			const currentBase = customBaseSelect.value;
-			if (!currentBase || !templateValues[currentBase]) return;
-
-			const currentValues = getCurrentInputValues();
-			const baseValues = templateValues[currentBase];
-			const isModified = currentValues.some((val, index) => parseInt(val) !== parseInt(baseValues[index]));
-			
-			updateSelectLabel(currentBase, isModified);
-			saveCustomState(currentBase, currentValues);
-			
-			if (hIeqSelect && (hIeqSelect.value === 'C' || hIeqSelect.value === 'CB')) {
-				updateGlobalState(currentValues);
-			}
-		} catch(e) { }
-	};
-
-	const saveCustomState = (base, values) => {
-		try {
-			const data = { base, values };
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-		} catch (e) {}
-	};
-
-	const loadValuesToInputs = (values) => {
-		if (!values) return;
-		hietInputs.forEach((id, index) => {
+		const getCurrentInputValues = () => config.inputs.map(id => {
 			const el = getEl(id);
-			if (el) el.value = values[index];
+			if (!el || el.value === '') return 0;
+			const parsed = parseInt(el.value, 10);
+			return isNaN(parsed) ? 0 : parsed;
 		});
-	};
 
-	const loadTemplate = (baseKey) => {
-		const values = templateValues[baseKey];
-		if (!values) return;
-		
-		loadValuesToInputs(values);
-		updateSelectLabel(baseKey, false);
-		saveCustomState(baseKey, values);
-		
-		if (hIeqSelect && (hIeqSelect.value === 'C' || hIeqSelect.value === 'CB')) {
-			updateGlobalState(values);
-		}
-	};
-
-	const loadCustomState = () => {
-		if (!customBaseSelect) return;
-		const saved = localStorage.getItem(STORAGE_KEY);
-		
-		if (saved) {
-			try {
-				const data = JSON.parse(saved);
-				if (data.base && templateValues[data.base]) {
-					customBaseSelect.value = data.base;
-					if (data.values && Array.isArray(data.values)) {
-						loadValuesToInputs(data.values);
-					}
-				}
-			} catch (e) { }
-		}
-		autoDetectBase();
-	};
-
-	const checkIeqCustomVisibility = () => {
-		if (!hIeqSelect) return;
-
-		const customContainer = getEl('hieqCustomInput'); 
-		const customBaseContainer = getEl('hieqCustomBaseContainer');
-
-		const isCustom = hIeqSelect.value === 'C' || hIeqSelect.value === 'CB';
-		
-		if (customContainer) {
-			if (isCustom) {
-				customContainer.style.removeProperty('display');
-				customContainer.classList.add('visible');
-			} else {
-				customContainer.style.setProperty('display', 'none', 'important');
-				customContainer.classList.remove('visible');
-			}
-		}
-		
-		if (customBaseContainer) {
-			if (isCustom) {
-				customBaseContainer.style.removeProperty('display');
-			} else {
-				customBaseContainer.style.setProperty('display', 'none', 'important');
-			}
-		}
-	};
-
-	// Restrict IEQ options based on Simple/Expert mode
-	const handleModeRestrictions = () => {
-		const isSimpleMode = document.body.classList.contains('simple-mode');
-		const allowedInSimple = ['B', 'D', 'W'];
-		
-		const restrictSelect = (selectEl) => {
-			if (!selectEl) return;
-			
-			let needsReset = false;
-			const currentValue = selectEl.value;
-			
-			Array.from(selectEl.options).forEach(option => {
-				const isAllowed = allowedInSimple.includes(option.value);
-				
-				if (isSimpleMode && !isAllowed) {
-					option.style.display = 'none';
-					// If currently selected option is being hidden, mark for reset
-					if (currentValue === option.value) {
-						needsReset = true;
-					}
-				} else {
-					option.style.display = '';
-				}
-			});
-			
-			// Force reset to 'B' (Balanced) if the current selection is invalid for Simple Mode
-			if (isSimpleMode && needsReset) {
-				selectEl.value = 'B';
-				// Trigger change event to update underlying data and UI
-				selectEl.dispatchEvent(new Event('change'));
+		const updateGlobalState = () => {
+			if (isSelectCustom(config.select)) {
+				state[config.stateKey] = getCurrentInputValues().join(',');
+				updateOutput();
 			}
 		};
 
-		restrictSelect(hIeqSelect);
-		restrictSelect(sIeqSelect);
-	};
+		const updateSelectLabel = (baseKey, isModified) => {
+			if (!config.customBase) return;
+			try {
+				const option = config.customBase.querySelector(`option[value="${baseKey}"]`);
+				if (!option) return;
 
-	// Listen for mode changes using MutationObserver on body classList
-	const setupModeObserver = () => {
-		const observer = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				if (mutation.attributeName === 'class') {
-					handleModeRestrictions();
+				Array.from(config.customBase.options).forEach(opt => {
+					if (opt.value !== '' && opt.getAttribute('data-original-text')) {
+						opt.text = opt.getAttribute('data-original-text');
+					}
+				});
+
+				if (!option.getAttribute('data-original-text')) {
+					option.setAttribute('data-original-text', option.text);
 				}
+
+				const originalText = option.getAttribute('data-original-text');
+				option.text = isModified ? `${originalText} (modified)` : originalText;
+			} catch(e) { }
+		};
+
+		const checkModification = () => {
+			if (!config.customBase) return;
+			try {
+				const currentBase = config.customBase.value;
+				if (!currentBase || !templateValues[currentBase]) return;
+
+				const currentValues = getCurrentInputValues();
+				const baseValues = templateValues[currentBase];
+				const isModified = currentValues.some((val, index) => parseInt(val) !== parseInt(baseValues[index]));
+				
+				updateSelectLabel(currentBase, isModified);
+				saveCustomState(currentBase, currentValues);
+				updateGlobalState();
+			} catch(e) { }
+		};
+
+		const autoDetectBase = () => {
+			if (!config.customBase) return;
+
+			const currentValues = getCurrentInputValues();
+			let closestMatch = null;
+			let minDifference = Infinity;
+
+			for (const [key, tplValues] of Object.entries(templateValues)) {
+				const diff = tplValues.reduce((sum, val, idx) => sum + Math.abs(val - currentValues[idx]), 0);
+				
+				if (diff < minDifference) {
+					minDifference = diff;
+					closestMatch = key;
+				}
+			}
+
+			if (closestMatch && minDifference < 2000) {
+				config.customBase.value = closestMatch;
+				checkModification();
+			}
+		};
+
+		const saveCustomState = (base, values) => {
+			try {
+				localStorage.setItem(config.storageKey, JSON.stringify({ base, values }));
+			} catch (e) {}
+		};
+
+		const loadValuesToInputs = (values) => {
+			if (!values) return;
+			config.inputs.forEach((id, index) => {
+				const el = getEl(id);
+				if (el) el.value = values[index];
 			});
-		});
-		
-		observer.observe(document.body, { attributes: true });
-	};
+		};
 
-	const hStrengthInput = getEl('hieqstr');
-	const hStrengthVal = getEl('hieqstr-value');
-	
-	const sStrengthInput = getEl('sieqstr');
-	const sStrengthVal = getEl('sieqstr-value');
-
-	const setupStrengthSlider = (input, valEl) => {
-		if (input && valEl) {
-			input.addEventListener('input', () => {
-				valEl.textContent = input.value;
-				updateOutput();
-			});
-			valEl.textContent = input.value;
-		}
-	};
-
-	setupStrengthSlider(hStrengthInput, hStrengthVal);
-	setupStrengthSlider(sStrengthInput, sStrengthVal);
-
-	// Setup event listener for headphones IEQ
-	if (hIeqSelect) {
-		hIeqSelect.addEventListener('change', (e) => {
-			checkIeqCustomVisibility(); 
+		const loadTemplate = (baseKey) => {
+			const values = templateValues[baseKey];
+			if (!values) return;
 			
+			loadValuesToInputs(values);
+			updateSelectLabel(baseKey, false);
+			saveCustomState(baseKey, values);
+			updateGlobalState();
+		};
+
+		const loadCustomState = () => {
+			if (!config.customBase) return;
+			const saved = localStorage.getItem(config.storageKey);
+			
+			if (saved) {
+				try {
+					const data = JSON.parse(saved);
+					if (data.base && templateValues[data.base]) {
+						config.customBase.value = data.base;
+						if (data.values && Array.isArray(data.values)) {
+							loadValuesToInputs(data.values);
+						}
+					}
+				} catch (e) { }
+			}
+			autoDetectBase();
+		};
+
+		const checkVisibility = () => {
+			const isCustom = isSelectCustom(config.select);
+			
+			if (config.customContainer) {
+				if (isCustom) {
+					config.customContainer.style.removeProperty('display');
+					config.customContainer.classList.add('visible');
+				} else {
+					config.customContainer.style.setProperty('display', 'none', 'important');
+					config.customContainer.classList.remove('visible');
+				}
+			}
+			
+			if (config.customBaseContainer) {
+				if (isCustom) {
+					config.customBaseContainer.style.removeProperty('display');
+				} else {
+					config.customBaseContainer.style.setProperty('display', 'none', 'important');
+				}
+			}
+		};
+
+		config.select.addEventListener('change', (e) => {
 			const val = e.target.value;
-			if (val === 'C' || val === 'CB') {
-				loadCustomState(); 
-				updateGlobalState(getCurrentInputValues());
+			
+			state[`${prefix}ieq`] = val; 
+			checkVisibility(); 
+			
+			if (isSelectCustom(config.select)) {
+				let targetBase = null;
+				if (val === 'CB') targetBase = 'B';
+				if (val === 'CD') targetBase = 'D';
+
+				if (targetBase) {
+					if (config.customBase) config.customBase.value = targetBase;
+					
+					const saved = localStorage.getItem(config.storageKey);
+					let loadedFromSave = false;
+					
+					if (saved) {
+						try {
+							const data = JSON.parse(saved);
+							if (data.base === targetBase && data.values && Array.isArray(data.values)) {
+								loadValuesToInputs(data.values);
+								loadedFromSave = true;
+							}
+						} catch (e) { }
+					}
+					
+					if (!loadedFromSave && templateValues[targetBase]) {
+						loadValuesToInputs(templateValues[targetBase]);
+					}
+					
+					state[config.stateKey] = getCurrentInputValues().join(',');
+					updateOutput();
+					checkModification();
+					
+				} else {
+					loadCustomState(); 
+					updateGlobalState();
+					updateOutput();
+				}
 			} else if (val === 'N') {
 				updateOutput();
 			} else {
@@ -266,68 +236,112 @@ export const initIeq = () => {
 				updateOutput();
 			}
 		});
-		
-		checkIeqCustomVisibility();
-	}
-	
-	// Setup event listener for speakers IEQ
-	if (sIeqSelect) {
-		sIeqSelect.addEventListener('change', () => {
-			updateOutput();
-		});
-	}
 
-	if (customBaseSelect) {
-		customBaseSelect.addEventListener('change', (e) => loadTemplate(e.target.value));
-	}
+		if (config.customBase) {
+			config.customBase.addEventListener('change', (e) => loadTemplate(e.target.value));
+		}
 
-	if (resetBaseBtn) {
-		resetBaseBtn.addEventListener('click', (e) => {
-			e.preventDefault();
-			if (customBaseSelect && customBaseSelect.value) {
-				loadTemplate(customBaseSelect.value);
+		if (config.resetBtn) {
+			config.resetBtn.addEventListener('click', (e) => {
+				e.preventDefault();
+				if (config.customBase && config.customBase.value) {
+					loadTemplate(config.customBase.value);
+				}
+			});
+		}
+
+		config.inputs.forEach(id => {
+			const el = getEl(id);
+			if (el) {
+				el.addEventListener('input', checkModification);
+				el.addEventListener('change', checkModification);
 			}
 		});
-	}
 
-	hietInputs.forEach(id => {
-		const el = getEl(id);
-		if (el) {
-			el.addEventListener('input', checkModification);
-			el.addEventListener('change', checkModification);
+		if (config.strInput && config.strVal) {
+			config.strInput.addEventListener('input', () => {
+				config.strVal.textContent = config.strInput.value;
+				updateOutput();
+			});
+			config.strVal.textContent = config.strInput.value;
 		}
-	});
 
-	if (hIeqSelect && (hIeqSelect.value === 'C' || hIeqSelect.value === 'CB')) {
-		loadCustomState();
-	}
-	if (hIeqSelect) {
-		checkIeqCustomVisibility();
-	}
-	
-	if (!state.hieqCustomValues) {
-		state.hieqCustomValues = getCurrentInputValues().join(',');
-	}
-	
-	// Initial application of mode restrictions and observer setup
+		if (isSelectCustom(config.select)) {
+			loadCustomState();
+		}
+		checkVisibility();
+		
+		if (!state[config.stateKey]) {
+			state[config.stateKey] = getCurrentInputValues().join(',');
+		}
+
+		return { checkVisibility, autoDetectBase, config };
+	};
+
+	const hIeqInstance = setupIeq('h');
+	const sIeqInstance = setupIeq('s');
+
+	const handleModeRestrictions = () => {
+		const isSimpleMode = document.body.classList.contains('simple-mode');
+		const allowedInSimple = ['B', 'D', 'W'];
+		
+		const restrictSelect = (instance) => {
+			if (!instance || !instance.config.select) return;
+			const selectEl = instance.config.select;
+			let needsReset = false;
+			const currentValue = selectEl.value;
+			
+			Array.from(selectEl.options).forEach(option => {
+				const isAllowed = allowedInSimple.includes(option.value);
+				if (isSimpleMode && !isAllowed) {
+					option.style.display = 'none';
+					if (currentValue === option.value) needsReset = true;
+				} else {
+					option.style.display = '';
+				}
+			});
+			
+			if (isSimpleMode && needsReset) {
+				selectEl.value = 'B';
+				selectEl.dispatchEvent(new Event('change'));
+			}
+		};
+
+		restrictSelect(hIeqInstance);
+		restrictSelect(sIeqInstance);
+	};
+
+	const setupModeObserver = () => {
+		const observer = new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.attributeName === 'class') {
+					handleModeRestrictions();
+				}
+			});
+		});
+		observer.observe(document.body, { attributes: true });
+	};
+
 	handleModeRestrictions();
 	setupModeObserver();
 
 	let safetyChecks = 0;
 	const safetyInterval = setInterval(() => {
-		if (hIeqSelect) {
-			checkIeqCustomVisibility();
+		const checkInstance = (instance) => {
+			if (!instance) return;
+			instance.checkVisibility();
 			
-			if ((hIeqSelect.value === 'C' || hIeqSelect.value === 'CB') && customBaseSelect && customBaseSelect.value === "") {
-				autoDetectBase();
+			if (isSelectCustom(instance.config.select) && instance.config.customBase && instance.config.customBase.value === "") {
+				instance.autoDetectBase();
 			}
-			if (hStrengthInput && hStrengthVal) {
-				hStrengthVal.textContent = hStrengthInput.value;
+			if (instance.config.strInput && instance.config.strVal) {
+				instance.config.strVal.textContent = instance.config.strInput.value;
 			}
-		}
-		if (sIeqSelect && sStrengthInput && sStrengthVal) {
-			sStrengthVal.textContent = sStrengthInput.value;
-		}
+		};
+
+		checkInstance(hIeqInstance);
+		checkInstance(sIeqInstance);
+		
 		safetyChecks++;
 		if (safetyChecks > 30) clearInterval(safetyInterval);
 	}, 100);

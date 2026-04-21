@@ -97,7 +97,7 @@
 			<button id="dolbymisurcomp" class="toggle-btn" data-state="false">OFF</button>
 			<span id="dolbymisurcomp-default" class="default-value">(Default: OFF)</span>
 			
-			<label for="dolbymiadaptvirt" data-lang-key="dolbmiadaptvirt">mi-adaptive-virtualizer</label>
+			<label for="dolbymiadaptvirt" data-lang-key="dolbymiadaptvirt">mi-adaptive-virtualizer</label>
 			<button id="dolbymiadaptvirt" class="toggle-btn" data-state="false">OFF</button>
 			<span id="dolbymiadaptvirt-default" class="default-value">(Default: OFF)</span>
 			
@@ -134,8 +134,8 @@
 					<option value="B" data-lang-key="balanced">Balanced</option>
 					<option value="D" data-lang-key="detailed">Detailed</option>
 					<option value="W" data-lang-key="warm">Warm</option>
-					<option value="C" data-lang-key="custom_new">Custom (New IEQ profile)</option>
-					<option value="CB" data-lang-key="custom_balanced">Custom (override Balanced IEQ)</option>
+					<option value="C" data-lang-key="custom_ieq_val">Custom IEQ Targets</option>
+					<option value="CB" data-lang-key="custom_ieq_val_ov_balanced">Custom IEQ Targets (Override Balanced)</option>
 					<option value="N" data-lang-key="no_ieq">No IEQ</option>
 				</select>
 				<span id="hieq-default" class="default-value">(Default: Balanced)</span>
@@ -427,7 +427,7 @@
 			</div>
 			<div id="hbasswidthContainer" class="slider-container">
 				<label for="hbasswidth" data-lang-key="bass_width">Bass Width:</label>
-				<input type="range" id="hbasswidth" min="0" max="128" value="16">
+				<input type="range" id="hbasswidth" min="0" max="32" value="16">
 				<span id="hbasswidth-value" class="slider-value">16</span>
 				<span id="hbasswidth-default" class="default-value">(Default: 16)</span>
 			</div>
@@ -442,18 +442,6 @@
 				<span id="hbassharmtype-value" class="slider-value">3</span>
 				<span id="hbassharmtype-default" class="default-value">(Default: 3)</span>
 			</div>
-			<div id="hbassharmmixfreqminContainer" class="slider-container expert-only">
-				<label for="hbassharmmixfreqmin" data-lang-key="min_mix_frequency">Min Mix Frequency:</label>
-				<input type="range" id="hbassharmmixfreqmin" min="10" max="200" value="10">
-				<span id="hbassharmmixfreqmin-value" class="slider-value">10</span>
-				<span id="hbassharmmixfreqmin-default" class="default-value">(Default: 10)</span>
-			</div>
-			<div id="hbassharmmixfreqmaxContainer" class="slider-container expert-only">
-				<label for="hbassharmmixfreqmax" data-lang-key="max_mix_frequency">Max Mix Frequency:</label>
-				<input type="range" id="hbassharmmixfreqmax" min="10" max="500" value="90">
-				<span id="hbassharmmixfreqmax-value" class="slider-value">90</span>
-				<span id="hbassharmmixfreqmax-default" class="default-value">(Default: 90)</span>
-			</div>
 			<div id="hbassharmsrcfreqminContainer" class="slider-container expert-only">
 				<label for="hbassharmsrcfreqmin" data-lang-key="min_source_frequency">Min Source Frequency:</label>
 				<input type="range" id="hbassharmsrcfreqmin" min="10" max="200" value="10">
@@ -466,6 +454,24 @@
 				<span id="hbassharmsrcfreqmax-value" class="slider-value">90</span>
 				<span id="hbassharmsrcfreqmax-default" class="default-value">(Default: 90)</span>
 			</div>
+			<div id="hbassharmmixfreqminContainer" class="slider-container expert-only">
+				<label for="hbassharmmixfreqmin" data-lang-key="min_mix_frequency">Min Mix Frequency:</label>
+				<input type="range" id="hbassharmmixfreqmin" min="10" max="200" value="10">
+				<span id="hbassharmmixfreqmin-value" class="slider-value">10</span>
+				<span id="hbassharmmixfreqmin-default" class="default-value">(Default: 10)</span>
+			</div>
+			<div id="hbassharmmixfreqmaxContainer" class="slider-container expert-only">
+				<label for="hbassharmmixfreqmax" data-lang-key="max_mix_frequency">Max Mix Frequency:</label>
+				<input type="range" id="hbassharmmixfreqmax" min="10" max="500" value="90">
+				<span id="hbassharmmixfreqmax-value" class="slider-value">90</span>
+				<span id="hbassharmmixfreqmax-default" class="default-value">(Default: 90)</span>
+			</div>
+			<div id="hbassharmgenfreqmaxContainer" class="slider-container expert-only">
+				<label for="hbassharmgenfreqmax" data-lang-key="max_harmgen_frequency">Max Harmonics Generation Frequency:</label>
+				<input type="range" id="hbassharmgenfreqmax" min="60" max="500" value="240">
+				<span id="hbassharmgenfreqmax-value" class="slider-value">240</span>
+				<span id="hbassharmgenfreqmax-default" class="default-value">(Default: 240)</span>
+			</div>
 			<div id="hbassharmboostContainer" class="slider-container expert-only">
 				<label for="hbassharmboost" data-lang-key="harmonics_boost">Harmonics Boost:</label>
 				<input type="range" id="hbassharmboost" min="0" max="15" value="6">
@@ -474,7 +480,7 @@
 			</div>
 			<div id="hbasslingainContainer" class="slider-container expert-only">
 				<label for="hbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
-				<input type="range" id="hbasslingain" min="-10" max="10" value="7">
+				<input type="range" id="hbasslingain" min="0" max="15" value="7">
 				<span id="hbasslingain-value" class="slider-value">7</span>
 				<span id="hbasslingain-default" class="default-value">(Default: 7)</span>
 			</div>
@@ -725,9 +731,107 @@
 					<option value="B" data-lang-key="balanced">Balanced</option>
 					<option value="D" data-lang-key="detailed">Detailed</option>
 					<option value="W" data-lang-key="warm">Warm</option>
+					<option value="C" data-lang-key="custom_ieq_val">Custom IEQ Targets</option>
+					<option value="CD" data-lang-key="custom_ieq_val_ov_detailed">Custom IEQ Targets (Override Detailed)</option>
 					<option value="N" data-lang-key="no_ieq">No IEQ</option>
 				</select>
 				<span id="sieq-default" class="default-value">(Default: Balanced)</span>
+			</div>
+			<div id="sieqCustomInput" class="select-container">
+			    <div id="sieqCustomBaseContainer" class="input-group" style="margin-bottom: 1rem; border-bottom: 1px solid #555; padding-bottom: 10px;">
+			        <label for="sieqCustomBase" data-lang-key="load_base">Load Base:</label>
+			        <div style="display: flex; gap: 10px;">
+			            <select id="sieqCustomBase" style="flex-grow: 1;">
+			                <option value="" disabled selected data-lang-key="select_placeholder">-- Select --</option>
+			                <option value="B" data-lang-key="balanced">Balanced</option>
+			                <option value="D" data-lang-key="detailed">Detailed</option>
+			                <option value="W" data-lang-key="warm">Warm</option>
+			            </select>
+			            <button id="resetCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
+			        </div>
+		        </div>
+				<label for="sieqCustomValues" data-lang-key="custom_ieq_val" style="margin-bottom: 1rem";>Custom IEQ Targets:</label>
+				<div class="input-group">
+					<label for="siet47" data-lang-key="freq_47">47 Hz Target:</label>
+					<input type="number" id="siet47" data-lang-key="freq_47">
+					<span class="error-message" id="sietErrorMessage"></span>
+				</div>
+				<div class="input-group">
+					<label for="siet141" data-lang-key="freq_141">141 Hz Target:</label>
+					<input type="number" id="siet141" data-lang-key="freq_141">
+				</div>
+				<div class="input-group">
+					<label for="siet234" data-lang-key="freq_234">234 Hz Target:</label>
+					<input type="number" id="siet234" data-lang-key="freq_234">
+				</div>
+				<div class="input-group">
+					<label for="siet328" data-lang-key="freq_328">328 Hz Target:</label>
+					<input type="number" id="siet328" data-lang-key="freq_328">
+				</div>
+				<div class="input-group">
+					<label for="siet469" data-lang-key="freq_469">469 Hz Target:</label>
+					<input type="number" id="siet469" data-lang-key="freq_469">
+				</div>
+				<div class="input-group">
+					<label for="siet656" data-lang-key="freq_656">656 Hz Target:</label>
+					<input type="number" id="siet656" data-lang-key="freq_656">
+				</div>
+				<div class="input-group">
+					<label for="siet844" data-lang-key="freq_844">844 Hz Target:</label>
+					<input type="number" id="siet844" data-lang-key="freq_844">
+				</div>
+				<div class="input-group">
+					<label for="siet1031" data-lang-key="freq_1031">1031 Hz Target:</label>
+					<input type="number" id="siet1031" data-lang-key="freq_1031">
+				</div>
+				<div class="input-group">
+					<label for="siet1313" data-lang-key="freq_1313">1313 Hz Target:</label>
+					<input type="number" id="siet1313" data-lang-key="freq_1313">
+				</div>
+				<div class="input-group">
+					<label for="siet1688" data-lang-key="freq_1688">1688 Hz Target:</label>
+					<input type="number" id="siet1688" data-lang-key="freq_1688">
+				</div>
+				<div class="input-group">
+					<label for="siet2250" data-lang-key="freq_2250">2250 Hz Target:</label>
+					<input type="number" id="siet2250" data-lang-key="freq_2250">
+				</div>
+				<div class="input-group">
+					<label for="siet3000" data-lang-key="freq_3000">3000 Hz Target:</label>
+					<input type="number" id="siet3000" data-lang-key="freq_3000">
+				</div>
+				<div class="input-group">
+					<label for="siet3750" data-lang-key="freq_3750">3750 Hz Target:</label>
+					<input type="number" id="siet3750" data-lang-key="freq_3750">
+				</div>
+				<div class="input-group">
+					<label for="siet4688" data-lang-key="freq_4688">4688 Hz Target:</label>
+					<input type="number" id="siet4688" data-lang-key="freq_4688">
+				</div>
+				<div class="input-group">
+					<label for="siet5813" data-lang-key="freq_5813">5813 Hz Target:</label>
+					<input type="number" id="siet5813" data-lang-key="freq_5813">
+				</div>
+				<div class="input-group">
+					<label for="siet7125" data-lang-key="freq_7125">7125 Hz Target:</label>
+					<input type="number" id="siet7125" data-lang-key="freq_7125">
+				</div>
+				<div class="input-group">
+					<label for="siet9000" data-lang-key="freq_9000">9000 Hz Target:</label>
+					<input type="number" id="siet9000" data-lang-key="freq_9000">
+				</div>
+				<div class="input-group">
+					<label for="siet11250" data-lang-key="freq_11250">11250 Hz Target:</label>
+					<input type="number" id="siet11250" data-lang-key="freq_11250">
+				</div>
+				<div class="input-group">
+					<label for="siet13875" data-lang-key="freq_13875">13875 Hz Target:</label>
+					<input type="number" id="siet13875" data-lang-key="freq_13875">
+				</div>
+				<div class="input-group">
+					<label for="siet19688" data-lang-key="freq_19688">19688 Hz Target:</label>
+					<input type="number" id="siet19688" data-lang-key="freq_19688">
+				</div>
 			</div>
 			<div id="sieqstrContainer" class="slider-container">
 				<label for="sieqstr" data-lang-key="strength">Strength:</label>
@@ -918,15 +1022,15 @@
 			</div>
 			<div id="sbassharmboostContainer" class="slider-container expert-only">
 				<label for="sbassharmboost" data-lang-key="harmonics_boost">Harmonics Boost:</label>
-				<input type="range" id="sbassharmboost" min="0" max="15" value="2">
-				<span id="sbassharmboost-value" class="slider-value">2</span>
-				<span id="sbassharmboost-default" class="default-value">(Default: 2)</span>
+				<input type="range" id="sbassharmboost" min="0" max="15" value="5">
+				<span id="sbassharmboost-value" class="slider-value">5</span>
+				<span id="sbassharmboost-default" class="default-value">(Default: 5)</span>
 			</div>
 			<div id="sbasslingainContainer" class="slider-container expert-only">
 				<label for="sbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
-				<input type="range" id="sbasslingain" min="0" max="20" value="6">
-				<span id="sbasslingain-value" class="slider-value">6</span>
-				<span id="sbasslingain-default" class="default-value">(Default: 6)</span>
+				<input type="range" id="sbasslingain" min="0" max="15" value="5">
+				<span id="sbasslingain-value" class="slider-value">5</span>
+				<span id="sbasslingain-default" class="default-value">(Default: 5)</span>
 			</div>
 			<div id="sbasscompstrengthContainer" class="slider-container expert-only">
 				<label for="sbasscompstrength" data-lang-key="bass_compressor_strength">Bass Compressor Strength:</label>

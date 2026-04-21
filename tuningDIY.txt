@@ -31,14 +31,16 @@ HEADPHONETUNING=YES
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, C - Custom (new ieq profile), CB - Custom (Balanced profile override), N - no IEQ)
+# (values B - Balanced, D - Detailed, W - Warm, N - Disabled IEQ)
+# You can also create your own profile with targets specified below
+# (C - Custom new ieq profile, CB - Custom new ieq profile (Override Balanced))
 # (default and stock: B)
 
 HIEQ=B
 
 #INTELLIGENT EQUALIZER
 # Values [-500 to 500]
-# HIEQ must be set to "C" to freely change values
+# HIEQ must be set to "C" or "CB" to freely change values
 
 HIET_47=150
 HIET_141=142
@@ -151,22 +153,6 @@ HBASSHARMTYPE=3
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Minimum frequency on which Virtual Bass will operate
-# values [10-200] (default: 10)
-
-HBASSHARMMIXFREQMIN=10
-
------------------------------------
-
-# This parameter work ONLY with Virtual Bass
-# Maximum frequency on which Virtual Bass will operate
-# values [10-500] (default: 90)
-
-HBASSHARMMIXFREQMAX=90
-
------------------------------------
-
-# This parameter work ONLY with Virtual Bass
 # Minimum source frequency for Virtual Bass harmonics
 # values [10-200] (default: 10)
 
@@ -179,6 +165,30 @@ HBASSHARMSRCFREQMIN=10
 # values [10-500] (default: 90)
 
 HBASSHARMSRCFREQMAX=90
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Minimum frequency on which Linear Gain will operate
+# values [10-200] (default: 10)
+
+HBASSHARMMIXFREQMIN=10
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum frequency on which Linear Gain will operate
+# values [10-500] (default: 90)
+
+HBASSHARMMIXFREQMAX=90
+
+-----------------------------------
+
+# This parameter work ONLY with Virtual Bass
+# Maximum frequency on which Harmonics will be generated (based on SRC frequencies)
+# values [60-500] (default: 240)
+
+HBASSHARMGENFREQMAX=240
 
 -----------------------------------
 
@@ -414,10 +424,37 @@ SPEAKERTUNING=YES
 -----------------------------------
 
 # Which Intelligent EQ preset you want? 
-# (values B - balanced, D - detailed, W - Warm, N - no IEQ)
+# (values B - Balanced, D - Detailed, W - Warm, N - Disabled IEQ)
+# You can also create your own profile with targets specified below
+# (C - Custom new ieq profile, CD - Custom new ieq profile (Override Detailed))
 # (default and stock: B)
 
 SIEQ=B
+
+#INTELLIGENT EQUALIZER
+# Values [-500 to 500]
+# SIEQ must be set to "C" or "CD" to freely change values
+
+SIET_47=150
+SIET_141=142
+SIET_234=188
+SIET_328=216
+SIET_469=189
+SIET_656=195
+SIET_844=202
+SIET_1031=199
+SIET_1313=210
+SIET_1688=225
+SIET_2250=230
+SIET_3000=236
+SIET_3750=235
+SIET_4688=235
+SIET_5813=214
+SIET_7125=165
+SIET_9000=112
+SIET_11250=49
+SIET_13875=-24
+SIET_19688=-217
 
 -----------------------------------
 
@@ -456,15 +493,15 @@ SBASSHARMTYPE=3
 
 # This parameter work ONLY with Virtual Bass
 # How strong Bass Harmonics boost you want?
-# values [0-15] (default: 3)
+# values [0-15] (default: 5)
 
-SBASSHARMBOOST=3
+SBASSHARMBOOST=5
 
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
 # Here you can set linear bass gain
-# Values [0-20] (default: 5)
+# Values [0-15] (default: 5)
 
 SBASSLINGAIN=5
 

@@ -40,7 +40,7 @@ load_config() {
 	tmpfile="$MODPATH/temp/config_vars_$$.tmp"
 	
 	awk -F '=' '
-		$1 ~ /^(DOLBYMIDVLEV|DOLBYMIIEQ|DOLBYMISURCOMP|DOLBYMIADAPTVIRT|DOLBYMIVIRTBIN|DOLBYMIDIALENH|HEADPHONETUNING|HIEQ|HIEQSTR|HIET_[0-9]+|HEQ_[0-9]+|SEQ_[0-9]+|HRENDERBASS|HBASSBOOST|HBASSCUTOFF|HBASSWIDTH|HBASSHARMTYPE|HBASSHARMBOOST|HBASSHARMMIXFREQMIN|HBASSHARMMIXFREQMAX|HBASSHARMSRCFREQMIN|HBASSHARMSRCFREQMAX|HBASSLINGAIN|HBASSCOMPSTRENGTH|HVOLBOOST|HVOLBALANCE|HDE|HDEA|HDED|HVIRTUALIZER|HVIRTDIST|HSURBOOST|HADVIRTANGLE|HVIRTMOD|HADVIRTREND|HHEIGHTFILTER|HLEVELER|HLEVSTR|HLEVAMOUNT|HLEVTARGETIN|HLEVTARGETOUT|HREGULATOR|HREGOVERDRIVE|HTIMBRE|HTUNEDRATE|H_OUTPUT_CHANNELS|SPEAKERTUNING|SIEQ|SIEQSTR|SRENDERBASS|SBASSBOOST|SBASSHARMTYPE|SBASSHARMBOOST|SBASSLINGAIN|SBASSCOMPSTRENGTH|SVOLBOOST|SDE|SDEA|SDED|SVIRTUALIZER|SSURBOOST|SVIRTMOD|SADVIRTREND|SLEVELER|SLEVSTR|SLEVAMOUNT|SLEVTARGETIN|SLEVTARGETOUT|STIMBRE|STUNEDRATE|S_OUTPUT_CHANNELS)$/ {
+		$1 ~ /^(DOLBYMIDVLEV|DOLBYMIIEQ|DOLBYMISURCOMP|DOLBYMIADAPTVIRT|DOLBYMIVIRTBIN|DOLBYMIDIALENH|HEADPHONETUNING|HIEQ|HIET_[0-9]+|HIEQSTR|HEQ_[0-9]+|HRENDERBASS|HBASSBOOST|HBASSCUTOFF|HBASSWIDTH|HBASSHARMTYPE|HBASSHARMBOOST|HBASSHARMMIXFREQMIN|HBASSHARMMIXFREQMAX|HBASSHARMGENFREQMAX|HBASSHARMSRCFREQMIN|HBASSHARMSRCFREQMAX|HBASSLINGAIN|HBASSCOMPSTRENGTH|HVOLBOOST|HVOLBALANCE|HDE|HDEA|HDED|HVIRTUALIZER|HVIRTDIST|HSURBOOST|HADVIRTANGLE|HVIRTMOD|HADVIRTREND|HHEIGHTFILTER|HLEVELER|HLEVSTR|HLEVAMOUNT|HLEVTARGETIN|HLEVTARGETOUT|HREGULATOR|HREGOVERDRIVE|HTIMBRE|HTUNEDRATE|H_OUTPUT_CHANNELS|SPEAKERTUNING|SIEQ|SIET_[0-9]+|SIEQSTR|SEQ_[0-9]+|SRENDERBASS|SBASSBOOST|SBASSHARMTYPE|SBASSHARMBOOST|SBASSLINGAIN|SBASSCOMPSTRENGTH|SVOLBOOST|SDE|SDEA|SDED|SVIRTUALIZER|SSURBOOST|SVIRTMOD|SADVIRTREND|SLEVELER|SLEVSTR|SLEVAMOUNT|SLEVTARGETIN|SLEVTARGETOUT|STIMBRE|STUNEDRATE|S_OUTPUT_CHANNELS)$/ {
 			gsub(/[[:space:]]*/, "", $1);
 			gsub(/[[:space:]]*/, "", $2);
 			if ($2 != "") print $1 "=" $2
@@ -79,18 +79,30 @@ set_ieq() {
 	local ieq_name
 	local ieq_enabled
 	local ieqstr
+	local endpoint
 	
+	# Determine context and define endpoint names matching the creation script
 	if [ "$prefix" = "h" ]; then
 		ieq_var="HIEQ"
 		ieqstr_var="HIEQSTR"
+		endpoint="headphone"
 	else
 		ieq_var="SIEQ"
 		ieqstr_var="SIEQSTR"
+		endpoint="speaker"
 	fi
 	
 	ieq=$(get_value "$ieq_var" "B")
 	case "$ieq" in
-		[Cc]) ieq_preset=4; ieq_name="custom"; ieq_enabled="true" ;;
+		[Cc])
+			if [ "$prefix" = "h" ]; then
+				ieq_preset=4
+			else
+				ieq_preset=5
+			fi
+			ieq_name="custom_${endpoint}"
+			ieq_enabled="true" 
+			;;
 		[Dd]) ieq_preset=1; ieq_name="detailed"; ieq_enabled="true" ;;
 		[Ww]) ieq_preset=3; ieq_name="warm"; ieq_enabled="true" ;;
 		[Nn]) ieq_preset=2; ieq_name="balanced"; ieq_enabled="false" ;;
@@ -188,17 +200,15 @@ set_eq_loops_indexed() {
 			for (i = 1; i <= fc; i++) {
 				f = freqs[i]
 				
-				# Handle IET settings for headphones
-				if (pfx == "h") {
-					iet_key = upfx "IET_" i
-					iet_val = dict[iet_key] + 0 # Force numeric
-					if (iet_val >= -500 && iet_val <= 500) {
-						p_iet = iet_val
-					} else {
-						p_iet = 0
-					}
-					print "export " pfx "iet_" f "=" p_iet
+				# Handle IET settings for all endpoints
+				iet_key = upfx "IET_" i
+				iet_val = dict[iet_key] + 0 # Force numeric
+				if (iet_val >= -500 && iet_val <= 500) {
+					p_iet = iet_val
+				} else {
+					p_iet = 0
 				}
+				print "export " pfx "iet_" f "=" p_iet
 
 				# Handle EQ settings
 				eq_key = upfx "EQ_" i
@@ -225,10 +235,11 @@ set_bass() {
 	local bassharmboost
 	local basslingain
 	local basscompstrength
-	local bassharmmixfreqmin
-	local bassharmmixfreqmax
 	local bassharmsrcfreqmin
 	local bassharmsrcfreqmax
+	local bassharmmixfreqmin
+	local bassharmmixfreqmax
+	local bassharmgenfreqmax
 	
 	if [ "$prefix" = "h" ]; then
 		key_prefix="H"
@@ -269,17 +280,20 @@ set_bass() {
 	eval "export ${prefix}basscompstrength=$basscompstrength"
 
 	if [ "$prefix" = "h" ]; then
-		bassharmmixfreqmin=$(get_value "HBASSHARMMIXFREQMIN" 10)
-		export "hbassharmmixfreqmin=$bassharmmixfreqmin"
-		
-		bassharmmixfreqmax=$(get_value "HBASSHARMMIXFREQMAX" 90)
-		export "hbassharmmixfreqmax=$bassharmmixfreqmax"
-		
 		bassharmsrcfreqmin=$(get_value "HBASSHARMSRCFREQMIN" 10)
 		export "hbassharmsrcfreqmin=$bassharmsrcfreqmin"
 		
 		bassharmsrcfreqmax=$(get_value "HBASSHARMSRCFREQMAX" 90)
 		export "hbassharmsrcfreqmax=$bassharmsrcfreqmax"
+		
+		bassharmmixfreqmin=$(get_value "HBASSHARMMIXFREQMIN" 10)
+		export "hbassharmmixfreqmin=$bassharmmixfreqmin"
+		
+		bassharmmixfreqmax=$(get_value "HBASSHARMMIXFREQMAX" 90)
+		export "hbassharmmixfreqmax=$bassharmmixfreqmax"
+
+		bassharmgenfreqmax=$(get_value "HBASSHARMGENFREQMAX" 240)
+		export "hbassharmgenfreqmax=$bassharmgenfreqmax"
 	fi
 }
 

@@ -56,6 +56,7 @@ rm -f "$TEMP_FREQ_FILE"
 # Apply all modifications
 apply_global_media_intelligence_settings "$i"
 apply_all_profiles "$i"
-apply_ieq_settings "$i"
+apply_ieq_settings "s" "$i"
+apply_ieq_settings "h" "$i"
 apply_tuning_settings "$i"
 apply_volume_boosts "$i"

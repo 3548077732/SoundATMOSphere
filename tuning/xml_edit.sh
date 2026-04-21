@@ -345,12 +345,12 @@ apply_virtual_bass() {
 		echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mode value=\"[^\"]*\"|virtual-bass-mode value=\"3\"|g"
 
 		if [ "$prefix" = "h" ]; then
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmgenfreqmax\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-128\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"0\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"0\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"-64\" harmonic_3=\"-16\" harmonic_4=\"-96\"/>|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmmixfreqmax\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"128\" harmonic_3=\"128\" harmonic_4=\"64\"/>|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency value=\"[^\"]*\"|virtual-bass-mix-frequency value=\"$hbassharmmixfreqmin,$hbassharmmixfreqmax\"|g"
 
@@ -362,46 +362,19 @@ apply_virtual_bass() {
 			
 			# Calculating formula for virtual bass
 			# Multiplying by 0 is intentional for testing purposes
-			hpvirtualbassmath_neglingain(){
 			if [ "$hbassharmtype" -eq 1 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*0)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*40)),$((hbassharmboost*10)),$((hbassharmboost*10))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 2 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*10)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*100)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 3 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*15)),$((hbassharmboost*20)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
-			elif [ "$hbassharmtype" -eq 4 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*10)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((poshbasslingain*0)),$((poshbasslingain*15)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
-			fi
-			}
-			
-			hpvirtualbassmath_poslingain(){
-			if [ "$hbassharmtype" -eq 1 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*0)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
-			elif [ "$hbassharmtype" -eq 2 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*12)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
-			elif [ "$hbassharmtype" -eq 3 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*5)),$((hbassharmboost*24)),$((hbassharmboost*50)),$((hbassharmboost*50))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*10)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40)),$((neghbasslingain*40))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*80)),$((hbassharmboost*60))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 4 ]; then
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((neghbasslingain*0)),$((neghbasslingain*10)),$((neghbasslingain*5)),$((neghbasslingain*5)),$((neghbasslingain*5)),$((neghbasslingain*0))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			fi
-			}
-
-			if [ "$hbasslingain" -lt 0 ]; then
-			poshbasslingain=$((hbasslingain*-1))
-			hpvirtualbassmath_neglingain
-			else
-			neghbasslingain=$((hbasslingain*-1))
-			hpvirtualbassmath_poslingain
-			fi
-
 		else
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs .*|virtual-bass-mix-freqs frequency_low=\"289\" frequency_high=\"498\"/>|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs .*|virtual-bass-src-freqs frequency_low=\"80\" frequency_high=\"150\"/>|g"
@@ -436,12 +409,12 @@ apply_virtual_bass() {
 }
 
 apply_ieq_settings() {
-	local file="$1"
+	local prefix="$1"
+	local file="$2"
 	local frequencies
 	local freq
 	local target_val
 	local source_preset="balanced"
-	local target_preset="custom"
 	local all_targets
 	local remaining_targets
 	local block
@@ -449,30 +422,160 @@ apply_ieq_settings() {
 	local insert_point_pattern
 	local sed_script_file
 	local working_preset
+	local endpoint
+	local active_ieq
+	local tuning_enabled
+	local var_prefix
+	local display_name
+	local target_id
+	local active_legacy_ieq
+
+	# Flags
+	local apply_custom=false
+	local will_modify=false
+
+	# Set variables based on the active endpoint (headphone or speaker)
+	if [ "$prefix" = "h" ]; then
+		endpoint="headphone"
+		target_id=4
+		active_ieq="$HIEQ"
+		tuning_enabled="$headphonetuning"
+		var_prefix="hiet"
+		display_name="Headphones"
+	else
+		endpoint="speaker"
+		target_id=5
+		active_ieq="$SIEQ"
+		tuning_enabled="$speakertuning"
+		var_prefix="siet"
+		display_name="Speaker"
+	fi
+
+	local target_preset="custom_${endpoint}"
 
 	echo " "
 	echo " -- Checking IEQ settings -- "
 
-	case "$HIEQ" in
-	[Cc][Bb])
-		target_preset="balanced"
-		;;
-	esac
+	sed_script_file=$(mktemp "$TMPDIR/sed_ieq_commands.XXXXXX")
 
+	# ==========================================
+	# Global (per profile) XML IEQ preset logic
+	# ==========================================
+	
+	# Extract the current endpoint block and check if it natively supports IEQ inclusions
+	if ! sed -n "/<endpoint_type id=\"$endpoint\"/,/<\/endpoint_type>/p" "$file" | grep -qE '<include (preset="ieq_|ieq_preset=)'; then
+		
+		# No IEQ include found inside the endpoint -> It's a legacy XML (global IEQ)
+		
+		# Find the global active preset (usually at the bottom of the profile)
+		active_legacy_ieq=$(grep -o "<include preset=\"ieq_[^\"]*\"" "$file" | head -n 1 | cut -d'"' -f2)
+		
+		if [ -n "$active_legacy_ieq" ]; then
+			echo " -- Legacy XML format detected -- "
+			
+			local legacy_targets_prefix=""
+			local h_apply_legacy=false
+			local s_apply_legacy=false
+			
+			case "$HIEQ" in [Cc]|[Cc][Bb]) h_apply_legacy=true ;; esac
+			case "$SIEQ" in [Cc]|[Cc][Dd]) s_apply_legacy=true ;; esac
+			
+			# Priority: Headphones override Speakers if both are enabled globally
+			if [ "$headphonetuning" = "true" ] && [ "$h_apply_legacy" = "true" ]; then
+				legacy_targets_prefix="hiet"
+				echo " -- Applying Headphone Custom IEQ globally (Legacy Override) -- "
+			elif [ "$speakertuning" = "true" ] && [ "$s_apply_legacy" = "true" ]; then
+				legacy_targets_prefix="siet"
+				echo " -- Applying Speaker Custom IEQ globally (Legacy Override) -- "
+			fi
+
+			if [ -n "$legacy_targets_prefix" ]; then
+				# Extract frequencies specifically from the active legacy preset
+				frequencies=$(sed -n "/<preset.*id=\"$active_legacy_ieq\".*>/,/<\/preset>/ s/.*band_ieq frequency=\"\([0-9]*\)\".*/\1/p" "$file")
+				
+				{
+					for freq in $frequencies; do
+						eval "target_val=\$${legacy_targets_prefix}_${freq}"
+						echo "/<preset .*id=\"$active_legacy_ieq\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+					done
+				} >> "$sed_script_file"
+				
+				if [ -s "$sed_script_file" ]; then
+					sed -i -f "$sed_script_file" "$file"
+				fi
+			fi
+		fi
+		
+		# Since it's a legacy XML, we always exit early to prevent modern logic from running
+		rm -f "$sed_script_file"
+		return 0
+	fi
+
+	# ==========================================
+	# Local (per device/endpoint) XML IEQ preset logic
+	# ==========================================
+	
+	# Determine what we are modifying and if we need to modify anything at all
+	if [ "$tuning_enabled" = "true" ]; then
+		if [ "$prefix" = "h" ]; then
+			case "$active_ieq" in
+			[Cc]) 
+				apply_custom=true
+				will_modify=true
+				;;
+			[Cc][Bb]) 
+				apply_custom=true
+				target_preset="balanced"
+				will_modify=true
+				;;
+			esac
+		else
+			case "$active_ieq" in
+			[Cc]) 
+				apply_custom=true
+				will_modify=true
+				;;
+			[Cc][Dd]) 
+				apply_custom=true
+				target_preset="detailed"
+				will_modify=true
+				;;
+			esac
+		fi
+	fi
+
+	if [ "$samsung" = "true" ]; then
+		case "$active_ieq" in
+		[Dd]|[Ww])
+			target_preset="balanced"
+			will_modify=true
+			;;
+		esac
+	fi
+
+	# Exit early if no modifications are needed
+	if [ "$will_modify" = "false" ]; then
+		echo " -- No custom preset needed -- "
+		rm -f "$sed_script_file"
+		return 0
+	fi
+
+	# Create target preset ONLY if it doesn't exist yet AND we actually need it
 	if ! grep -q "name=\"$target_preset\"" "$file" && ! grep -q "id=\"ieq_$target_preset\"" "$file"; then
 		block=$(sed -n "/<preset.*name=\"$source_preset\".*>/,/<\/preset>/p" "$file")
 
 		if [ -n "$block" ]; then
 			insert_point_pattern="name=\"$source_preset\""
-			new_block=$(echo "$block" | sed "s/name=\"$source_preset\"/name=\"$target_preset\"/; s/id=\"[0-9]*\"/id=\"4\"/")
+			new_block=$(echo "$block" | sed "s/name=\"$source_preset\"/name=\"$target_preset\"/; s/id=\"[0-9]*\"/id=\"$target_id\"/")
 		else
 			block=$(sed -n "/<preset.*id=\"ieq_$source_preset\".*>/,/<\/preset>/p" "$file")
 
 			if [ -n "$block" ]; then
 				insert_point_pattern="id=\"ieq_$source_preset\""
-				new_block=$(echo "$block" | sed "s/id=\"ieq_$source_preset\"/id=\"ieq_$target_preset\"/")
+				new_block=$(echo "$block" | sed "s/id=\"ieq_$source_preset\"/id=\"ieq_$target_preset\"/; s/id=\"[0-9]*\"/id=\"$target_id\"/")
 			else
 				echo "Error: Source preset '$source_preset' not found! Cannot create custom preset."
+				rm -f "$sed_script_file"
 				return 1
 			fi
 		fi
@@ -488,56 +591,56 @@ apply_ieq_settings() {
 
 	working_preset="$target_preset"
 
+	# Extract frequencies for the working preset
 	frequencies=$(sed -n "/<preset.*name=\"$working_preset\".*>/,/<\/preset>/ s/.*band_ieq frequency=\"\([0-9]*\)\".*/\1/p" "$file")
 	if [ -z "$frequencies" ]; then
 		frequencies=$(sed -n "/<preset.*id=\"ieq_$working_preset\".*>/,/<\/preset>/ s/.*band_ieq frequency=\"\([0-9]*\)\".*/\1/p" "$file")
 	fi
 
-	sed_script_file=$(mktemp "$TMPDIR/sed_ieq_commands.XXXXXX")
+	# Generate sed commands for user custom IEQ targets
+	if [ "$apply_custom" = "true" ]; then
+		echo " -- Applying $display_name Custom IEQ to '$working_preset' -- "
+		{
+			for freq in $frequencies; do
+				eval "target_val=\$${var_prefix}_${freq}"
+				echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+				echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
+			done
+		} >> "$sed_script_file"
+	fi
 
-	if [ "$headphonetuning" = "true" ]; then
-		case "$HIEQ" in
-		[Cc]|[Cc][Bb])
-			echo " -- Applying Headphones Custom IEQ to '$working_preset' -- "
+	# Generate sed commands for Samsung specific predefined targets
+	if [ "$samsung" = "true" ]; then
+		case "$active_ieq" in
+		[Dd]|[Ww])
+			echo " -- Applying Samsung IEQ to '$working_preset' -- "
+			
+			case "$active_ieq" in
+			[Dd])
+				all_targets="150 142 188 216 189 195 202 199 210 225 230 236 235 235 214 165 112 49 -24 -217"
+				;;
+			[Ww])
+				all_targets="114 146 183 169 170 128 103 90 98 126 127 140 96 85 80 66 38 -32 -132 -275"
+				;;
+			esac
+
+			remaining_targets="$all_targets"
+
 			{
 				for freq in $frequencies; do
-					eval "target_val=\$hiet_${freq}"
+					target_val="${remaining_targets%% *}"
+					if [ -z "$target_val" ]; then break; fi
+					remaining_targets="${remaining_targets#* }"
+
 					echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
 					echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
 				done
 			} >> "$sed_script_file"
 			;;
 		esac
-
-		if [ "$samsung" = "true" ]; then
-			case "$HIEQ" in
-			[Dd]|[Ww])
-				working_preset="balanced"
-				echo " -- Applying Samsung IEQ to '$working_preset' -- "
-				case "$HIEQ" in
-				[Dd])
-					all_targets="150 142 188 216 189 195 202 199 210 225 230 236 235 235 214 165 112 49 -24 -217";;
-				[Ww])
-					all_targets="114 146 183 169 170 128 103 90 98 126 127 140 96 85 80 66 38 -32 -132 -275";;
-				esac
-
-				remaining_targets="$all_targets"
-
-				{
-					for freq in $frequencies; do
-						target_val="${remaining_targets%% *}"
-						if [ -z "$target_val" ]; then break; fi
-						remaining_targets="${remaining_targets#* }"
-
-						echo "/<preset .*name=\"$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
-						echo "/<preset .*id=\"ieq_$working_preset\"/,/<\/preset>/ s|band_ieq frequency=\"$freq\" target=\"[^\"]*\"|band_ieq frequency=\"$freq\" target=\"$target_val\"|"
-					done
-				} >> "$sed_script_file"
-				;;
-			esac
-		fi
 	fi
 
+	# Apply all accumulated sed commands at once
 	if [ -s "$sed_script_file" ]; then
 		sed -i -f "$sed_script_file" "$file"
 	fi
