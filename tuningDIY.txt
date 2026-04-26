@@ -142,10 +142,11 @@ HBASSWIDTH=16
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render only third and fourth harmonic
-# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
-# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
-# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Each value will result with different virtual bass sound (proportions: second/third/fourth harmonic)
+# Value of 1 have higher values for second harmonic than third and fourth (proportions: 25/10/10)
+# Value of 2 have moderate values for second harmonic, but higher third and fourth (proportions: 25/60/60)
+# Value of 3 have lower values for second harmonic, but higher third and fourth (proportions: 10/60/60)
+# Value of 4 have the same values for second, third and fourth harmonic (poportions 30/30/30)
 # Values [1-4] (default: 3)
 
 HBASSHARMTYPE=3
@@ -317,7 +318,7 @@ HVIRTMOD=2
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,12288,2048,0,2,3,3 (one of my favorite and currently used)
+# 360,65535,12288,4096,0,2,2,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 HADVIRTREND=103,32568,11164,5090,0,3,3,3
@@ -481,10 +482,11 @@ SBASSBOOST=6
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render only third and fourth harmonic
-# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
-# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
-# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Each value will result with different virtual bass sound (proportions: second/third/fourth harmonic)
+# Value of 1 have higher values for second harmonic than third and fourth (proportions: 25/10/10)
+# Value of 2 have moderate values for second harmonic, but higher third and fourth (proportions: 25/60/60)
+# Value of 3 have lower values for second harmonic, but higher third and fourth (proportions: 10/60/60)
+# Value of 4 have the same values for second, third and fourth harmonic (poportions 30/30/30)
 # Values [1-4] (default: 3)
 
 SBASSHARMTYPE=3
@@ -588,7 +590,7 @@ SVIRTMOD=2
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,12288,2048,0,2,3,3 (one of my favorite and currently used)
+# 360,65535,12288,4096,0,2,2,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=103,32568,11164,5090,0,3,3,3

@@ -252,7 +252,7 @@ export const configMap = {
     HVIRTUALIZER: { id: 'hvirtualizer', type: 'select', default: '1' },
     HADVIRTANGLE: { id: 'hadvirtangle', type: 'range', default: '90' },
     HVIRTMOD: { id: 'hvirtmod', type: 'select', default: '2' },
-    HADVIRTREND: { id: 'hadvirtrend', type: 'select', default: '360,65535,12288,8192,0,2,3,3', transform: (el) => { if (el && el.value && el.value !== 'custom') { return el.value; } return state.hadvirtrend; } },
+    HADVIRTREND: { id: 'hadvirtrend', type: 'select', default: '103,32568,11164,5090,0,3,3,3', transform: (el) => { if (el && el.value && el.value !== 'custom') { return el.value; } return state.hadvirtrend; } },
     HHEIGHTFILTER: { id: 'hheightfilter', type: 'select', default: '1' },
     HLEVELER: { id: 'hleveler', type: 'toggle', default: 'OFF', transform: (el) => el && el.getAttribute('data-state') === 'true' ? 'ON' : 'OFF' },
     HLEVSTR: { id: 'hlevstr', type: 'range', default: '3' },
@@ -399,7 +399,6 @@ export const visibilityMap = {
 };
 
 export const translationMaps = {
-    bassHarmType: { '1': 'first_harmonic', '2': 'more_harmonics', '3': 'extra_harmonics' },
     virtMod: { '1': 'center_oriented', '2': 'expanded' },
     dialogEnhancer: { '0': 'off', '1': 'movie_profile_only', '2': 'all_profiles' },
     ieq: { 'B': 'balanced', 'D': 'detailed', 'W': 'warm', 'C': 'custom', 'N': 'no_ieq' },
@@ -412,7 +411,7 @@ export const translationMaps = {
         '103,32568,11164,5090,0,1,2,2': 'xiaomi_15_spatializer',
         '200,32568,15164,8090,1,2,2,1': 'ShadoV_favorite_1',
         '200,32568,15164,8090,1,2,3,1': 'ShadoV_favorite_2',
-        '360,65535,12288,8192,0,2,3,3': 'ShadoV_favorite_3'
+        '360,65535,12288,4096,0,2,2,3': 'ShadoV_favorite_3'
     },
     timbre: { '1': 'level_1', '2': 'level_2', '3': 'level_3', '4': 'level_4' }
 };
@@ -627,10 +626,11 @@ HBASSWIDTH=${config.hbasswidth}
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render only third and fourth harmonic
-# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
-# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
-# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Each value will result with different virtual bass sound (proportions: second/third/fourth harmonic)
+# Value of 1 have higher values for second harmonic than third and fourth (proportions: 25/10/10)
+# Value of 2 have moderate values for second harmonic, but higher third and fourth (proportions: 25/60/60)
+# Value of 3 have lower values for second harmonic, but higher third and fourth (proportions: 10/60/60)
+# Value of 4 have the same values for second, third and fourth harmonic (poportions 30/30/30)
 # Values [1-4] (default: 3)
 
 HBASSHARMTYPE=${config.hbassharmtype}
@@ -802,7 +802,7 @@ HVIRTMOD=${config.hvirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,12288,8192,0,2,3,3 (one of my favorite and currently used)
+# 360,65535,12288,4096,0,2,2,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 HADVIRTREND=${config.hadvirtrend}
@@ -1000,10 +1000,11 @@ SBASSBOOST=${config.sbassboost}
 -----------------------------------
 
 # This parameter work ONLY with Virtual Bass
-# Value 1 will render only third and fourth harmonic
-# Value 2 - like value 1, but with additional boost depend on linear gain and mix frequencies 
-# Value 3 will render second, third, fourth and possibly more harmonics (but much weaker)
-# Value 4 - like value 3, but with additional boost depend on linear gain and mix frequencies 
+# Each value will result with different virtual bass sound (proportions: second/third/fourth harmonic)
+# Value of 1 have higher values for second harmonic than third and fourth (proportions: 25/10/10)
+# Value of 2 have moderate values for second harmonic, but higher third and fourth (proportions: 25/60/60)
+# Value of 3 have lower values for second harmonic, but higher third and fourth (proportions: 10/60/60)
+# Value of 4 have the same values for second, third and fourth harmonic (poportions 30/30/30)
 # Values [1-4] (default: 3)
 
 SBASSHARMTYPE=${config.sbassharmtype}
@@ -1107,7 +1108,7 @@ SVIRTMOD=${config.svirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,12288,8192,0,2,3,3 (one of my favorite and currently used)
+# 360,65535,12288,4096,0,2,2,3 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=${config.sadvirtrend}

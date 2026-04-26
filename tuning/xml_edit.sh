@@ -104,12 +104,12 @@ apply_tuning_settings() {
 		if [ "$headphonetuning" = "true" ]; then
 			_gen_tuning_value "headphone" "volume-leveler-compressor-enable" "true"
 			_gen_tuning_value "headphone" "bass-mbdrc-enable" "false"
-			_gen_tuning_value "headphone" "bass-extraction-enable" "true"
+			_gen_tuning_value "headphone" "bass-extraction-enable" "false"
 			_gen_tuning_value "headphone" "bass-extraction-cutoff-frequency" "200"
 			_gen_tuning_value "headphone" "regulator-speaker-dist-enable" "true"
 			_gen_tuning_value "headphone" "regulator-sibilance-suppress-enable" "false"
 			_gen_tuning_value "headphone" "regulator-stress-amount" "96,96,96,96"
-			_gen_tuning_value "headphone" "regulator-distortion-slope" "32"
+			_gen_tuning_value "headphone" "regulator-distortion-slope" "16"
 			_gen_tuning_value "headphone" "audio-optimizer-enable" "true"
 			_gen_tuning_value "headphone" "height-filter-mode" "$hheightfilter"
 			_gen_tuning_value "headphone" "virtualizer-front-speaker-angle" "45"
@@ -347,29 +347,29 @@ apply_virtual_bass() {
 		if [ "$prefix" = "h" ]; then
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-mix-freqs frequency_low=\"$hbassharmmixfreqmin\" frequency_high=\"$hbassharmgenfreqmax\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-src-freqs frequency_low=\"[^\"]*\" frequency_high=\"[^\"]*\"|virtual-bass-src-freqs frequency_low=\"$hbassharmsrcfreqmin\" frequency_high=\"$hbassharmsrcfreqmax\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-128\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"0\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"0\"|g"
-			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"128\" harmonic_3=\"128\" harmonic_4=\"64\"/>|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-overall-gain value=\"[^\"]*\"|virtual-bass-overall-gain value=\"-96\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-slope-gain value=\"[^\"]*\"|virtual-bass-slope-gain value=\"-16\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-rolloff-gain value=\"[^\"]*\"|virtual-bass-rolloff-gain value=\"-2\"|g"
+			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-subgains .*|virtual-bass-subgains harmonic_2=\"96\" harmonic_3=\"64\" harmonic_4=\"32\"/>|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-blend-linear-gain value=\"[^\"]*\"|virtual-bass-blend-linear-gain value=\"$hbasslingain\"|g"
 			echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-mix-frequency value=\"[^\"]*\"|virtual-bass-mix-frequency value=\"$hbassharmmixfreqmin,$hbassharmmixfreqmax\"|g"
 
 			if [ "$hbasscompstrength" -eq 0 ]; then
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"0,0,0,0,0,0,0\"|g"
 			else
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"1,$((hbasscompstrength*36)),-96,96,32,25,50\"|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-compressor-tuning value=\"[^\"]*\"|virtual-bass-compressor-tuning value=\"1,$((hbasscompstrength*16)),$((hbasscompstrength*16)),$((hbasscompstrength*24)),32,25,50\"|g"
 			fi
 			
 			# Calculating formula for virtual bass
 			# Multiplying by 0 is intentional for testing purposes
 			if [ "$hbassharmtype" -eq 1 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*40)),$((hbassharmboost*10)),$((hbassharmboost*10))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*25)),$((hbassharmboost*10)),$((hbassharmboost*10))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 2 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*100)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*25)),$((hbassharmboost*60)),$((hbassharmboost*30))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 3 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*80)),$((hbassharmboost*60))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*60)),$((hbassharmboost*30))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 4 ]; then
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
@@ -392,16 +392,16 @@ apply_virtual_bass() {
 			fi
 
 			if [ "$sbassharmtype" -eq 1 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*0)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*0)-(sbasslingain*5))),$((sbassharmboost*0)),$((sbassharmboost*0)),$((sbassharmboost*0))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
 			elif [ "$sbassharmtype" -eq 2 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*10)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*0)-(sbasslingain*5))),$((sbassharmboost*10)),$((sbassharmboost*10)),$((sbassharmboost*10))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
 			elif [ "$sbassharmtype" -eq 3 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*20)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*15)),$((sbassharmboost*15)),$((sbassharmboost*15))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
 			elif [ "$sbassharmtype" -eq 4 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*5)-(sbasslingain*5))),$((sbassharmboost*30)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$(((sbassharmboost*10)-(sbasslingain*5))),$((sbassharmboost*30)),$((sbassharmboost*30)),$((sbassharmboost*30))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0)),$((sbasslingain*0))\"/>|g"
 			fi
 		fi
@@ -580,12 +580,12 @@ apply_ieq_settings() {
 			fi
 		fi
 
-		echo "$new_block" > /tmp/ieq_new_preset.tmp
+		echo "$new_block" > $TMPDIR/ieq_new_preset.tmp
 		sed -i "/<preset.*$insert_point_pattern.*>/,/<\/preset>/ {
-			/<\/preset>/r /tmp/ieq_new_preset.tmp
+			/<\/preset>/r $TMPDIR/ieq_new_preset.tmp
 		}" "$file"
 
-		rm /tmp/ieq_new_preset.tmp
+		rm $TMPDIR/ieq_new_preset.tmp
 		echo " -- Custom preset created -- "
 	fi
 

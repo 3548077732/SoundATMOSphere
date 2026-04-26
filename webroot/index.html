@@ -150,7 +150,7 @@
 			                <option value="D" data-lang-key="detailed">Detailed</option>
 			                <option value="W" data-lang-key="warm">Warm</option>
 			            </select>
-			            <button id="resetCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
+			            <button id="resetHCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
 			        </div>
 		        </div>
 				<label for="hieqCustomValues" data-lang-key="custom_ieq_val" style="margin-bottom: 1rem";>Custom IEQ Targets:</label>
@@ -235,12 +235,12 @@
 					<label for="hiet19688" data-lang-key="freq_19688">19688 Hz Target:</label>
 					<input type="number" id="hiet19688" data-lang-key="freq_19688">
 				</div>
-				<div id="hieqstrContainer" class="slider-container">
-					<label for="hieqstr" data-lang-key="strength">Strength:</label>
-					<input type="range" id="hieqstr" min="1" max="20" value="6">
-					<span id="hieqstr-value" class="slider-value">6</span>
-					<span id="hieqstr-default" class="default-value">(Default: 6)</span>
-				</div>
+			</div>
+			<div id="hieqstrContainer" class="slider-container">
+				<label for="hieqstr" data-lang-key="strength">Strength:</label>
+				<input type="range" id="hieqstr" min="1" max="20" value="6">
+				<span id="hieqstr-value" class="slider-value">6</span>
+				<span id="hieqstr-default" class="default-value">(Default: 6)</span>
 			</div>
 		</details>
 			<!-- Equalizer -->
@@ -480,7 +480,7 @@
 			</div>
 			<div id="hbasslingainContainer" class="slider-container expert-only">
 				<label for="hbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
-				<input type="range" id="hbasslingain" min="0" max="15" value="7">
+				<input type="range" id="hbasslingain" min="0" max="25" value="7">
 				<span id="hbasslingain-value" class="slider-value">7</span>
 				<span id="hbasslingain-default" class="default-value">(Default: 7)</span>
 			</div>
@@ -598,7 +598,7 @@
 					<option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
 					<option value="200,32568,15164,8090,1,2,2,1" data-lang-key="ShadoV_favorite_1">ShadoV Favorite 1</option>
 					<option value="200,32568,15164,8090,1,2,3,1" data-lang-key="ShadoV_favorite_2">ShadoV Favorite 2</option>
-					<option value="360,65535,12288,8192,0,2,3,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
+					<option value="360,65535,12288,4096,0,2,2,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
 					<option value="custom" data-lang-key="custom">Custom</option>
 				</select>
 				<span id="hadvirtrend-values"></span>
@@ -747,7 +747,7 @@
 			                <option value="D" data-lang-key="detailed">Detailed</option>
 			                <option value="W" data-lang-key="warm">Warm</option>
 			            </select>
-			            <button id="resetCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
+			            <button id="resetSCustomBase" style="padding: 5px 10px; cursor: pointer;" title="Reset to Template">↺</button>
 			        </div>
 		        </div>
 				<label for="sieqCustomValues" data-lang-key="custom_ieq_val" style="margin-bottom: 1rem";>Custom IEQ Targets:</label>
@@ -1028,7 +1028,7 @@
 			</div>
 			<div id="sbasslingainContainer" class="slider-container expert-only">
 				<label for="sbasslingain" data-lang-key="linear_gain">Linear Gain:</label>
-				<input type="range" id="sbasslingain" min="0" max="15" value="5">
+				<input type="range" id="sbasslingain" min="0" max="25" value="5">
 				<span id="sbasslingain-value" class="slider-value">5</span>
 				<span id="sbasslingain-default" class="default-value">(Default: 5)</span>
 			</div>
@@ -1119,7 +1119,7 @@
 					<option value="103,32568,11164,5090,0,1,2,2" data-lang-key="xiaomi_15_spatializer">Xiaomi 15 Spatializer</option>
 					<option value="200,32568,15164,8090,1,2,2,1" data-lang-key="ShadoV_favorite_1">ShadoV Favorite 1</option>
 					<option value="200,32568,15164,8090,1,2,3,1" data-lang-key="ShadoV_favorite_2">ShadoV Favorite 2</option>
-					<option value="360,65535,12288,8192,0,2,3,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
+					<option value="360,65535,12288,4096,0,2,2,3" data-lang-key="ShadoV_favorite_3">ShadoV Favorite 3</option>
 					<option value="custom" data-lang-key="custom">Custom</option>
 				</select>
 				<span id="sadvirtrend-values"></span>
