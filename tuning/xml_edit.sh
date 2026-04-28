@@ -580,12 +580,12 @@ apply_ieq_settings() {
 			fi
 		fi
 
-		echo "$new_block" > $TMPDIR/ieq_new_preset.tmp
+		echo "$new_block" > "$TMPDIR/ieq_new_preset.tmp"
 		sed -i "/<preset.*$insert_point_pattern.*>/,/<\/preset>/ {
 			/<\/preset>/r $TMPDIR/ieq_new_preset.tmp
 		}" "$file"
 
-		rm $TMPDIR/ieq_new_preset.tmp
+		rm "$TMPDIR/ieq_new_preset.tmp"
 		echo " -- Custom preset created -- "
 	fi
 
