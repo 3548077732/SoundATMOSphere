@@ -366,10 +366,10 @@ apply_virtual_bass() {
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*25)),$((hbassharmboost*10)),$((hbassharmboost*10))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 2 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*25)),$((hbassharmboost*60)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*25)),$((hbassharmboost*60)),$((hbassharmboost*60))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 3 ]; then
-				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*60)),$((hbassharmboost*30))\"/>|g"
+				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*10)),$((hbassharmboost*80)),$((hbassharmboost*80))\"/>|g"
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-hybgains .*|virtual-bass-hybgains value=\"$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0)),$((hbasslingain*0))\"/>|g"
 			elif [ "$hbassharmtype" -eq 4 ]; then
 				echo "/endpoint_type=\"$endpoint\"/,/<\/tuning>/s|virtual-bass-harmgains .*|virtual-bass-harmgains value=\"$((hbasslingain*0)),$((hbassharmboost*30)),$((hbassharmboost*30)),$((hbassharmboost*30))\"/>|g"
