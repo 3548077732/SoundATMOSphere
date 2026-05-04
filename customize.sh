@@ -22,18 +22,17 @@ DIY_PREV="/data/adb/modules/sv_sndasphere/tuningDIY.txt"
 DIY_STOR="/storage/emulated/0/tuningDIY.txt"
 
 # If module is reflashed, previous tuning file can be copied to update
+# -f flag is used, to be sure that default file will be overwritten
 if [ -f "$DIY_PREV" ] && [ -f "$DIY_STOR" ]; then
 	if [ "$DIY_PREV" -nt "$DIY_STOR" ]; then
-		cp "$DIY_PREV" "$DIY"
+		cp -f "$DIY_PREV" "$DIY"
 	else
-		cp "$DIY_STOR" "$DIY"
+		cp -f "$DIY_STOR" "$DIY"
 	fi
 elif [ -f "$DIY_STOR" ]; then
-	 cp "$DIY_STOR" "$DIY"
+	cp -f "$DIY_STOR" "$DIY"
 elif [ -f "$DIY_PREV" ]; then
-	cp "$DIY_PREV" "$DIY"
-elif [ -f "$DIY_STOR" ]; then
-	cp "$DIY_STOR" "$DIY"
+	cp -f "$DIY_PREV" "$DIY"
 fi
 
 # Checking DIY existence
@@ -62,5 +61,5 @@ if grep -q "^author=ShadoV90$" "$MODPATH/module.prop" && grep -q "^name=SoundATM
 		abort "Error: main.sh not found in $MODPATH"
 	fi
 else
-	abort "Error: Verification failed. Custom module.prop detected."
+	abort " -- Nice try dude... -- "
 fi

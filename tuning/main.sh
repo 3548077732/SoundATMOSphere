@@ -49,13 +49,10 @@ for DIR in "$MODPATH/"*; do
 done
 
 check() {
-	if [ -f "$MODPATH/module.prop" ]; then
-		# shellcheck source=../module.prop
-		. "$MODPATH/module.prop"
-		if [ "$author" != "ShadoV90" ] || [ "$name" != "SoundATMOSphere" ]; then
-			exit 1
-		fi
+	if grep -q "^author=ShadoV90$" "$MODPATH/module.prop" && grep -q "^name=SoundATMOSphere$" "$MODPATH/module.prop"; then
+		set -x
 	else
+		echo " -- Nice try dude... -- "
 		exit 1
 	fi
 }

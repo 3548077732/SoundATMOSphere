@@ -411,7 +411,7 @@ export const translationMaps = {
         '103,32568,11164,5090,0,1,2,2': 'xiaomi_15_spatializer',
         '200,32568,15164,8090,1,2,2,1': 'ShadoV_favorite_1',
         '200,32568,15164,8090,1,2,3,1': 'ShadoV_favorite_2',
-        '360,65535,8192,4096,0,3,3,2': 'ShadoV_favorite_3'
+        '360,65535,8192,4096,0,3,2,2': 'ShadoV_favorite_3'
     },
     timbre: { '1': 'level_1', '2': 'level_2', '3': 'level_3', '4': 'level_4' }
 };
@@ -802,7 +802,7 @@ HVIRTMOD=${config.hvirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,8192,4096,0,3,3,2 (one of my favorite and currently used)
+# 360,65535,8192,4096,0,3,2,2 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 HADVIRTREND=${config.hadvirtrend}
@@ -1108,7 +1108,7 @@ SVIRTMOD=${config.svirtmod}
 # 200,32767,16379,7090,3,3,3,1
 # 200,32568,15164,8090,1,2,2,1 (one of my favorite)
 # 200,32568,15164,8090,1,2,3,1 (also one of my favorite)
-# 360,65535,8192,4096,0,3,3,2 (one of my favorite and currently used)
+# 360,65535,8192,4096,0,3,2,2 (one of my favorite and currently used)
 # I encourage to experiment but be careful with modifying it ^^
 
 SADVIRTREND=${config.sadvirtrend}
