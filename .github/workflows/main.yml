@@ -18,8 +18,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Run ShellCheck
-        run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
+
+      - name: Run ShellCheck (only if .sh exists)
+        run: |
+          sh_files=$(find . -name "*.sh")
+          if [ -n "$sh_files" ]; then
+            find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
+          fi
 
   attach-zip-and-notify:
     needs: test_code
@@ -32,7 +37,7 @@ jobs:
       - name: Prepare clean build folder
         run: |
           mkdir -p build
-          cp -r ./* build/
+          cp -r ./* build/ 2>/dev/null || true
           rm -rf build/.git build/.github
 
       - name: Create clean ZIP
