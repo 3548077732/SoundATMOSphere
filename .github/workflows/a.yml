@@ -1,0 +1,59 @@
+name: Auto Flat ZIP + Tests z
+
+on:
+  workflow_dispatch:
+  release:
+    types: [released, prereleased, edited]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  test_code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+  attach-zip-and-notify:
+    needs: test_code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set filename
+        run: echo "ZIP_NAME=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
+
+      - name: Build clean package
+        run: |
+          mkdir -p tmp
+          rsync -av --exclude '.git' --exclude '.github' ./ tmp/
+          cd tmp
+          zip -r ../${{ env.ZIP_NAME }} *
+          cd ..
+          rm -rf tmp
+
+      # 不管手动还是 release 都上传到 Release
+      - name: Upload ZIP to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: auto-build-${{ github.run_id }}
+          name: Auto Build ${{ github.run_id }}
+          files: ${{ env.ZIP_NAME }}
+          append: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send File to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          document: ${{ env.ZIP_NAME }}
+          message: ✅ Build Finished & Uploaded
