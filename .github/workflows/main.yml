@@ -1,6 +1,8 @@
 name: Auto Flat ZIP + Tests
 
+# 新增：手动触发 + 原有触发
 on:
+  workflow_dispatch:  # 手动点击按钮触发
   release:
     types: [released, prereleased, edited]
   push:
@@ -20,9 +22,11 @@ jobs:
 
       - name: Run ShellCheck
         run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
+
   attach-zip-and-notify:
     needs: test_code
-    if: github.event_name == 'release'
+    # 手动触发 或 release 事件都可以运行
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -49,11 +53,6 @@ jobs:
           format: markdown
           document: SoundATMOSphere-1.55-Stable.zip
           message: |
-            🚀 **New release available!**
-            📦 Version: `${{ github.event.release.tag_name }}`
-            
-            File ready for download 👇
-            [🔗 View full changelog on GitHub](${{ github.event.release.html_url }})          message: |
             🚀 **New release available!**
             📦 Version: `${{ github.event.release.tag_name }}`
             
