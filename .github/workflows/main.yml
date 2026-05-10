@@ -18,7 +18,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Run ShellCheck
         run: find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
 
@@ -30,11 +29,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install 7zip
-        run: sudo apt update && sudo apt install p7zip-full -y
+      - name: Prepare clean build folder
+        run: |
+          mkdir -p build
+          cp -r ./* build/
+          rm -rf build/.git build/.github
 
-      - name: Create Archive with 7zip
-        run: 7z a -tzip SoundATMOSphere-1.55-Stable.zip . -x!.git -x!.github
+      - name: Create clean ZIP
+        run: cd build && zip -r ../SoundATMOSphere-1.55-Stable.zip *
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
