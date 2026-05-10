@@ -30,41 +30,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Env
+      - name: Set environment variables
         run: |
           echo "TIMESTAMP=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
           echo "ZIP_FILE=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
 
-      # 规避 zip 123 错误：排除多余目录
-      - name: Create Clean ZIP
-        run: |
-          zip -r "${{ env.ZIP_FILE }}" . \
-            -x ".git/*" -x ".github/*" -x "*.gitignore" -x ".*"
+      - name: Create clean flat ZIP
+        run: zip -r "${{ env.ZIP_FILE }}" . -x ".git/*" -x ".github/*" -x ".*"
 
-      - name: Upload Release Asset
+      - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ env.ZIP_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 先判断事件类型，写入消息变量，避免非法表达式
-      - name: Prepare Telegram Message
+      - name: Telegram message for Release
         if: github.event_name == 'release'
-        run: |
-          echo "MSG=🚀 **New Release Available!**
-📦 Version: ${{ github.event.release.tag_name }}
-⏰ Build Time: ${{ env.TIMESTAMP }}
-[🔗 View Full Changelog](${{ github.event.release.html_url }})" >> $GITHUB_ENV
+        run: echo "MSG=🚀 New Release Available! 📦 Version: ${{ github.event.release.tag_name }} ⏰ Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
 
-      - name: Prepare Manual Message
+      - name: Telegram message for Manual run
         if: github.event_name == 'workflow_dispatch'
-        run: |
-          echo "MSG=🔧 **Manual Build Triggered**
-📦 Version: 1.55 Stable
-⏰ Build Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
+        run: echo "MSG=🔧 Manual Build Triggered 📦 Version: 1.55 Stable ⏰ Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
 
-      - name: Send to Telegram
+      - name: Send File to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
@@ -72,5 +61,4 @@ jobs:
           format: markdown
           document: ${{ env.ZIP_FILE }}
           message: ${{ env.MSG }}
-
 
