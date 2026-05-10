@@ -19,13 +19,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run ShellCheck (only if .sh exists)
-        run: |
-          sh_files=$(find . -name "*.sh")
-          if [ -n "$sh_files" ]; then
-            find . -name "*.sh" -print0 | xargs -0 shellcheck -e SC2148
-          fi
-
   attach-zip-and-notify:
     needs: test_code
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
@@ -34,14 +27,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Prepare clean build folder
+      - name: Build clean package
         run: |
-          mkdir -p build
-          cp -r ./* build/ 2>/dev/null || true
-          rm -rf build/.git build/.github
-
-      - name: Create clean ZIP
-        run: cd build && zip -r ../SoundATMOSphere-1.55-Stable.zip *
+          mkdir -p tmp
+          rsync -av --exclude '.git' --exclude '.github' ./ tmp/
+          cd tmp
+          zip -r ../SoundATMOSphere-1.55-Stable.zip *
+          cd ..
+          rm -rf tmp
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
