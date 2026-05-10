@@ -5,9 +5,9 @@ on:
   release:
     types: [released, prereleased, edited]
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 permissions:
   contents: write
@@ -30,35 +30,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set environment variables
+      - name: Set Env
         run: |
-          echo "TIMESTAMP=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
           echo "ZIP_FILE=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
 
-      - name: Create clean flat ZIP
-        run: zip -r "${{ env.ZIP_FILE }}" . -x ".git/*" -x ".github/*" -x ".*"
+      - name: Create ZIP
+        run: zip -r SoundATMOSphere-1.55-Stable.zip . -x ".git/*" -x ".github/*"
 
-      - name: Upload to Release
+      - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.ZIP_FILE }}
+          files: SoundATMOSphere-1.55-Stable.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Telegram message for Release
-        if: github.event_name == 'release'
-        run: echo "MSG=🚀 New Release Available! 📦 Version: ${{ github.event.release.tag_name }} ⏰ Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
-
-      - name: Telegram message for Manual run
-        if: github.event_name == 'workflow_dispatch'
-        run: echo "MSG=🔧 Manual Build Triggered 📦 Version: 1.55 Stable ⏰ Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
-
-      - name: Send File to Telegram
+      - name: Send Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
-          document: ${{ env.ZIP_FILE }}
-          message: ${{ env.MSG }}
-
+          document: SoundATMOSphere-1.55-Stable.zip
+          message: New Build Ready
