@@ -30,21 +30,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Env
-        run: |
-          echo "ZIP_FILE=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
+      - name: Install 7zip
+        run: sudo apt update && sudo apt install p7zip-full -y
 
-      - name: Create ZIP
-        run: zip -r SoundATMOSphere-1.55-Stable.zip . -x ".git/*" -x ".github/*"
+      - name: Create Archive with 7zip
+        run: 7z a -tzip SoundATMOSphere-1.55-Stable.zip . -x!.git -x!.github
 
-      - name: Upload Release
+      - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
           files: SoundATMOSphere-1.55-Stable.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Send Telegram
+      - name: Send File to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
