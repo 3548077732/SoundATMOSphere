@@ -30,35 +30,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get current date & version
+      - name: Set Env
         run: |
           echo "TIMESTAMP=$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
-          echo "ZIP_NAME=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
+          echo "ZIP_FILE=SoundATMOSphere-1.55-Stable.zip" >> $GITHUB_ENV
 
-      # 修复zip 123错误：排除更多冗余文件、不打包git、action缓存、隐藏目录
-      - name: Create clean flat ZIP
+      # 规避 zip 123 错误：排除多余目录
+      - name: Create Clean ZIP
         run: |
-          zip -r "${{ env.ZIP_NAME }}" . \
-            -x "*.git*" -x ".github/workflows/*" -x ".github/*" -x ".*" -x "__MACOSX" -x "node_modules/*"
+          zip -r "${{ env.ZIP_FILE }}" . \
+            -x ".git/*" -x ".github/*" -x "*.gitignore" -x ".*"
 
-      - name: Upload to Release
+      - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.ZIP_NAME }}
+          files: ${{ env.ZIP_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 兼容手动触发：判断是否为release事件，避免变量为空报错
-      - name: Send File to Telegram
+      # 先判断事件类型，写入消息变量，避免非法表达式
+      - name: Prepare Telegram Message
+        if: github.event_name == 'release'
+        run: |
+          echo "MSG=🚀 **New Release Available!**
+📦 Version: ${{ github.event.release.tag_name }}
+⏰ Build Time: ${{ env.TIMESTAMP }}
+[🔗 View Full Changelog](${{ github.event.release.html_url }})" >> $GITHUB_ENV
+
+      - name: Prepare Manual Message
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "MSG=🔧 **Manual Build Triggered**
+📦 Version: 1.55 Stable
+⏰ Build Time: ${{ env.TIMESTAMP }}" >> $GITHUB_ENV
+
+      - name: Send to Telegram
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
-          document: ${{ env.ZIP_NAME }}
-          message: |
-            🚀 **New Build Released!**
-            📦 Version: 1.55 Stable
-            ⏰ Build Time: ${{ env.TIMESTAMP }}
-            ${{ github.event_name == 'release' && '[🔗 View GitHub Changelog](' + github.event.release.html_url + ')' || '🔧 Manual Workflow Triggered' }}
+          document: ${{ env.ZIP_FILE }}
+          message: ${{ env.MSG }}
+
 
